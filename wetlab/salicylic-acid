@@ -75,7 +75,7 @@
           <li><a href="/#Result" class="dropdown-link "><span class="nav-text" data-text-en="Result" data-text-zh="实验结果">Result</span></a></li>
           <li><a href="/#Design" class="dropdown-link "><span class="nav-text" data-text-en="Design" data-text-zh="实验设计">Design</span></a></li>
           <li><a href="/#Notebook" class="dropdown-link "><span class="nav-text" data-text-en="Notebook" data-text-zh="实验记录">Notebook</span></a></li>
-          <li><a href="/wetlab/salicylic-acid" class="dropdown-link active"><span class="nav-text" data-text-en="Experiments" data-text-zh="实验内容">Experiments</span></a></li>
+          <li><a href="salicylic-acid" class="dropdown-link active"><span class="nav-text" data-text-en="Experiments" data-text-zh="实验内容">Experiments</span></a></li>
           <li><a href="/#Parts" class="dropdown-link "><span class="nav-text" data-text-en="Parts" data-text-zh="实验部件">Parts</span></a></li>
           <li><a href="/#Safety" class="dropdown-link "><span class="nav-text" data-text-en="Safety" data-text-zh="安全说明">Safety</span></a></li>
         </ul>
