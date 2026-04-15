@@ -10,6 +10,8 @@ app = Flask(__name__, template_folder=template_folder)
 app.config['FREEZER_DESTINATION'] = 'public'
 app.config['FREEZER_RELATIVE_URLS'] = True
 app.config['FREEZER_IGNORE_MIMETYPE_WARNINGS'] = True
+# 强制 Frozen-Flask 生成 .html 结尾的文件，而不是文件夹形式，这在某些静态托管环境下更稳定
+app.config['FREEZER_REMOVE_EXTRA_INDICES'] = True 
 freezer = Freezer(app)
 
 @app.cli.command()

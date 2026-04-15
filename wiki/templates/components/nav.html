@@ -39,7 +39,7 @@
           <li><a href="{{ lp }}Result" class="dropdown-link {% if current_path == '/#Result' %}active{% endif %}"><span class="nav-text" data-text-en="Result" data-text-zh="实验结果">Result</span></a></li>
           <li><a href="{{ lp }}Design" class="dropdown-link {% if current_path == '/#Design' %}active{% endif %}"><span class="nav-text" data-text-en="Design" data-text-zh="实验设计">Design</span></a></li>
           <li><a href="{{ lp }}Notebook" class="dropdown-link {% if current_path == '/#Notebook' %}active{% endif %}"><span class="nav-text" data-text-en="Notebook" data-text-zh="实验记录">Notebook</span></a></li>
-          <li><a href="/wetlab/salicylic-acid" class="dropdown-link {% if current_path == '/wetlab/salicylic-acid' %}active{% endif %}"><span class="nav-text" data-text-en="Experiments" data-text-zh="实验内容">Experiments</span></a></li>
+          <li><a href="{{ url_for('wetlab_salicylic_acid') }}" class="dropdown-link {% if active_nav == 'Wet-Lab' and not is_subpage == False %}active{% endif %}"><span class="nav-text" data-text-en="Experiments" data-text-zh="实验内容">Experiments</span></a></li>
           <li><a href="{{ lp }}Parts" class="dropdown-link {% if current_path == '/#Parts' %}active{% endif %}"><span class="nav-text" data-text-en="Parts" data-text-zh="实验部件">Parts</span></a></li>
           <li><a href="{{ lp }}Safety" class="dropdown-link {% if current_path == '/#Safety' %}active{% endif %}"><span class="nav-text" data-text-en="Safety" data-text-zh="安全说明">Safety</span></a></li>
         </ul>
