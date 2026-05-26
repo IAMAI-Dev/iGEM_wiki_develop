@@ -12,7 +12,10 @@
 <header class="main-header" id="header">
   <nav class="nav-container">
     <div class="nav-brand">
-      <a href="{{ home }}"><img src="{{ url_for('static', filename='image/logo.png') }}" alt="logo" class="logo"></a>
+      <a href="{{ home }}">
+        <img src="{{ url_for('static', filename='image/logo.png') }}" alt="logo" class="logo logo-full">
+        <img src="{{ url_for('static', filename='image/logo-icon.png') }}" alt="logo icon" class="logo logo-icon">
+      </a>
     </div>
     <ul class="nav-menu" id="navMenu">
       <!-- Project 下拉菜单 -->

@@ -6,8 +6,8 @@
     /* 次要色调：对应视觉方案顶部条的青绿色，用于次要按钮、边框装饰、模块分区 */
     --accent: #34C759;
     /* 强调色：亮绿色，用于重点提示、核心数据高亮，贴合iGEM科技感 */
-    --bg-light: #d7f3d7;
-    /* 页面主背景：对应视觉方案的浅绿白格子背景，作为全站底层背景 */
+    --bg-light: #ffffff;
+    /* 页面主背景：纯白色，让导航栏和内容更突出 */
     --bg-card: #bdf2bd;
     /* 卡片/模块背景：比主背景深一级的浅绿，用于内容卡片、数据面板 */
     --bg-hover: #D1EAD1;
@@ -247,18 +247,37 @@ img {
     top: 0;
     left: 0;
     width: 100%;
-    background: rgba(48, 235, 31, 0.3);
-    backdrop-filter: blur(8px); /* 模糊半径，数值越大越朦胧（推荐6-12px） */
-    -webkit-backdrop-filter: blur(8px); /* 兼容Safari/移动端 */
-    border-bottom: 1px solid var(--border);
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-bottom: none;
+    border-radius: 0;
     z-index: 1000;
-    transition: all var(--transition);
+    transition: all 0.35s ease-in-out;
+    box-shadow: none;
 }
 
-/*scrolled*/
+/* 胶囊浮动状态 */
 .main-header.scrolled {
-    background: rgba(48, 235, 31, 0.4);
-    box-shadow: var(--shadow-md);
+    max-width: 90%;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 12px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.78);
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    box-shadow: 0 4px 24px rgba(10, 110, 63, 0.08),
+                0 1px 3px rgba(0, 0, 0, 0.06);
+    border-bottom: 1px solid rgba(10, 110, 63, 0.08);
+}
+
+/* 暗色主题胶囊适配 */
+[data-theme="dark"] .main-header.scrolled {
+    background: rgba(10, 31, 20, 0.82);
+    box-shadow: 0 4px 24px rgba(20, 184, 102, 0.1),
+                0 1px 3px rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid rgba(20, 184, 102, 0.12);
 }
 
 .nav-container {
@@ -275,13 +294,55 @@ img {
     align-items: center;
     flex-shrink: 0;
     min-width: 40px;
+    position: relative;
+    width: 100px;
+    height: 40px;
+}
+
+.nav-brand a {
+    display: block;
+    position: relative;
+    width: 100%;
+    height: 100%;
 }
 
 .logo {
-    width: 100px;
     max-width: 100%;
     height: auto;
     display: block;
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+}
+
+/* 完整 Logo — 初始可见 */
+.logo-full {
+    width: 100px;
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
+    transition: opacity 0.35s ease-in-out, transform 0.35s ease-in-out;
+}
+
+/* 精简图标 Logo — 初始隐藏 */
+.logo-icon {
+    width: 36px;
+    opacity: 0;
+    transform: translateY(-50%) scale(0.6);
+    transition: opacity 0.35s ease-in-out, transform 0.35s ease-in-out;
+}
+
+/* 滚动后：完整 Logo 淡出 */
+.main-header.scrolled .logo-full {
+    opacity: 0;
+    transform: translateY(-50%) scale(0.8);
+    pointer-events: none;
+}
+
+/* 滚动后：精简 Logo 淡入 */
+.main-header.scrolled .logo-icon {
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
 }
 
 .nav-menu {
@@ -458,9 +519,13 @@ img {
     }
     .nav-brand {
         flex: 1;
-    }
-    .logo {
         width: 70px;
+    }
+    .logo-full {
+        width: 70px;
+    }
+    .logo-icon {
+        width: 28px;
     }
     .nav-controls {
         gap: 0.5rem;
@@ -491,6 +556,12 @@ img {
     }
     .menu-toggle {
         display: flex;
+    }
+    /* 移动端胶囊适配 */
+    .main-header.scrolled {
+        max-width: 95%;
+        top: 8px;
+        border-radius: 12px;
     }
 }
 

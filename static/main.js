@@ -245,7 +245,7 @@ function initNavigation() {
     if (!isSubpage) {
         window.addEventListener('scroll', handleScroll);
     }
-    window.addEventListener('scroll', updateHeaderOnSroll);
+    window.addEventListener('scroll', updateHeaderOnSroll, { passive: true });
 
     // ========== 5. 点击页面其他区域关闭下拉菜单 ==========
     document.addEventListener('click', (e) => {
@@ -289,14 +289,25 @@ function updateActiveNavLink(clickedLink, sectionId = null) {
     });
 }
 
-function updateHeaderOnSroll() {
-    const header = document.querySelector('.main-header');
-    if (window.scrollY > 50) {
-        header.classList.add('scrolled');
-    } else {
-        header.classList.remove('scrolled');
-    }
-}
+// ---- 胶囊导航栏滚动检测（rAF 优化） ----
+const updateHeaderOnSroll = (() => {
+    let header = null;
+    let ticking = false;
+
+    return function () {
+        if (!header) header = document.querySelector('.main-header');
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+            ticking = false;
+        });
+    };
+})();
 
 /**
  * 滚动响应
