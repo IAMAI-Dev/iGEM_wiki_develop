@@ -1,41 +1,26 @@
 :root {
-    /* 一、核心配色（贴合视觉方案+湖北大学校徽色调） */
-    --primary: #0A6E3F;
-    /* 主色调：对应标题“统一视觉方案”+校徽核心深绿色，用于标题、导航、重点按钮 */
-    --secondary: #5FA778;
-    /* 次要色调：对应视觉方案顶部条的青绿色，用于次要按钮、边框装饰、模块分区 */
-    --accent: #34C759;
-    /* 强调色：亮绿色，用于重点提示、核心数据高亮，贴合iGEM科技感 */
-    --bg-light: #ffffff;
-    /* 页面主背景：纯白色，让导航栏和内容更突出 */
-    --bg-card: #bdf2bd;
-    /* 卡片/模块背景：比主背景深一级的浅绿，用于内容卡片、数据面板 */
-    --bg-hover: #D1EAD1;
-    /* 悬浮背景：卡片/按钮hover时的背景，提升交互感知 */
-    --border: #B3D9B3;
-    /* 全局边框色：对应背景的浅绿系，用于卡片边框、模块分隔线 */
-    --text-primary: #0A6E3F;
-    /* 主文本色：深绿色，对应标题文字，保证浅色背景下的可读性 */
-    --text-secondary: #3A7D44;
-    /* 次要文本色：深灰绿，用于副标题、说明文字 */
-    --text-muted: #6B9F72;
-    /* 弱化文本色：浅灰绿，用于备注、时间戳等补充信息 */
+    /* Emerald color system */
+    --primary: #059669;
+    --secondary: #34D399;
+    --accent: #10B981;
+    --bg-light: #F0FDF4;
+    --bg-card: #ECFDF5;
+    --bg-hover: #D1FAE5;
+    --border: rgba(16, 185, 129, 0.15);
+    --text-primary: #064E3B;
+    --text-secondary: #475569;
+    --text-muted: #94A3B8;
 
-    /* 二、渐变效果（绿色系专属，贴合视觉方案风格） */
-    --gradient-1: linear-gradient(135deg, #00ff87 0%, #28a152 50%, #00ff40 100%);
-    /* 主渐变：校徽绿→顶部条绿→强调亮绿，用于标题装饰、banner */
-    --gradient-2: linear-gradient(135deg, #5FA778 0%, #E6F3E6 100%);
-    /* 辅助渐变：用于次要模块装饰 */
+    /* Gradients */
+    --gradient-1: linear-gradient(135deg, #10B981 0%, #059669 50%, #047857 100%);
+    --gradient-2: linear-gradient(135deg, #D1FAE5 0%, #ECFDF5 100%);
 
-    /* 三、阴影效果（适配浅背景，弱化但保留层次感） */
-    --shadow-sm: 0 2px 4px rgba(10, 110, 63, 0.1);
-    /* 小阴影：浅绿透明，贴合主色 */
-    --shadow-md: 0 4px 6px rgba(10, 110, 63, 0.2);
-    /* 中等阴影：用于常规卡片 */
-    --shadow-glow: 0 0 20px rgba(52, 199, 89, 0.2);
-    /* 发光阴影：强调色发光，提升科技感 */
+    /* Shadows */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06), 0 2px 4px rgba(0, 0, 0, 0.04);
+    --shadow-glow: 0 0 20px rgba(16, 185, 129, 0.2);
 
-    /* 四、间距/过渡/字体（延续你之前的规范，保证开发一致性） */
+    /* Spacing / Transition / Font */
     --spacing-xs: 0.5rem;
     --spacing-sm: 1rem;
     --spacing-md: 2rem;
@@ -44,32 +29,28 @@
     --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-smooth: 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    --font-primary: 'Tajawal', sans-serif;
-    /* 主字体：延续之前的无衬线字体，保证可读性 */
+    --font-primary: 'Inter', 'Noto Serif SC', sans-serif;
     --font-code: 'Fira Code', monospace;
 }
 
 [data-theme="dark"] {
-    /* 核心配色：深绿系暗背景，文字/强调色适配暗背景可读性 */
-    --primary: #14B866; /* 暗主题主色：亮一点的绿，替代原深绿，保证暗背景下醒目 */
-    --secondary: #4CAF50; /* 暗主题次要色：比主色浅的绿，保持层级 */
-    --accent: #54E346; /* 暗主题强调色：更亮的绿，科技感发光效果更突出 */
-    --bg-light: #0A1F14; /* 暗主题页面主背景：深墨绿，护眼且贴合校徽绿系 */
-    --bg-card: #112E1D; /* 暗主题卡片背景：比主背景浅一点的深绿，有层次 */
-    --bg-hover: #1B402B; /* 暗主题悬浮背景：卡片/按钮hover时的深绿，提升交互感知 */
-    --border: #275F3E; /* 暗主题边框色：深绿系边框，不突兀且分隔清晰 */
-    --text-primary: #E8F5E9; /* 暗主题主文本：浅绿白，保证暗背景下可读性 */
-    --text-secondary: #C8E6C9; /* 暗主题次要文本：浅灰绿，副标题/说明文字 */
-    --text-muted: #9CCC9C; /* 暗主题弱化文本：浅绿灰，备注/时间戳等补充信息 */
+    --primary: #34D399;
+    --secondary: #6EE7B7;
+    --accent: #10B981;
+    --bg-light: #022C22;
+    --bg-card: #064E3B;
+    --bg-hover: #065F46;
+    --border: rgba(52, 211, 153, 0.15);
+    --text-primary: #ECFDF5;
+    --text-secondary: #A7F3D0;
+    --text-muted: #6EE7B7;
 
-    /* 渐变效果：适配暗背景，调整色值为深绿系渐变 */
-    --gradient-1: linear-gradient(135deg, #14B866 0%, #0A6E3F 50%, #54E346 100%);
-    --gradient-2: linear-gradient(135deg, #112E1D 0%, #275F3E 100%);
+    --gradient-1: linear-gradient(135deg, #34D399 0%, #10B981 50%, #059669 100%);
+    --gradient-2: linear-gradient(135deg, #064E3B 0%, #065F46 100%);
 
-    /* 阴影效果：适配暗背景，降低透明度，避免太亮刺眼 */
-    --shadow-sm: 0 2px 4px rgba(20, 184, 102, 0.15);
-    --shadow-md: 0 4px 6px rgba(20, 184, 102, 0.25);
-    --shadow-glow: 0 0 20px rgba(84, 227, 70, 0.3); /* 发光阴影更柔和，暗背景不刺眼 */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.2), 0 2px 4px rgba(0, 0, 0, 0.1);
+    --shadow-glow: 0 0 20px rgba(52, 211, 153, 0.25);
 }
 
 * {
@@ -96,12 +77,7 @@ body {
     text-rendering: optimizeLegibility;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+h1, h2, h3, h4, h5, h6 {
     font-weight: 700;
 }
 
@@ -122,6 +98,7 @@ img {
     height: auto;
 }
 
+/* ========== Loader ========== */
 .loader-screen {
     position: fixed;
     top: 0;
@@ -153,7 +130,6 @@ img {
     margin-bottom: 2rem;
 }
 
-
 .code-line {
     display: flex;
     justify-content: center;
@@ -161,12 +137,8 @@ img {
     margin: 0.5rem 0;
     opacity: 0;
     transform: translateY(20px);
-    /* 轻微上移，强化悬浮感 */
     animation: fadeInUp 0.5s ease forwards;
 }
-
-/* .code-line[data-line="1"] { animation-delay: 0.1s; }
-.code-line[data-line="2"] { animation-delay: 0.3s; } */
 
 @keyframes fadeInUp {
     to {
@@ -174,7 +146,6 @@ img {
         transform: translateY(0px);
     }
 }
-
 
 .loader-dots {
     display: inline-flex;
@@ -187,31 +158,19 @@ img {
     height: 8px;
     border-radius: 50%;
     background-color: var(--text-primary);
-    /* 可替换为--primary主色调更醒目 */
     opacity: 0;
     animation: dotBounce 1.2s infinite linear;
 }
 
-.loader-dots .dot:nth-child(1) {
-    animation-delay: 0s;
-}
-
-.loader-dots .dot:nth-child(2) {
-    animation-delay: 0.2s;
-}
-
-.loader-dots .dot:nth-child(3) {
-    animation-delay: 0.4s;
-}
+.loader-dots .dot:nth-child(1) { animation-delay: 0s; }
+.loader-dots .dot:nth-child(2) { animation-delay: 0.2s; }
+.loader-dots .dot:nth-child(3) { animation-delay: 0.4s; }
 
 @keyframes dotBounce {
-
-    0%,
-    100% {
+    0%, 100% {
         opacity: 0;
         transform: translateY(2px);
     }
-
     50% {
         opacity: 1;
         transform: translateY(-2px);
@@ -242,6 +201,7 @@ img {
     margin-top: 1rem;
 }
 
+/* ========== Header / Navbar ========== */
 .main-header {
     position: fixed;
     top: 0;
@@ -257,27 +217,26 @@ img {
     box-shadow: none;
 }
 
-/* 胶囊浮动状态 */
+/* Capsule floating state */
 .main-header.scrolled {
     max-width: 90%;
     left: 50%;
     transform: translateX(-50%);
     top: 12px;
     border-radius: 16px;
-    background: rgba(255, 255, 255, 0.78);
+    background: rgba(240, 253, 244, 0.8);
     backdrop-filter: blur(12px) saturate(180%);
     -webkit-backdrop-filter: blur(12px) saturate(180%);
-    box-shadow: 0 4px 24px rgba(10, 110, 63, 0.08),
-                0 1px 3px rgba(0, 0, 0, 0.06);
-    border-bottom: 1px solid rgba(10, 110, 63, 0.08);
+    box-shadow: 0 4px 24px rgba(5, 150, 105, 0.06),
+                0 1px 3px rgba(0, 0, 0, 0.04);
+    border-bottom: 1px solid rgba(16, 185, 129, 0.1);
 }
 
-/* 暗色主题胶囊适配 */
 [data-theme="dark"] .main-header.scrolled {
-    background: rgba(10, 31, 20, 0.82);
-    box-shadow: 0 4px 24px rgba(20, 184, 102, 0.1),
+    background: rgba(2, 44, 34, 0.85);
+    box-shadow: 0 4px 24px rgba(52, 211, 153, 0.08),
                 0 1px 3px rgba(0, 0, 0, 0.2);
-    border-bottom: 1px solid rgba(20, 184, 102, 0.12);
+    border-bottom: 1px solid rgba(52, 211, 153, 0.12);
 }
 
 .nav-container {
@@ -316,7 +275,6 @@ img {
     transform: translateY(-50%);
 }
 
-/* 完整 Logo — 初始可见 */
 .logo-full {
     width: 100px;
     opacity: 1;
@@ -324,7 +282,6 @@ img {
     transition: opacity 0.35s ease-in-out, transform 0.35s ease-in-out;
 }
 
-/* 精简图标 Logo — 初始隐藏 */
 .logo-icon {
     width: 36px;
     opacity: 0;
@@ -332,14 +289,12 @@ img {
     transition: opacity 0.35s ease-in-out, transform 0.35s ease-in-out;
 }
 
-/* 滚动后：完整 Logo 淡出 */
 .main-header.scrolled .logo-full {
     opacity: 0;
     transform: translateY(-50%) scale(0.8);
     pointer-events: none;
 }
 
-/* 滚动后：精简 Logo 淡入 */
 .main-header.scrolled .logo-icon {
     opacity: 1;
     transform: translateY(-50%) scale(1);
@@ -357,66 +312,90 @@ img {
     align-items: start;
 }
 
+/* ========== Dropdown Menu ========== */
 .dropdown-menu {
     position: absolute;
-    top: 100%;
-    left: 0;
-    background-color: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    box-shadow: var(--shadow-md);
+    top: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%) translateY(8px);
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid rgba(16, 185, 129, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08),
+                0 4px 12px rgba(0, 0, 0, 0.04);
     list-style: none;
-    padding: var(--spacing-xs) 0;
-    min-width: 160px;
-    display: none;
+    padding: 6px;
+    min-width: 180px;
     z-index: 999;
-    transition: opacity var(--transition-smooth), transform var(--transition-smooth);
     opacity: 0;
-    transform: translateY(4px);
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
 }
 
+/* Hover trigger (desktop) + JS .active fallback */
+.has-dropdown:hover > .dropdown-menu,
 .dropdown-menu.active {
-    display: block;
     opacity: 1;
-    transform: translateY(0);
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateX(-50%) translateY(0);
 }
 
-/* 下拉菜单链接样式 */
+[data-theme="dark"] .dropdown-menu {
+    background: rgba(6, 78, 59, 0.92);
+    border-color: rgba(52, 211, 153, 0.12);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
 .dropdown-link {
-  display: block;
-  padding: var(--spacing-xs) var(--spacing-sm);
-  color: var(--text-primary);
-  text-decoration: none;
-  font-size: 0.9rem;
-  transition: background-color var(--transition);
+    display: block;
+    padding: 8px 14px;
+    color: #475569;
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: background-color 0.15s, color 0.15s;
 }
 
-/* 下拉链接hover效果 */
 .dropdown-link:hover {
-  background-color: var(--bg-hover);
+    background-color: #ECFDF5;
+    color: #059669;
 }
 
-/* 下拉链接当前页面高亮 */
+[data-theme="dark"] .dropdown-link {
+    color: #A7F3D0;
+}
+
+[data-theme="dark"] .dropdown-link:hover {
+    background-color: rgba(52, 211, 153, 0.1);
+    color: #34D399;
+}
+
 .dropdown-link.active {
-  color: var(--primary);
-  font-weight: 700;
-  background-color: rgba(52, 199, 89, 0.1);
-  border-left: 3px solid var(--accent);
-  padding-left: calc(var(--spacing-sm) - 3px);
+    color: #059669;
+    font-weight: 700;
+    background-color: rgba(16, 185, 129, 0.08);
+    border-left: 3px solid #10B981;
+    padding-left: 11px;
 }
 
-
+/* ========== Nav Links ========== */
 .nav-link {
     display: flex;
     align-items: center;
     gap: 0.5rem;
     color: var(--text-secondary);
     text-decoration: none;
-    font-weight: 700;
+    font-weight: 600;
     padding: 0.5rem 1rem;
     border-radius: 8px;
     transition: all var(--transition-fast);
     position: relative;
+    font-size: 0.9rem;
 }
 
 .nav-link::before {
@@ -436,23 +415,28 @@ img {
     color: var(--primary);
 }
 
-.nav-link.active::before{
+.nav-link.active::before {
     width: 80%;
 }
 
 .nav-link i {
     font-size: 1rem;
+    color: var(--accent);
 }
 
-/* 下拉菜单图标旋转 */
+/* Chevron rotation on hover + JS expanded */
 .has-dropdown .nav-link .fa-chevron-down {
     transition: transform var(--transition);
+    font-size: 0.7rem;
+    opacity: 0.5;
 }
 
+.has-dropdown:hover .nav-link .fa-chevron-down,
 .has-dropdown .nav-link.expanded .fa-chevron-down {
     transform: rotate(180deg);
 }
 
+/* ========== Nav Controls ========== */
 .nav-controls {
     display: flex;
     gap: 1rem;
@@ -462,8 +446,8 @@ img {
 .lang-toggle,
 .theme-toggle,
 .menu-toggle {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(16, 185, 129, 0.12);
     color: var(--text-primary);
     padding: 0.6rem 1rem;
     border-radius: 8px;
@@ -508,7 +492,7 @@ img {
     transform: rotate(-45deg) translate(7px,-6px);
 }
 
-
+/* ========== Responsive ========== */
 @media (max-width: 1024px) {
 
 }
@@ -529,7 +513,7 @@ img {
     }
     .nav-controls {
         gap: 0.5rem;
-    } 
+    }
     .nav-menu {
         position: fixed;
         top: 90px;
@@ -557,11 +541,23 @@ img {
     .menu-toggle {
         display: flex;
     }
-    /* 移动端胶囊适配 */
+    /* Mobile capsule */
     .main-header.scrolled {
         max-width: 95%;
         top: 8px;
         border-radius: 12px;
+    }
+    /* Mobile: disable CSS hover, keep JS click only */
+    .has-dropdown:hover > .dropdown-menu {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+    }
+    .dropdown-menu.active {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+        transform: translateX(-50%) translateY(0);
     }
 }
 
