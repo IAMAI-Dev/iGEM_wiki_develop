@@ -232,12 +232,12 @@ img {
     max-width: 90%;
     top: 12px;
     border-radius: 16px;
-    background: rgba(240, 253, 244, 0.8);
-    backdrop-filter: blur(12px) saturate(180%);
-    -webkit-backdrop-filter: blur(12px) saturate(180%);
-    box-shadow: 0 4px 24px rgba(5, 150, 105, 0.06),
-                0 1px 3px rgba(0, 0, 0, 0.04);
-    border-bottom: 1px solid rgba(16, 185, 129, 0.1);
+    background: rgba(240, 253, 244, 0.85);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08),
+                0 1px 8px rgba(16, 185, 129, 0.05);
+    border: 1px solid rgba(16, 185, 129, 0.18);
 }
 
 [data-theme="dark"] .main-header {
@@ -246,10 +246,10 @@ img {
 }
 
 [data-theme="dark"] .main-header.scrolled {
-    background: rgba(2, 44, 34, 0.85);
-    box-shadow: 0 4px 24px rgba(52, 211, 153, 0.08),
-                0 1px 3px rgba(0, 0, 0, 0.2);
-    border-bottom: 1px solid rgba(52, 211, 153, 0.12);
+    background: rgba(2, 44, 34, 0.9);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35),
+                0 0 15px rgba(52, 211, 153, 0.08);
+    border: 1px solid rgba(52, 211, 153, 0.2);
 }
 
 .nav-container {
