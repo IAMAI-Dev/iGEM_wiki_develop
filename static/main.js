@@ -230,9 +230,9 @@ function initNavigation() {
         });
     });
 
-    // 子页面模式：/#xxx → 淡出过渡后跳转首页
+    // 子页面模式：../../#xxx → 淡出过渡后跳转首页
     if (isSubpage) {
-        const dropdownLinksSlash = document.querySelectorAll('.dropdown-link[href^="/#"]');
+        const dropdownLinksSlash = document.querySelectorAll('.dropdown-link[href^="../../#"]');
         dropdownLinksSlash.forEach(link => {
             link.addEventListener('click', (e) => {
                 const href = link.getAttribute('href');
@@ -254,7 +254,7 @@ function initNavigation() {
         });
 
         // 子页面中无下拉的普通导航链接（如 Human Practice, Team, Video），也需要淡出过渡
-        const normalSubpageLinks = document.querySelectorAll('.nav-link[href^="/#"]:not(.has-dropdown .nav-link)');
+        const normalSubpageLinks = document.querySelectorAll('.nav-link[href^="../../#"]:not(.has-dropdown .nav-link)');
         normalSubpageLinks.forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();

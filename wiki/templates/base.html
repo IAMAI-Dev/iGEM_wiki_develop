@@ -26,7 +26,7 @@
 
   {# 子页面标记 & 首页路径（传递给 JS，避免硬编码绝对路径） #}
   <script>
-    window.__HOME_URL = "{{ url_for('home') }}";
+    window.__HOME_URL = "{{ '../../' if is_subpage else './' }}";
     window.__IS_SUBPAGE = document.body.dataset.isSubpage === '1';
   </script>
 
