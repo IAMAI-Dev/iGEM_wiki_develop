@@ -7,6 +7,7 @@ template_folder = path.abspath('./wiki')
 
 
 app = Flask(__name__, template_folder=template_folder)
+app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.config['FREEZER_DESTINATION'] = 'public'
 app.config['FREEZER_RELATIVE_URLS'] = True
 app.config['FREEZER_IGNORE_MIMETYPE_WARNINGS'] = True
