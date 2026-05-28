@@ -17,7 +17,7 @@
     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Serif+SC:wght@400;600;700&display=swap">
 
   <!-- 全局样式 -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css', v='1.0.1') }}">
 
   {% block extra_css %}{% endblock %}
 </head>
@@ -59,7 +59,7 @@
 
   {# 全局脚本 #}
   <script src="{{ url_for('static', filename='anime.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='main.js') }}"></script>
+  <script src="{{ url_for('static', filename='main.js', v='1.0.1') }}"></script>
   {% if not is_subpage %}
   <script src="{{ url_for('static', filename='animation.js') }}"></script>
   {% endif %}
