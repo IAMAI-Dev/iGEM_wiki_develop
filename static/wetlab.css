@@ -78,7 +78,7 @@
     color: var(--primary);
     font-weight: 700;
     border-left-color: var(--accent);
-    background: rgba(52, 199, 89, 0.08);
+    background: rgba(16, 185, 129, 0.08);
 }
 
 /* ---------- 可折叠树形目录 ---------- */
@@ -155,7 +155,7 @@
 .toc-children a.active {
     color: var(--primary);
     font-weight: 600;
-    background: rgba(52, 199, 89, 0.06);
+    background: rgba(16, 185, 129, 0.06);
     border-left-color: transparent;
 }
 
@@ -225,8 +225,7 @@
 
 /* ---------- 文章字体 ---------- */
 .wetlab-content {
-    color: #2E4A3A;
-    /* 正文字体在这里：深灰绿 */
+    color: var(--text-secondary);
     line-height: 1.85;
     font-size: 1rem;
 }
@@ -341,7 +340,7 @@
     padding: 0.65rem 0 0.65rem 2.5rem;
     margin-bottom: 0.35rem;
     line-height: 1.85;
-    color: #2E4A3A;
+    color: var(--text-secondary);
     border-radius: 8px;
     transition: background var(--transition);
 }
@@ -401,7 +400,7 @@
 .wetlab-table td {
     padding: 0.75rem 1.2rem;
     border-top: 1px solid var(--border);
-    color: #2E4A3A;
+    color: var(--text-secondary);
 }
 
 [data-theme="dark"] .wetlab-table td {
@@ -413,7 +412,7 @@
 }
 
 .wetlab-table tbody tr:hover {
-    background: rgba(52, 199, 89, 0.06);
+    background: rgba(16, 185, 129, 0.06);
 }
 
 /* ---------- 图表 ---------- */
@@ -448,19 +447,19 @@
 
 /* ---------- 重点发现 ---------- */
 .key-finding {
-    background: linear-gradient(135deg, rgba(52, 199, 89, 0.08), rgba(10, 110, 63, 0.06));
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(5, 150, 105, 0.06));
     border-left: 4px solid var(--accent);
     border-radius: 0 14px 14px 0;
     padding: 1.3rem 1.6rem;
     margin: 1.5rem 0 2rem;
     font-size: 0.98rem;
     line-height: 1.85;
-    color: #2E4A3A;
+    color: var(--text-secondary);
 }
 
 [data-theme="dark"] .key-finding {
     color: var(--text-secondary);
-    background: linear-gradient(135deg, rgba(52, 199, 89, 0.12), rgba(20, 184, 102, 0.08));
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(52, 211, 153, 0.08));
 }
 
 .key-finding strong {

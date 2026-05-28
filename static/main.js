@@ -147,32 +147,58 @@ function initNavigation() {
         });
     });
 
-    // ========== 2. 处理下拉菜单的父级导航（仅展开/收起下拉，不跳转） ==========
-    // 同时匹配首页 (#xxx) 和子页面 (/#xxx) 格式的下拉触发器
-    const dropdownTriggers = document.querySelectorAll('.has-dropdown .nav-link');
-    dropdownTriggers.forEach(trigger => {
-        trigger.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
+    // ========== 2. 下拉菜单 — 桌面端悬停触发，移动端点击触发 ==========
+    const dropdownItems = document.querySelectorAll('.has-dropdown');
+    const isTouchDevice = window.matchMedia('(hover: none)').matches;
 
-            const parentLi = trigger.closest('.has-dropdown');
-            const dropdownMenu = parentLi?.querySelector('.dropdown-menu');
-            const isOpen = dropdownMenu?.classList.contains('active');
+    dropdownItems.forEach(item => {
+        const trigger = item.querySelector('.nav-link');
+        const menu = item.querySelector('.dropdown-menu');
+        let closeTimer = null;
 
-            // 关闭所有其他下拉菜单
-            document.querySelectorAll('.dropdown-menu').forEach(menu => {
-                menu.classList.remove('active');
+        if (!isTouchDevice) {
+            // 桌面端：mouseenter 打开，mouseleave 延迟关闭
+            item.addEventListener('mouseenter', () => {
+                clearTimeout(closeTimer);
+                // 关闭其他菜单
+                dropdownItems.forEach(other => {
+                    if (other !== item) {
+                        other.querySelector('.dropdown-menu')?.classList.remove('active');
+                        other.querySelector('.nav-link')?.classList.remove('expanded');
+                    }
+                });
+                menu?.classList.add('active');
+                trigger?.classList.add('expanded');
             });
-            document.querySelectorAll('.has-dropdown .nav-link').forEach(link => {
-                link.classList.remove('expanded');
+
+            item.addEventListener('mouseleave', () => {
+                closeTimer = setTimeout(() => {
+                    menu?.classList.remove('active');
+                    trigger?.classList.remove('expanded');
+                }, 150);
             });
 
-            // 切换当前下拉菜单
-            if (dropdownMenu) {
-                dropdownMenu.classList.toggle('active', !isOpen);
-                trigger.classList.toggle('expanded', !isOpen);
-            }
-        });
+            // 桌面端阻止触发器默认跳转
+            trigger?.addEventListener('click', (e) => {
+                e.preventDefault();
+            });
+        } else {
+            // 移动端/触屏：保留 click 切换逻辑
+            trigger?.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const isOpen = menu?.classList.contains('active');
+                // 关闭所有
+                dropdownItems.forEach(other => {
+                    other.querySelector('.dropdown-menu')?.classList.remove('active');
+                    other.querySelector('.nav-link')?.classList.remove('expanded');
+                });
+                if (!isOpen) {
+                    menu?.classList.add('active');
+                    trigger?.classList.add('expanded');
+                }
+            });
+        }
     });
 
     // ========== 3. 处理下拉菜单的子链接 ==========
@@ -245,7 +271,7 @@ function initNavigation() {
     if (!isSubpage) {
         window.addEventListener('scroll', handleScroll);
     }
-    window.addEventListener('scroll', updateHeaderOnSroll);
+    window.addEventListener('scroll', updateHeaderOnSroll, { passive: true });
 
     // ========== 5. 点击页面其他区域关闭下拉菜单 ==========
     document.addEventListener('click', (e) => {
@@ -289,14 +315,25 @@ function updateActiveNavLink(clickedLink, sectionId = null) {
     });
 }
 
-function updateHeaderOnSroll() {
-    const header = document.querySelector('.main-header');
-    if (window.scrollY > 50) {
-        header.classList.add('scrolled');
-    } else {
-        header.classList.remove('scrolled');
-    }
-}
+// ---- 胶囊导航栏滚动检测（rAF 优化） ----
+const updateHeaderOnSroll = (() => {
+    let header = null;
+    let ticking = false;
+
+    return function () {
+        if (!header) header = document.querySelector('.main-header');
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+            ticking = false;
+        });
+    };
+})();
 
 /**
  * 滚动响应
