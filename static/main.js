@@ -26,8 +26,8 @@ function initializeApp() {
 }
 
 function loadPreferences() {
-    const savedLang = localStorage.getItem('portfolio-lang');
-    const savedTheme = localStorage.getItem('portfolio-theme');
+    const savedLang = sessionStorage.getItem('portfolio-lang');
+    const savedTheme = sessionStorage.getItem('portfolio-theme');
     if (savedLang) AppState.currentLang = savedLang;
     if (savedTheme) AppState.currentTheme = savedTheme;
 }
@@ -46,7 +46,7 @@ function initLanguage() {
 function toggleLanguage() {
     const newLang = AppState.currentLang === 'en' ? 'zh' : 'en';
     setLanguage(newLang);
-    localStorage.setItem('portfolio-lang', newLang);
+    sessionStorage.setItem('portfolio-lang', newLang);
 }
 
 function setLanguage(lang) {
@@ -101,7 +101,7 @@ function initTheme() {
 function toggleTheme() {
     const newTheme = AppState.currentTheme === 'light' ? 'dark' : 'light';
     setTheme(newTheme);
-    localStorage.setItem('portfolio-theme', newTheme); // 本地存储
+    sessionStorage.setItem('portfolio-theme', newTheme); // 本地存储
 }
 
 function setTheme(theme) {
