@@ -150,46 +150,46 @@ function initNavigation() {
 
     // ========== 2. 下拉菜单 — 桌面端悬停触发，移动端点击触发 ==========
     const dropdownItems = document.querySelectorAll('.has-dropdown');
-    const isTouchDevice = window.matchMedia('(hover: none)').matches;
+
+    // Helper: returns true when in mobile layout (nav drawer mode)
+    function isMobileLayout() {
+        return window.innerWidth <= 768;
+    }
 
     dropdownItems.forEach(item => {
         const trigger = item.querySelector('.nav-link');
         const menu = item.querySelector('.dropdown-menu');
         let closeTimer = null;
 
-        if (!isTouchDevice) {
-            // 桌面端：mouseenter 打开，mouseleave 延迟关闭
-            item.addEventListener('mouseenter', () => {
-                clearTimeout(closeTimer);
-                // 关闭其他菜单
-                dropdownItems.forEach(other => {
-                    if (other !== item) {
-                        other.querySelector('.dropdown-menu')?.classList.remove('active');
-                        other.querySelector('.nav-link')?.classList.remove('expanded');
-                    }
-                });
-                menu?.classList.add('active');
-                trigger?.classList.add('expanded');
+        // Desktop: mouseenter / mouseleave
+        item.addEventListener('mouseenter', () => {
+            if (isMobileLayout()) return; // skip on mobile layout
+            clearTimeout(closeTimer);
+            dropdownItems.forEach(other => {
+                if (other !== item) {
+                    other.querySelector('.dropdown-menu')?.classList.remove('active');
+                    other.querySelector('.nav-link')?.classList.remove('expanded');
+                }
             });
+            menu?.classList.add('active');
+            trigger?.classList.add('expanded');
+        });
 
-            item.addEventListener('mouseleave', () => {
-                closeTimer = setTimeout(() => {
-                    menu?.classList.remove('active');
-                    trigger?.classList.remove('expanded');
-                }, 150);
-            });
+        item.addEventListener('mouseleave', () => {
+            if (isMobileLayout()) return;
+            closeTimer = setTimeout(() => {
+                menu?.classList.remove('active');
+                trigger?.classList.remove('expanded');
+            }, 150);
+        });
 
-            // 桌面端阻止触发器默认跳转
-            trigger?.addEventListener('click', (e) => {
-                e.preventDefault();
-            });
-        } else {
-            // 移动端/触屏：保留 click 切换逻辑
-            trigger?.addEventListener('click', (e) => {
-                e.preventDefault();
+        // Click handler — used on both desktop (to prevent navigation) and mobile (to toggle accordion)
+        trigger?.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (isMobileLayout()) {
                 e.stopPropagation();
                 const isOpen = menu?.classList.contains('active');
-                // 关闭所有
+                // Accordion: close all others first
                 dropdownItems.forEach(other => {
                     other.querySelector('.dropdown-menu')?.classList.remove('active');
                     other.querySelector('.nav-link')?.classList.remove('expanded');
@@ -198,8 +198,8 @@ function initNavigation() {
                     menu?.classList.add('active');
                     trigger?.classList.add('expanded');
                 }
-            });
-        }
+            }
+        });
     });
 
     // ========== 3. 处理下拉菜单的子链接 ==========
@@ -381,6 +381,11 @@ function toggleMoblieMenu() {
     if (menuToggle) {
         menuToggle.classList.toggle('active', AppState.isMenuOpen);
     }
+    // Collapse all dropdown sub-menus when closing the drawer
+    if (!AppState.isMenuOpen) {
+        document.querySelectorAll('.dropdown-menu').forEach(menu => menu.classList.remove('active'));
+        document.querySelectorAll('.has-dropdown .nav-link').forEach(link => link.classList.remove('expanded'));
+    }
 }
 
 /**
@@ -557,6 +562,13 @@ function initMascotCursor() {
     const mascot = document.getElementById('mascot-cursor');
     if (!mascot) return;
 
+    // Disable on touch devices or small screens — remove element entirely
+    const isTouchDevice = window.matchMedia('(hover: none)').matches;
+    if (isTouchDevice || window.innerWidth <= 960) {
+        mascot.remove();
+        return;
+    }
+
     let mouseX = 0, mouseY = 0;
     let mascotX = 0, mascotY = 0;
     let currentScale = 0; // Starts from 0 for a smooth entrance scale-up
@@ -691,6 +703,9 @@ if (document.readyState === 'loading') {
  * Interactive 3D Tilt and Cursor Glow for Glass Cards and Illustration Containers
  */
 function init3DTiltAndGlow() {
+    // Disable 3D tilt on touch-only devices
+    if (window.matchMedia('(hover: none)').matches) return;
+
     const targets = document.querySelectorAll('.glass-card, .illustration-container');
     targets.forEach(card => {
         card.addEventListener('mousemove', (e) => {
