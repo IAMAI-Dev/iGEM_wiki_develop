@@ -71,10 +71,14 @@ body {
     color: var(--text-primary);
     line-height: 1.7;
     overflow-x: hidden;
-    transition: background var(--transition-fast), color var(--transition-fast);
+    transition: opacity 0.3s ease-in-out, background var(--transition-fast), color var(--transition-fast);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+}
+
+body.page-loading {
+    opacity: 0 !important;
 }
 
 h1,

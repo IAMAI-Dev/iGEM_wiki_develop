@@ -1,6 +1,6 @@
 const AppState = {
     currentLang: 'en',
-    currentTheme: 'light',
+    currentTheme: 'dark',
     currentSection: 'home',
     isMenuOpen: false,
     isLoaded: false
@@ -16,6 +16,9 @@ document.addEventListener('DOMContentLoaded', () => {
     updateThemeUI();
     initSubpageTransitions();
     init3DTiltAndGlow();
+    
+    // 渐显页面内容，防止语言及主题切换闪烁
+    document.body.classList.remove('page-loading');
 });
 
 function initializeApp() {
@@ -23,7 +26,7 @@ function initializeApp() {
 }
 
 function loadPreferences() {
-    const savedLang = localStorage.getItem('porfolio-lang');
+    const savedLang = localStorage.getItem('portfolio-lang');
     const savedTheme = localStorage.getItem('portfolio-theme');
     if (savedLang) AppState.currentLang = savedLang;
     if (savedTheme) AppState.currentTheme = savedTheme;
@@ -92,6 +95,7 @@ function initTheme() {
     if (themeToggle) {
         themeToggle.addEventListener('click', toggleTheme);
     }
+    setTheme(AppState.currentTheme);
 }
 
 function toggleTheme() {
