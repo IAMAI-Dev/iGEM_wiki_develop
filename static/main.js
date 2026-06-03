@@ -189,19 +189,29 @@ function initNavigation() {
 
         // Click handler — used on both desktop (to prevent navigation) and mobile (to toggle accordion)
         trigger?.addEventListener('click', (e) => {
-            e.preventDefault();
             if (isMobileLayout()) {
+                e.preventDefault();
                 e.stopPropagation();
                 const isOpen = menu?.classList.contains('active');
-                // Accordion: close all others first
+
+                // Accordion: close all OTHER menus first
                 dropdownItems.forEach(other => {
-                    other.querySelector('.dropdown-menu')?.classList.remove('active');
-                    other.querySelector('.nav-link')?.classList.remove('expanded');
+                    if (other !== item) {
+                        other.querySelector('.dropdown-menu')?.classList.remove('active');
+                        other.querySelector('.nav-link')?.classList.remove('expanded');
+                    }
                 });
-                if (!isOpen) {
+
+                // Toggle current menu (tap-same-item to close)
+                if (isOpen) {
+                    menu?.classList.remove('active');
+                    trigger?.classList.remove('expanded');
+                } else {
                     menu?.classList.add('active');
                     trigger?.classList.add('expanded');
                 }
+            } else {
+                e.preventDefault();
             }
         });
     });
