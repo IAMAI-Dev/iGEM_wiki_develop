@@ -69,6 +69,18 @@
           <li><a href="{{ home_hash_prefix }}#Hardware" class="dropdown-link"><span class="nav-text" data-text-en="Hardware" data-text-zh="硬件实现">Hardware</span></a></li>
         </ul>
       </li>
+      <!-- Team 下拉菜单 -->
+      <li class="nav-item has-dropdown">
+        <a href="{{ home_hash_prefix }}#Team" class="nav-link {% if active_nav == 'Team' %}active{% endif %}" data-section="Team">
+          <i class="fa-solid fa-people-group"></i>
+          <span class="nav-text" data-text-en="Team" data-text-zh="团队介绍">Team</span>
+          <i class="fa-solid fa-chevron-down"></i>
+        </a>
+        <ul class="dropdown-menu">
+          <li><a href="{{ url_for('team_members') }}" class="dropdown-link {% if current_path == '/team/members' %}active{% endif %}"><span class="nav-text" data-text-en="Members" data-text-zh="团队成员">Members</span></a></li>
+          <li><a href="{{ home_hash_prefix }}#Attribution" class="dropdown-link"><span class="nav-text" data-text-en="Attribution" data-text-zh="贡献说明">Attribtribution</span></a></li>
+        </ul>
+      </li>
 
       <!-- 无下拉的导航项 -->
       <li class="nav-item">
@@ -77,12 +89,7 @@
           <span class="nav-text" data-text-en="Human-Practice" data-text-zh="人文实践">Human Practice</span>
         </a>
       </li>
-      <li class="nav-item">
-        <a href="{{ home_hash_prefix }}#Team" class="nav-link {% if active_nav == 'Team' %}active{% endif %}" data-section="Team">
-          <i class="fa-solid fa-people-group"></i>
-          <span class="nav-text" data-text-en="Team" data-text-zh="团队介绍">Team</span>
-        </a>
-      </li>
+      
       <li class="nav-item">
         <a href="{{ home_hash_prefix }}#Video" class="nav-link {% if active_nav == 'Video' %}active{% endif %}" data-section="Video">
           <i class="fa-solid fa-video"></i>

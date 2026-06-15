@@ -1,0 +1,36 @@
+{% extends 'templates/base.html' %}
+
+{% block title %}Team Members{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/members.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="members_page">
+    <!-- 团队成员合照 -->
+    <section id="groupPhoto" class="group_photo">
+        <img class="group_photo_img" src="{{ url_for('static', filename='image/team/Shanghai.webp') }}" alt="Team Group Photo">
+        <h2>
+            <span class="letter" style="--i: 0">m</span>
+            <span class="letter" style="--i: 1">e</span>
+            <span class="letter" style="--i: 2">e</span>
+            <span class="letter" style="--i: 3">t</span>
+            <span class="letter" style="--i: 4">&nbsp;</span>
+            <span class="letter" style="--i: 5">o</span>
+            <span class="letter" style="--i: 6">u</span>
+            <span class="letter" style="--i: 7">r</span>
+            <span class="letter" style="--i: 8">&nbsp;</span>
+            <span class="letter" style="--i: 9">t</span>
+            <span class="letter" style="--i: 10">e</span>
+            <span class="letter" style="--i: 11">a</span>
+            <span class="letter" style="--i: 12">m</span>
+        </h2>
+    </section>
+    <section id="membersDisplay" class="members_display">
+        <div class="group_wrapper">
+            <div class="group_slides" id="groupSlidesContainer"></div>
+        </div>
+    </section>
+</div>
+{% endblock %}
