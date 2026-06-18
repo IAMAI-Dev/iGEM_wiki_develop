@@ -39,6 +39,12 @@ def wetlab_salicylic_acid():
         active_nav='Wet-Lab',
         current_path='/wetlab/salicylic-acid')
 
+@app.route('/team/members/')
+def team_members():
+    return render_template('pages/team/members.html',
+        is_subpage=True,
+        active_nav='Team',
+        current_path='/team/members')
 
 # Main Function, Runs at http://0.0.0.0:5000
 if __name__ == "__main__":
