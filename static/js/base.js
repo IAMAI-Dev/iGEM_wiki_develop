@@ -253,15 +253,14 @@ function init3DTiltAndGlow() {
 function initLoaderAnimation() {
     const loader = document.getElementById('loader');
     const loaderPercent = document.getElementById('loaderPercent');
-    const loaderBar = document.querySelector('.loader-progress-bar');
+    const loaderFill = document.querySelector('.loader-pahs-fill');
     const loaderStatus = document.getElementById('loaderStatus');
-    if (!loader || !loaderPercent || !loaderBar) return;
+    if (!loader || !loaderPercent || !loaderFill) return;
 
     // 从子页面返回时跳过加载动画
     if (sessionStorage.getItem('skipLoader') === 'true') {
         sessionStorage.removeItem('skipLoader');
         loaderPercent.textContent = '100%';
-        loaderBar.style.transform = 'scaleX(1)';
         loader.style.setProperty('--loader-progress', '100%');
         loader.setAttribute('aria-valuenow', '100');
         loader.setAttribute('aria-hidden', 'true');
@@ -292,7 +291,6 @@ function initLoaderAnimation() {
     const renderProgress = (value, announce = false) => {
         const safeValue = Math.max(0, Math.min(100, value));
         const roundedValue = Math.floor(safeValue);
-        loaderBar.style.transform = `scaleX(${safeValue / 100})`;
         loader.style.setProperty('--loader-progress', `${safeValue}%`);
 
         if (roundedValue !== lastRenderedProgress) {
@@ -384,10 +382,7 @@ const loaderMoleculeLayout = [
 ];
 
 function startLoaderScene(loader, motionEngine, reducedMotion) {
-    const glow = loader.querySelector('.loader-pahs-glow');
-
     if (reducedMotion || !motionEngine) {
-        if (glow) glow.style.opacity = '0.22';
         return;
     }
 
@@ -567,20 +562,20 @@ function animateLoaderSignals(loader, motionEngine) {
 
 function animateLoaderSensor(loader, motionEngine) {
     const shadowColor = getComputedStyle(loader).getPropertyValue('--loader-shadow').trim();
-    const circuit = loader.querySelectorAll('.loader-pahs-circuit, .loader-pahs-circuit-core');
-    const glow = loader.querySelector('.loader-pahs-glow');
+    const structureLayer = loader.querySelector('.loader-pahs-layer--structure');
+    const perspectiveLayer = loader.querySelector('.loader-pahs-layer--perspective');
     const receptor = loader.querySelector('.loader-receptor-core');
     const timeline = motionEngine.timeline({ easing: 'easeOutQuad' });
 
     timeline
         .add({
-            targets: circuit,
-            opacity: [0.58, 1],
+            targets: structureLayer,
+            opacity: [0.66, 0.92],
             duration: 520
         }, 0)
         .add({
-            targets: glow,
-            opacity: [0.08, 0.42, 0.2],
+            targets: perspectiveLayer,
+            opacity: [0.16, 0.58, 0.42],
             duration: 1150
         }, 420)
         .add({

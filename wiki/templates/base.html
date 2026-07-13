@@ -18,7 +18,7 @@
     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Serif+SC:wght@400;600;700&display=swap">
 
   <!-- 全局样式 -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css', v='1.0.4') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css', v='1.0.5') }}">
 
   {% block extra_css %}{% endblock %}
 </head>
@@ -61,10 +61,16 @@
         </div>
 
         <div class="loader-sensor" data-loader-sensor>
-          <span class="loader-mask loader-pahs-glow"></span>
-          <span class="loader-mask loader-pahs-circuit loader-pahs-circuit--ambient"></span>
-          <span class="loader-mask loader-pahs-circuit-core"></span>
-          <span class="loader-mask loader-pahs-word loader-pahs-word--active"></span>
+          <img class="loader-pahs-layer loader-pahs-layer--perspective"
+            src="{{ url_for('static', filename='image/loader/pahs-perspective.png') }}"
+            alt="" draggable="false">
+          <img class="loader-pahs-layer loader-pahs-layer--structure"
+            src="{{ url_for('static', filename='image/loader/pahs-structure.png') }}"
+            alt="" draggable="false">
+          <span class="loader-pahs-fill" aria-hidden="true">
+            <img src="{{ url_for('static', filename='image/loader/pahs-progress-fill.png') }}"
+              alt="" draggable="false">
+          </span>
           <span class="loader-receptor-core" data-loader-target></span>
 
           <div class="loader-dots" data-loader-dots>
@@ -73,9 +79,6 @@
             <span class="loader-dot" data-loader-pin="2"></span>
           </div>
 
-          <div class="loader-progress-wrapper">
-            <div class="loader-progress-bar"></div>
-          </div>
           <div class="loader-percentage" id="loaderPercent" aria-hidden="true">0%</div>
         </div>
 
@@ -106,7 +109,7 @@
 
   {# 全局脚本 #}
   <script src="{{ url_for('static', filename='anime.min.js') }}"></script>
-  <script type="module" src="{{ url_for('static', filename='js/base.js', v='1.0.4') }}"></script>
+  <script type="module" src="{{ url_for('static', filename='js/base.js', v='1.0.5') }}"></script>
   
   {% block extra_js %}{% endblock %}
 </body>
