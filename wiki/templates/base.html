@@ -62,15 +62,15 @@
 
         <div class="loader-sensor" data-loader-sensor>
           <span class="loader-mask loader-pahs-glow"></span>
-          <span class="loader-mask loader-pahs-circuit"></span>
-          <span class="loader-mask loader-pahs-word loader-pahs-word--idle"></span>
+          <span class="loader-mask loader-pahs-circuit loader-pahs-circuit--ambient"></span>
+          <span class="loader-mask loader-pahs-circuit-core"></span>
           <span class="loader-mask loader-pahs-word loader-pahs-word--active"></span>
           <span class="loader-receptor-core" data-loader-target></span>
 
           <div class="loader-dots" data-loader-dots>
-            <span class="loader-dot"></span>
-            <span class="loader-dot"></span>
-            <span class="loader-dot"></span>
+            <span class="loader-dot" data-loader-pin="0"></span>
+            <span class="loader-dot" data-loader-pin="1"></span>
+            <span class="loader-dot" data-loader-pin="2"></span>
           </div>
 
           <div class="loader-progress-wrapper">
@@ -81,8 +81,14 @@
 
         <div class="loader-fluorescence-field" data-loader-fluorescence>
           {% for index in range(6) %}
-          <span class="loader-mask loader-fluorescence loader-fluorescence--{{ (index % 3) + 1 }}"
-            data-loader-signal="{{ index }}"></span>
+          {% set signal_type = (index % 3) + 1 %}
+          <span class="loader-fluorescence-signal loader-fluorescence-signal--{{ signal_type }}"
+            data-loader-signal="{{ index }}" data-loader-lane="{{ index // 2 }}">
+            <span class="loader-mask loader-fluorescence-edge loader-fluorescence-edge--{{ signal_type }}"></span>
+            <img class="loader-fluorescence-art"
+              src="{{ url_for('static', filename='image/loader/fluorescence-' ~ signal_type ~ '.png') }}"
+              alt="" draggable="false">
+          </span>
           {% endfor %}
         </div>
       </div>

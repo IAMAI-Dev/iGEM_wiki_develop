@@ -262,6 +262,7 @@ function initLoaderAnimation() {
         sessionStorage.removeItem('skipLoader');
         loaderPercent.textContent = '100%';
         loaderBar.style.transform = 'scaleX(1)';
+        loader.style.setProperty('--loader-progress', '100%');
         loader.setAttribute('aria-valuenow', '100');
         loader.setAttribute('aria-hidden', 'true');
         loader.classList.add('hidden');
@@ -292,6 +293,7 @@ function initLoaderAnimation() {
         const safeValue = Math.max(0, Math.min(100, value));
         const roundedValue = Math.floor(safeValue);
         loaderBar.style.transform = `scaleX(${safeValue / 100})`;
+        loader.style.setProperty('--loader-progress', `${safeValue}%`);
 
         if (roundedValue !== lastRenderedProgress) {
             loaderPercent.textContent = `${roundedValue}%`;
@@ -321,6 +323,7 @@ function initLoaderAnimation() {
         const finish = () => {
             progress = 100;
             renderProgress(100, true);
+            loader.classList.add('is-complete');
             window.setTimeout(hideLoader, reducedMotion ? 0 : 110);
         };
 
@@ -377,13 +380,9 @@ const loaderMoleculeLayout = [
 ];
 
 function startLoaderScene(loader, motionEngine, reducedMotion) {
-    const activeWord = loader.querySelector('.loader-pahs-word--active');
-    const idleWord = loader.querySelector('.loader-pahs-word--idle');
     const glow = loader.querySelector('.loader-pahs-glow');
 
     if (reducedMotion || !motionEngine) {
-        if (activeWord) activeWord.style.opacity = '1';
-        if (idleWord) idleWord.style.opacity = '0.12';
         if (glow) glow.style.opacity = '0.22';
         return;
     }
@@ -465,7 +464,7 @@ function animateLoaderSensor(loader, motionEngine) {
 
     timeline
         .add({
-            targets: '.loader-pahs-circuit',
+            targets: '.loader-pahs-circuit, .loader-pahs-circuit-core',
             opacity: [0.58, 1],
             duration: 520
         }, 0)
@@ -474,16 +473,6 @@ function animateLoaderSensor(loader, motionEngine) {
             opacity: [0.08, 0.42, 0.2],
             duration: 1150
         }, 420)
-        .add({
-            targets: '.loader-pahs-word--idle',
-            opacity: [0.78, 0.1],
-            duration: 620
-        }, 680)
-        .add({
-            targets: '.loader-pahs-word--active',
-            opacity: [0, 1],
-            duration: 620
-        }, 700)
         .add({
             targets: '.loader-receptor-core',
             boxShadow: [`0 0 0 0 ${shadowColor}`, `0 0 24px 8px ${shadowColor}`, `0 0 10px 2px ${shadowColor}`],

@@ -86,17 +86,22 @@ body.page-loading {
 
 /* ========== Loader ========== */
 .loader-screen {
+    --loader-progress: 0%;
     --loader-bg: #F0FDF4;
-    --loader-circuit: #167A52;
-    --loader-circuit-muted: rgba(22, 122, 82, 0.28);
-    --loader-word-idle: #35644F;
-    --loader-word-active: #4D7C0F;
-    --loader-molecule: #596556;
+    --loader-circuit: #0A8A55;
+    --loader-circuit-muted: rgba(10, 138, 85, 0.28);
+    --loader-word-active: #65A30D;
+    --loader-word-fill: linear-gradient(90deg, #16A34A 0%, #84CC16 58%, #D9F51B 100%);
+    --loader-molecule: #0A8F58;
+    --loader-molecule-edge: #B4F000;
+    --loader-molecule-glow: rgba(163, 230, 53, 0.52);
     --loader-fluorescence: #84CC16;
-    --loader-fluorescence-soft: rgba(132, 204, 22, 0.24);
-    --loader-dot: #CA8A04;
-    --loader-track: rgba(22, 122, 82, 0.18);
-    --loader-shadow: rgba(21, 128, 61, 0.2);
+    --loader-fluorescence-edge: #4D7C0F;
+    --loader-fluorescence-soft: rgba(217, 245, 27, 0.58);
+    --loader-dot: #D9F51B;
+    --loader-dot-edge: #4D7C0F;
+    --loader-track: rgba(10, 138, 85, 0.19);
+    --loader-shadow: rgba(101, 163, 13, 0.32);
     position: fixed;
     inset: 0;
     display: grid;
@@ -113,16 +118,20 @@ body.page-loading {
 
 [data-theme="dark"] .loader-screen {
     --loader-bg: #022C22;
-    --loader-circuit: #5BAD57;
-    --loader-circuit-muted: rgba(91, 173, 87, 0.32);
-    --loader-word-idle: #245B3C;
-    --loader-word-active: #BCFF18;
-    --loader-molecule: #B8BDA5;
+    --loader-circuit: #72D46E;
+    --loader-circuit-muted: rgba(114, 212, 110, 0.36);
+    --loader-word-active: #DFFF18;
+    --loader-word-fill: linear-gradient(90deg, #9FDC18 0%, #DFFF18 56%, #F6FF77 100%);
+    --loader-molecule: #F4F7D9;
+    --loader-molecule-edge: #BCFF18;
+    --loader-molecule-glow: rgba(188, 255, 24, 0.54);
     --loader-fluorescence: #F6FF77;
-    --loader-fluorescence-soft: rgba(246, 255, 119, 0.28);
-    --loader-dot: #FFE92C;
-    --loader-track: rgba(91, 173, 87, 0.18);
-    --loader-shadow: rgba(188, 255, 24, 0.28);
+    --loader-fluorescence-edge: #DFFF18;
+    --loader-fluorescence-soft: rgba(246, 255, 119, 0.48);
+    --loader-dot: #FFF45A;
+    --loader-dot-edge: #DFFF18;
+    --loader-track: rgba(114, 212, 110, 0.2);
+    --loader-shadow: rgba(188, 255, 24, 0.38);
 }
 
 .loader-screen.hidden {
@@ -170,34 +179,43 @@ body.page-loading {
     --loader-mask-image: url('../image/loader/pahs-glow.svg');
     inset: -1.5%;
     color: var(--loader-circuit);
-    opacity: 0.16;
-    filter: blur(3px) drop-shadow(0 0 18px var(--loader-shadow));
+    opacity: 0.2;
+    filter: blur(2.5px) drop-shadow(0 0 18px var(--loader-shadow));
 }
 
 .loader-pahs-circuit {
-    --loader-mask-image: url('../image/loader/pahs-circuit.svg');
     inset: 0;
     color: var(--loader-circuit);
-    filter: drop-shadow(0 0 7px var(--loader-circuit-muted));
+}
+
+.loader-pahs-circuit--ambient {
+    --loader-mask-image: url('../image/loader/pahs-circuit.svg');
+    opacity: 0.36;
+    filter: drop-shadow(0 0 8px var(--loader-circuit-muted));
+}
+
+.loader-pahs-circuit-core {
+    --loader-mask-image: url('../image/loader/pahs-circuit-core.svg');
+    inset: 0;
+    color: var(--loader-circuit);
+    opacity: 0.96;
+    filter: drop-shadow(0 0 1px currentColor) drop-shadow(0 0 5px var(--loader-circuit-muted));
 }
 
 .loader-pahs-word {
-    --loader-mask-image: url('../image/loader/pahs-word.svg');
+    --loader-mask-image: url('../image/loader/pahs-word-core.svg');
     left: 24.35%;
     top: 35.3%;
     width: 57%;
     height: 25.4%;
-}
-
-.loader-pahs-word--idle {
-    color: var(--loader-word-idle);
-    opacity: 0.78;
+    background: var(--loader-word-fill);
 }
 
 .loader-pahs-word--active {
-    color: var(--loader-word-active);
-    opacity: 0;
-    filter: drop-shadow(0 0 8px var(--loader-shadow));
+    opacity: 1;
+    clip-path: inset(0 calc(100% - var(--loader-progress)) 0 0);
+    filter: drop-shadow(0 0 1px var(--loader-word-active)) drop-shadow(0 0 7px var(--loader-shadow));
+    will-change: clip-path, filter;
 }
 
 .loader-receptor-core {
@@ -228,23 +246,24 @@ body.page-loading {
     top: 50%;
     width: var(--particle-size, 12%);
     color: var(--loader-molecule);
-    opacity: 0.72;
+    opacity: 0.92;
+    filter: drop-shadow(0 0 1px var(--loader-molecule-edge)) drop-shadow(0 0 5px var(--loader-molecule-glow));
     transform: translate(-50%, -50%);
     will-change: transform, opacity;
 }
 
 .loader-molecule--1 {
-    --loader-mask-image: url('../image/loader/naphthalene-outline.svg');
+    --loader-mask-image: url('../image/loader/naphthalene-outline-core.svg');
     aspect-ratio: 201 / 260;
 }
 
 .loader-molecule--2 {
-    --loader-mask-image: url('../image/loader/naphthalene-solid.svg');
+    --loader-mask-image: url('../image/loader/naphthalene-solid-core.svg');
     aspect-ratio: 201 / 260;
 }
 
 .loader-molecule--3 {
-    --loader-mask-image: url('../image/loader/benzene-solid.svg');
+    --loader-mask-image: url('../image/loader/benzene-solid-core.svg');
     aspect-ratio: 150 / 164;
 }
 
@@ -258,48 +277,82 @@ body.page-loading {
     pointer-events: none;
 }
 
-.loader-fluorescence {
+.loader-fluorescence-signal {
+    position: absolute;
     width: var(--signal-size, 47%);
-    color: var(--loader-fluorescence);
-    opacity: 0.7;
-    filter: drop-shadow(0 0 9px var(--loader-fluorescence-soft));
+    opacity: 0.92;
     will-change: transform, opacity;
 }
 
-.loader-fluorescence--1 {
-    --loader-mask-image: url('../image/loader/fluorescence-1.svg');
+.loader-fluorescence-edge,
+.loader-fluorescence-art {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.loader-fluorescence-edge {
+    color: var(--loader-fluorescence-edge);
+    opacity: 0.94;
+    filter: drop-shadow(0 0 1px var(--loader-fluorescence-edge)) drop-shadow(0 0 8px var(--loader-fluorescence-soft));
+}
+
+.loader-fluorescence-art {
+    object-fit: contain;
+    user-select: none;
+    pointer-events: none;
+    filter: saturate(1.55) contrast(1.22) brightness(1.04) drop-shadow(0 0 1px var(--loader-fluorescence-edge)) drop-shadow(0 0 8px var(--loader-fluorescence-soft));
+}
+
+[data-theme="dark"] .loader-fluorescence-art {
+    filter: saturate(1.48) contrast(1.16) brightness(1.24) drop-shadow(0 0 2px var(--loader-fluorescence)) drop-shadow(0 0 11px var(--loader-fluorescence-soft));
+}
+
+.loader-fluorescence-signal--1 {
     left: 3%;
     top: 9%;
     aspect-ratio: 268 / 286;
 }
 
-.loader-fluorescence--2 {
-    --loader-mask-image: url('../image/loader/fluorescence-2.svg');
+.loader-fluorescence-signal--2 {
     left: 30%;
     top: 34%;
     aspect-ratio: 200 / 274;
 }
 
-.loader-fluorescence--3 {
-    --loader-mask-image: url('../image/loader/fluorescence-3.svg');
+.loader-fluorescence-signal--3 {
     left: 48%;
     top: 7%;
     aspect-ratio: 331 / 417;
 }
 
-.loader-fluorescence:nth-child(4) {
+.loader-fluorescence-edge--1 {
+    --loader-mask-image: url('../image/loader/fluorescence-1-core.svg');
+}
+
+.loader-fluorescence-edge--2 {
+    --loader-mask-image: url('../image/loader/fluorescence-2-core.svg');
+}
+
+.loader-fluorescence-edge--3 {
+    --loader-mask-image: url('../image/loader/fluorescence-3-core.svg');
+}
+
+.loader-fluorescence-signal:nth-child(4) {
     left: 0;
     top: 51%;
     width: 38%;
 }
 
-.loader-fluorescence:nth-child(5) {
+.loader-fluorescence-signal:nth-child(5) {
     left: 49%;
     top: 53%;
     width: 32%;
 }
 
-.loader-fluorescence:nth-child(6) {
+.loader-fluorescence-signal:nth-child(6) {
     left: 70%;
     top: 31%;
     width: 26%;
@@ -307,33 +360,37 @@ body.page-loading {
 
 .loader-dots {
     position: absolute;
-    left: 85.5%;
-    top: 31%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-    width: 3.2%;
-    height: 33%;
+    inset: 0;
     z-index: 6;
+    pointer-events: none;
 }
 
 .loader-dot {
+    position: absolute;
+    left: 88.2%;
     display: block;
-    width: 100%;
+    width: 2.7%;
     aspect-ratio: 1;
+    border: 1px solid var(--loader-dot-edge);
     border-radius: 50%;
-    background: var(--loader-dot);
-    box-shadow: 0 0 11px var(--loader-fluorescence-soft);
+    background: radial-gradient(circle at 36% 30%, #FFFFFF 0 16%, var(--loader-dot) 38%, var(--loader-dot-edge) 100%);
+    box-shadow: 0 0 2px var(--loader-dot), 0 0 10px var(--loader-fluorescence-soft);
     opacity: 0.18;
+    transform: translate(-50%, -50%) scale(0.76);
     animation: loader-dot-pulse 1.15s steps(2, end) infinite;
 }
 
-.loader-dot:nth-child(2) {
+.loader-dot[data-loader-pin="0"] {
+    top: 28.5%;
+}
+
+.loader-dot[data-loader-pin="1"] {
+    top: 48.5%;
     animation-delay: 0.24s;
 }
 
-.loader-dot:nth-child(3) {
+.loader-dot[data-loader-pin="2"] {
+    top: 68.9%;
     animation-delay: 0.48s;
 }
 
@@ -342,13 +399,13 @@ body.page-loading {
     30%,
     100% {
         opacity: 0.16;
-        transform: scale(0.76);
+        transform: translate(-50%, -50%) scale(0.76);
     }
 
     45%,
     72% {
         opacity: 1;
-        transform: scale(1);
+        transform: translate(-50%, -50%) scale(1);
     }
 }
 
@@ -374,6 +431,37 @@ body.page-loading {
     transform: scaleX(0);
     transform-origin: left center;
     will-change: transform;
+}
+
+.loader-screen.is-complete .loader-pahs-word--active,
+.loader-screen.is-complete .loader-progress-bar {
+    animation: loader-complete-flash 0.34s ease-out both;
+}
+
+.loader-screen.is-complete .loader-pahs-glow {
+    animation: loader-complete-glow 0.34s ease-out both;
+}
+
+@keyframes loader-complete-flash {
+    0%,
+    100% {
+        filter: brightness(1);
+    }
+
+    52% {
+        filter: brightness(1.62) drop-shadow(0 0 12px var(--loader-shadow));
+    }
+}
+
+@keyframes loader-complete-glow {
+    0%,
+    100% {
+        opacity: 0.2;
+    }
+
+    52% {
+        opacity: 0.68;
+    }
 }
 
 .loader-percentage {
@@ -427,7 +515,7 @@ body.page-loading {
     }
 
     .loader-molecule:nth-child(n + 13),
-    .loader-fluorescence:nth-child(n + 5) {
+    .loader-fluorescence-signal:nth-child(n + 5) {
         display: none;
     }
 
@@ -474,7 +562,7 @@ body.page-loading {
     }
 
     .loader-molecule,
-    .loader-fluorescence {
+    .loader-fluorescence-signal {
         display: none;
     }
 
