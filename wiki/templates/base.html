@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>{% block title %}WIKI{% endblock %} | iGEM Wiki</title>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='image/logo-icon.png') }}">
   {% block meta_description %}{% endblock %}
 
   <!-- 字体图标 -->
@@ -17,7 +18,7 @@
     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Serif+SC:wght@400;600;700&display=swap">
 
   <!-- 全局样式 -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css', v='1.0.2') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css', v='1.0.3') }}">
 
   {% block extra_css %}{% endblock %}
 </head>
@@ -99,7 +100,7 @@
 
   {# 全局脚本 #}
   <script src="{{ url_for('static', filename='anime.min.js') }}"></script>
-  <script type="module" src="{{ url_for('static', filename='js/base.js', v='1.0.2') }}"></script>
+  <script type="module" src="{{ url_for('static', filename='js/base.js', v='1.0.3') }}"></script>
   
   {% block extra_js %}{% endblock %}
 </body>
