@@ -514,8 +514,7 @@ body.page-loading {
         height: 64%;
     }
 
-    .loader-molecule:nth-child(n + 13),
-    .loader-fluorescence-signal:nth-child(n + 5) {
+    .loader-molecule:nth-child(n + 13) {
         display: none;
     }
 

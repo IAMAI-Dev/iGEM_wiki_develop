@@ -308,6 +308,10 @@ function initLoaderAnimation() {
     };
 
     const hideLoader = () => {
+        if (typeof loader.__stopLoaderScene === 'function') {
+            loader.__stopLoaderScene();
+            loader.__stopLoaderScene = null;
+        }
         loader.classList.add('hidden');
         loader.setAttribute('aria-hidden', 'true');
         window.setTimeout(() => {
@@ -387,17 +391,64 @@ function startLoaderScene(loader, motionEngine, reducedMotion) {
         return;
     }
 
-    requestAnimationFrame(() => {
-        animateLoaderMolecules(loader, motionEngine);
-        animateLoaderSignals(loader, motionEngine);
-        animateLoaderSensor(loader, motionEngine);
+    const flowTargets = [
+        ...loader.querySelectorAll('[data-loader-particle]'),
+        ...loader.querySelectorAll('[data-loader-signal]')
+    ];
+    let flowAnimations = [];
+    let sensorAnimation = null;
+    let resizeTimer = null;
+    let startFrame = null;
+    let isStopped = false;
+
+    const stopFlow = () => {
+        flowAnimations.forEach(animation => animation.pause());
+        flowAnimations = [];
+        motionEngine.remove(flowTargets);
+    };
+
+    const startFlow = () => {
+        if (isStopped || loader.hidden || loader.classList.contains('hidden')) return;
+        stopFlow();
+        flowAnimations = [
+            ...animateLoaderMolecules(loader, motionEngine),
+            ...animateLoaderSignals(loader, motionEngine)
+        ];
+    };
+
+    const handleResize = () => {
+        window.clearTimeout(resizeTimer);
+        resizeTimer = window.setTimeout(startFlow, 120);
+    };
+
+    const stopScene = () => {
+        if (isStopped) return;
+        isStopped = true;
+        if (startFrame !== null) cancelAnimationFrame(startFrame);
+        window.clearTimeout(resizeTimer);
+        window.removeEventListener('resize', handleResize);
+        window.removeEventListener('pagehide', stopScene);
+        stopFlow();
+        if (sensorAnimation) sensorAnimation.pause();
+        motionEngine.remove(loader.querySelectorAll('[data-loader-sensor] *'));
+    };
+
+    loader.__stopLoaderScene = stopScene;
+    window.addEventListener('resize', handleResize, { passive: true });
+    window.addEventListener('pagehide', stopScene, { once: true });
+
+    startFrame = requestAnimationFrame(() => {
+        startFrame = null;
+        if (isStopped) return;
+        startFlow();
+        sensorAnimation = animateLoaderSensor(loader, motionEngine);
     });
 }
 
 function animateLoaderMolecules(loader, motionEngine) {
     const field = loader.querySelector('[data-loader-molecules]');
     const target = loader.querySelector('[data-loader-target]');
-    if (!field || !target) return;
+    if (!field || !target) return [];
 
     const fieldRect = field.getBoundingClientRect();
     const targetRect = target.getBoundingClientRect();
@@ -406,7 +457,7 @@ function animateLoaderMolecules(loader, motionEngine) {
     const particles = [...field.querySelectorAll('[data-loader-particle]')]
         .filter(particle => getComputedStyle(particle).display !== 'none');
 
-    particles.forEach((particle, index) => {
+    return particles.map((particle, index) => {
         const [xRatio, yRatio, sizeRatio, rotation] = loaderMoleculeLayout[index];
         particle.style.left = '0';
         particle.style.top = '0';
@@ -418,64 +469,125 @@ function animateLoaderMolecules(loader, motionEngine) {
         const endX = targetX - (particleRect.width / 2) + (((index % 3) - 1) * 3);
         const endY = targetY - (particleRect.height / 2) + (((index % 5) - 2) * 2);
 
+        const startScale = 0.76 + ((index % 4) * 0.08);
+        const startOpacity = 0.56 + ((index % 5) * 0.09);
+        const duration = 860 + ((index % 6) * 54);
+
         motionEngine.set(particle, {
             translateX: startX,
             translateY: startY,
             rotate: rotation,
-            scale: 0.76 + ((index % 4) * 0.08),
-            opacity: 0.38 + ((index % 5) * 0.1)
+            scale: startScale,
+            opacity: startOpacity
         });
 
-        motionEngine({
+        const animation = motionEngine({
             targets: particle,
-            translateX: endX,
-            translateY: endY,
-            rotate: rotation + ((index % 2 === 0 ? 1 : -1) * 42),
-            scale: 0.16,
-            opacity: 0,
-            duration: 1500 + ((index % 6) * 135),
-            delay: 180 + ((index % 6) * 105) + (Math.floor(index / 6) * 80),
-            easing: 'easeInQuad'
+            translateX: [startX, endX],
+            translateY: [startY, endY],
+            rotate: [rotation, rotation + ((index % 2 === 0 ? 1 : -1) * 48)],
+            scale: [startScale, 0.08],
+            opacity: [
+                { value: startOpacity, duration: 80 },
+                { value: 1, duration: duration - 210 },
+                { value: 0, duration: 130 }
+            ],
+            duration,
+            easing: 'easeInCubic',
+            loop: true,
+            autoplay: false
         });
+
+        animation.seek((index / particles.length) * duration);
+        animation.play();
+        return animation;
     });
 }
 
 function animateLoaderSignals(loader, motionEngine) {
-    const signals = [...loader.querySelectorAll('[data-loader-signal]')]
+    const field = loader.querySelector('[data-loader-fluorescence]');
+    const pins = [...loader.querySelectorAll('[data-loader-pin]')];
+    if (!field || pins.length < 3) return [];
+
+    const fieldRect = field.getBoundingClientRect();
+    const signals = [...field.querySelectorAll('[data-loader-signal]')]
         .filter(signal => getComputedStyle(signal).display !== 'none');
 
-    signals.forEach((signal, index) => {
-        motionEngine({
-            targets: signal,
-            translateX: [-24, 18 + (index * 7)],
-            translateY: [((index % 3) - 1) * 5, ((index % 3) - 1) * 14],
-            scale: [0.48, 1 + ((index % 3) * 0.08)],
-            opacity: [0, 0.9, 0.62],
-            duration: 1550 + ((index % 3) * 230),
-            delay: 520 + (index * 135),
-            easing: 'easeOutCubic'
+    return signals.map((signal, index) => {
+        const lane = Number(signal.dataset.loaderLane);
+        const pairIndex = index % 2;
+        const pinRect = pins[lane].getBoundingClientRect();
+        signal.style.left = '0';
+        signal.style.top = '0';
+
+        const signalRect = signal.getBoundingClientRect();
+        const anchorX = pinRect.left + (pinRect.width / 2) - fieldRect.left;
+        const anchorY = pinRect.top + (pinRect.height / 2) - fieldRect.top;
+        const startX = anchorX - (signalRect.width / 2);
+        const startY = anchorY - (signalRect.height / 2);
+        const endX = startX + (fieldRect.width * (0.72 + (pairIndex * 0.13)));
+        const laneDrift = (lane - 1) * fieldRect.height * 0.055;
+        const pairDrift = pairIndex === 0 ? -fieldRect.height * 0.028 : fieldRect.height * 0.032;
+        const endY = startY + laneDrift + pairDrift;
+        const duration = 930 + (lane * 95) + (pairIndex * 105);
+        const endScale = 0.86 + (lane * 0.06) + (pairIndex * 0.08);
+
+        signal.dataset.loaderAnchorX = anchorX.toFixed(2);
+        signal.dataset.loaderAnchorY = anchorY.toFixed(2);
+        motionEngine.set(signal, {
+            translateX: startX,
+            translateY: startY,
+            scale: 0.2,
+            opacity: 0
         });
+
+        const animation = motionEngine({
+            targets: signal,
+            translateX: [startX, endX],
+            translateY: [startY, endY],
+            scale: [0.2, endScale],
+            opacity: [
+                { value: 0, duration: 30 },
+                { value: 1, duration: 130 },
+                { value: 0.82, duration: duration - 300 },
+                { value: 0, duration: 140 }
+            ],
+            duration,
+            easing: 'easeOutCubic',
+            loop: true,
+            autoplay: false
+        });
+
+        const phaseOffset = pairIndex === 0 ? lane * 0.08 : 0.5 + (lane * 0.08);
+        animation.seek((phaseOffset % 1) * duration);
+        animation.play();
+        return animation;
     });
 }
 
 function animateLoaderSensor(loader, motionEngine) {
     const shadowColor = getComputedStyle(loader).getPropertyValue('--loader-shadow').trim();
+    const circuit = loader.querySelectorAll('.loader-pahs-circuit, .loader-pahs-circuit-core');
+    const glow = loader.querySelector('.loader-pahs-glow');
+    const receptor = loader.querySelector('.loader-receptor-core');
     const timeline = motionEngine.timeline({ easing: 'easeOutQuad' });
 
     timeline
         .add({
-            targets: '.loader-pahs-circuit, .loader-pahs-circuit-core',
+            targets: circuit,
             opacity: [0.58, 1],
             duration: 520
         }, 0)
         .add({
-            targets: '.loader-pahs-glow',
+            targets: glow,
             opacity: [0.08, 0.42, 0.2],
             duration: 1150
         }, 420)
         .add({
-            targets: '.loader-receptor-core',
+            targets: receptor,
             boxShadow: [`0 0 0 0 ${shadowColor}`, `0 0 24px 8px ${shadowColor}`, `0 0 10px 2px ${shadowColor}`],
             duration: 920
         }, 540);
+
+    return timeline;
 }
