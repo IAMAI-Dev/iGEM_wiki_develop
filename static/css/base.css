@@ -86,116 +86,400 @@ body.page-loading {
 
 /* ========== Loader ========== */
 .loader-screen {
+    --loader-bg: #F0FDF4;
+    --loader-circuit: #167A52;
+    --loader-circuit-muted: rgba(22, 122, 82, 0.28);
+    --loader-word-idle: #35644F;
+    --loader-word-active: #4D7C0F;
+    --loader-molecule: #596556;
+    --loader-fluorescence: #84CC16;
+    --loader-fluorescence-soft: rgba(132, 204, 22, 0.24);
+    --loader-dot: #CA8A04;
+    --loader-track: rgba(22, 122, 82, 0.18);
+    --loader-shadow: rgba(21, 128, 61, 0.2);
     position: fixed;
-    top: 0;
-    left: 0;
+    inset: 0;
+    display: grid;
+    place-items: center;
     width: 100%;
-    height: 100%;
-    background: var(--bg-light);
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    min-height: 100%;
+    min-height: 100dvh;
+    overflow: hidden;
+    background: var(--loader-bg);
     z-index: 10000;
-    transition: opacity 0.5s, visibility 0.5s;
+    isolation: isolate;
+    transition: opacity 0.42s ease, visibility 0.42s ease, background-color 0.2s ease;
+}
+
+[data-theme="dark"] .loader-screen {
+    --loader-bg: #022C22;
+    --loader-circuit: #5BAD57;
+    --loader-circuit-muted: rgba(91, 173, 87, 0.32);
+    --loader-word-idle: #245B3C;
+    --loader-word-active: #BCFF18;
+    --loader-molecule: #B8BDA5;
+    --loader-fluorescence: #F6FF77;
+    --loader-fluorescence-soft: rgba(246, 255, 119, 0.28);
+    --loader-dot: #FFE92C;
+    --loader-track: rgba(91, 173, 87, 0.18);
+    --loader-shadow: rgba(188, 255, 24, 0.28);
 }
 
 .loader-screen.hidden {
     opacity: 0;
     visibility: hidden;
+    pointer-events: none;
 }
 
-.loader-content {
-    text-align: center;
+.loader-shell {
+    position: relative;
+    width: min(1180px, 96vw);
 }
 
-.loader-code-text {
-    font-family: var(--font-code);
-    font-size: 4rem;
-    font-weight: bolder;
-    color: var(--primary);
-    margin-bottom: 2rem;
+.loader-stage {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1.95 / 1;
 }
 
-.code-line {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0.5rem 0;
+.loader-mask {
+    position: absolute;
+    display: block;
+    background-color: currentColor;
+    -webkit-mask-image: var(--loader-mask-image);
+    mask-image: var(--loader-mask-image);
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-size: contain;
+    mask-size: contain;
+}
+
+.loader-sensor {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 54%;
+    aspect-ratio: 846 / 575;
+    transform: translate(-50%, -50%);
+    z-index: 3;
+}
+
+.loader-pahs-glow {
+    --loader-mask-image: url('../image/loader/pahs-glow.svg');
+    inset: -1.5%;
+    color: var(--loader-circuit);
+    opacity: 0.16;
+    filter: blur(3px) drop-shadow(0 0 18px var(--loader-shadow));
+}
+
+.loader-pahs-circuit {
+    --loader-mask-image: url('../image/loader/pahs-circuit.svg');
+    inset: 0;
+    color: var(--loader-circuit);
+    filter: drop-shadow(0 0 7px var(--loader-circuit-muted));
+}
+
+.loader-pahs-word {
+    --loader-mask-image: url('../image/loader/pahs-word.svg');
+    left: 24.35%;
+    top: 35.3%;
+    width: 57%;
+    height: 25.4%;
+}
+
+.loader-pahs-word--idle {
+    color: var(--loader-word-idle);
+    opacity: 0.78;
+}
+
+.loader-pahs-word--active {
+    color: var(--loader-word-active);
     opacity: 0;
-    transform: translateY(20px);
-    animation: fadeInUp 0.5s ease forwards;
+    filter: drop-shadow(0 0 8px var(--loader-shadow));
 }
 
-@keyframes fadeInUp {
-    to {
-        opacity: 1;
-        transform: translateY(0px);
-    }
+.loader-receptor-core {
+    position: absolute;
+    left: 11.7%;
+    top: 47.5%;
+    width: 6.3%;
+    aspect-ratio: 1;
+    border: clamp(2px, 0.24vw, 4px) solid var(--loader-circuit);
+    border-radius: 50%;
+    background: var(--loader-bg);
+    box-shadow: 0 0 0 0 var(--loader-shadow);
+    transform: translate(-50%, -50%);
+    z-index: 5;
+}
+
+.loader-molecule-field {
+    position: absolute;
+    left: 0;
+    top: 13%;
+    width: 33%;
+    height: 72%;
+    z-index: 2;
+}
+
+.loader-molecule {
+    left: 50%;
+    top: 50%;
+    width: var(--particle-size, 12%);
+    color: var(--loader-molecule);
+    opacity: 0.72;
+    transform: translate(-50%, -50%);
+    will-change: transform, opacity;
+}
+
+.loader-molecule--1 {
+    --loader-mask-image: url('../image/loader/naphthalene-outline.svg');
+    aspect-ratio: 201 / 260;
+}
+
+.loader-molecule--2 {
+    --loader-mask-image: url('../image/loader/naphthalene-solid.svg');
+    aspect-ratio: 201 / 260;
+}
+
+.loader-molecule--3 {
+    --loader-mask-image: url('../image/loader/benzene-solid.svg');
+    aspect-ratio: 150 / 164;
+}
+
+.loader-fluorescence-field {
+    position: absolute;
+    right: 0;
+    top: 14%;
+    width: 36%;
+    height: 72%;
+    z-index: 4;
+    pointer-events: none;
+}
+
+.loader-fluorescence {
+    width: var(--signal-size, 47%);
+    color: var(--loader-fluorescence);
+    opacity: 0.7;
+    filter: drop-shadow(0 0 9px var(--loader-fluorescence-soft));
+    will-change: transform, opacity;
+}
+
+.loader-fluorescence--1 {
+    --loader-mask-image: url('../image/loader/fluorescence-1.svg');
+    left: 3%;
+    top: 9%;
+    aspect-ratio: 268 / 286;
+}
+
+.loader-fluorescence--2 {
+    --loader-mask-image: url('../image/loader/fluorescence-2.svg');
+    left: 30%;
+    top: 34%;
+    aspect-ratio: 200 / 274;
+}
+
+.loader-fluorescence--3 {
+    --loader-mask-image: url('../image/loader/fluorescence-3.svg');
+    left: 48%;
+    top: 7%;
+    aspect-ratio: 331 / 417;
+}
+
+.loader-fluorescence:nth-child(4) {
+    left: 0;
+    top: 51%;
+    width: 38%;
+}
+
+.loader-fluorescence:nth-child(5) {
+    left: 49%;
+    top: 53%;
+    width: 32%;
+}
+
+.loader-fluorescence:nth-child(6) {
+    left: 70%;
+    top: 31%;
+    width: 26%;
 }
 
 .loader-dots {
-    display: inline-flex;
+    position: absolute;
+    left: 85.5%;
+    top: 31%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     align-items: center;
-    gap: 4px;
+    width: 3.2%;
+    height: 33%;
+    z-index: 6;
 }
 
-.loader-dots .dot {
-    width: 8px;
-    height: 8px;
+.loader-dot {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1;
     border-radius: 50%;
-    background-color: var(--text-primary);
-    opacity: 0;
-    animation: dotBounce 1.2s infinite linear;
+    background: var(--loader-dot);
+    box-shadow: 0 0 11px var(--loader-fluorescence-soft);
+    opacity: 0.18;
+    animation: loader-dot-pulse 1.15s steps(2, end) infinite;
 }
 
-.loader-dots .dot:nth-child(1) {
-    animation-delay: 0s;
+.loader-dot:nth-child(2) {
+    animation-delay: 0.24s;
 }
 
-.loader-dots .dot:nth-child(2) {
-    animation-delay: 0.2s;
+.loader-dot:nth-child(3) {
+    animation-delay: 0.48s;
 }
 
-.loader-dots .dot:nth-child(3) {
-    animation-delay: 0.4s;
-}
-
-@keyframes dotBounce {
-
+@keyframes loader-dot-pulse {
     0%,
+    30%,
     100% {
-        opacity: 0;
-        transform: translateY(2px);
+        opacity: 0.16;
+        transform: scale(0.76);
     }
 
-    50% {
+    45%,
+    72% {
         opacity: 1;
-        transform: translateY(-2px);
+        transform: scale(1);
     }
 }
 
 .loader-progress-wrapper {
-    width: 200px;
-    height: 10px;
-    background: var(--border);
-    border-radius: 10px;
-    margin: 1rem auto;
+    position: absolute;
+    left: 25.5%;
+    top: 88.9%;
+    width: 54.5%;
+    height: 7.8%;
+    padding: clamp(2px, 0.25vw, 4px);
     overflow: hidden;
+    border-radius: 999px;
+    background: var(--loader-track);
+    z-index: 7;
 }
 
 .loader-progress-bar {
+    width: 100%;
     height: 100%;
-    background: var(--gradient-1);
-    width: 0%;
-    box-shadow: 0 0 10px var(--primary);
-    transition: width 0.1s linear;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--loader-circuit), var(--loader-word-active));
+    box-shadow: 0 0 12px var(--loader-shadow);
+    transform: scaleX(0);
+    transform-origin: left center;
+    will-change: transform;
 }
 
 .loader-percentage {
+    position: absolute;
+    left: 82.5%;
+    top: 88.1%;
+    color: var(--loader-circuit);
     font-family: var(--font-code);
-    color: var(--primary);
-    font-size: 1rem;
-    margin-top: 1rem;
+    font-size: clamp(0.56rem, 0.78vw, 0.82rem);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    z-index: 7;
 }
 
+.sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
 
+@media (max-width: 700px) {
+    .loader-shell {
+        width: min(100vw, 620px);
+    }
+
+    .loader-stage {
+        aspect-ratio: 1.25 / 1;
+    }
+
+    .loader-sensor {
+        width: 72%;
+    }
+
+    .loader-molecule-field {
+        top: 18%;
+        width: 29%;
+        height: 64%;
+    }
+
+    .loader-fluorescence-field {
+        top: 18%;
+        width: 30%;
+        height: 64%;
+    }
+
+    .loader-molecule:nth-child(n + 13),
+    .loader-fluorescence:nth-child(n + 5) {
+        display: none;
+    }
+
+    .loader-pahs-glow {
+        filter: blur(2px) drop-shadow(0 0 10px var(--loader-shadow));
+    }
+}
+
+@media (max-width: 420px) {
+    .loader-stage {
+        aspect-ratio: 1.12 / 1;
+    }
+
+    .loader-sensor {
+        width: 76%;
+    }
+
+    .loader-molecule-field {
+        width: 27%;
+    }
+
+    .loader-fluorescence-field {
+        width: 28%;
+    }
+
+    .loader-percentage {
+        left: 81.5%;
+    }
+}
+
+@media (max-height: 600px) and (orientation: landscape) {
+    .loader-shell {
+        width: min(900px, 92vw);
+    }
+
+    .loader-stage {
+        max-height: 84vh;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .loader-screen {
+        transition-duration: 0.18s;
+    }
+
+    .loader-molecule,
+    .loader-fluorescence {
+        display: none;
+    }
+
+    .loader-dot {
+        opacity: 0.72;
+        animation: none;
+    }
+}

@@ -48,27 +48,47 @@
 
   {# 首页加载动画（仅非子页面） #}
   {% if not is_subpage %}
-  <div class="loader-screen" id="loader">
-    <div class="loader-content">
-      <div class="loader-code-text">
-        <div class="code-line">
-          <img src="{{ url_for('static', filename='image/logo.png') }}" style="width: 150px;" alt="logo">
-          <p>PAHs</p>
+  <div class="loader-screen" id="loader" role="progressbar" aria-label="Loading homepage"
+    aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+    <div class="loader-shell">
+      <div class="loader-stage" aria-hidden="true">
+        <div class="loader-molecule-field" data-loader-molecules>
+          {% for index in range(18) %}
+          <span class="loader-mask loader-molecule loader-molecule--{{ (index % 3) + 1 }}"
+            data-loader-particle="{{ index }}"></span>
+          {% endfor %}
+        </div>
+
+        <div class="loader-sensor" data-loader-sensor>
+          <span class="loader-mask loader-pahs-glow"></span>
+          <span class="loader-mask loader-pahs-circuit"></span>
+          <span class="loader-mask loader-pahs-word loader-pahs-word--idle"></span>
+          <span class="loader-mask loader-pahs-word loader-pahs-word--active"></span>
+          <span class="loader-receptor-core" data-loader-target></span>
+
+          <div class="loader-dots" data-loader-dots>
+            <span class="loader-dot"></span>
+            <span class="loader-dot"></span>
+            <span class="loader-dot"></span>
+          </div>
+
+          <div class="loader-progress-wrapper">
+            <div class="loader-progress-bar"></div>
+          </div>
+          <div class="loader-percentage" id="loaderPercent" aria-hidden="true">0%</div>
+        </div>
+
+        <div class="loader-fluorescence-field" data-loader-fluorescence>
+          {% for index in range(6) %}
+          <span class="loader-mask loader-fluorescence loader-fluorescence--{{ (index % 3) + 1 }}"
+            data-loader-signal="{{ index }}"></span>
+          {% endfor %}
         </div>
       </div>
-
-      <div class="loader-progress-wrapper">
-        <div class="loader-progress-bar"></div>
-      </div>
-
-      <div class="loader-dots">
-        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-      </div>
-      <div class="loader-percentage" id="loaderPercent">
-        0%
-      </div>
+      <span class="sr-only" id="loaderStatus" aria-live="polite">Loading homepage: 0%</span>
     </div>
   </div>
+  <noscript><style>#loader { display: none; }</style></noscript>
   {% endif %}
 
   {# 导航栏 #}
@@ -85,4 +105,3 @@
 </body>
 
 </html>
-
