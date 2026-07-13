@@ -272,7 +272,7 @@ function initLoaderAnimation() {
 
     const motionEngine = window.anime;
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const minimumDuration = reducedMotion ? 650 : 3000;
+    const minimumDuration = reducedMotion ? 650 : 2750;
     const maximumDuration = 8000;
     const progressRampDuration = reducedMotion ? 500 : 2600;
     const startTime = performance.now();
@@ -328,7 +328,7 @@ function initLoaderAnimation() {
             progress = 100;
             renderProgress(100, true);
             loader.classList.add('is-complete');
-            window.setTimeout(hideLoader, reducedMotion ? 0 : 110);
+            window.setTimeout(hideLoader, reducedMotion ? 0 : 600);
         };
 
         if (motionEngine && !reducedMotion) {
