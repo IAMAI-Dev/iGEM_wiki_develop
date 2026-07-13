@@ -11,6 +11,7 @@ const AppState = {
 document.addEventListener('DOMContentLoaded', () => {
     initializeApp();
     initTheme();
+    initLoaderAnimation();
     initLanguage();
     initNavigation();
     initScrollEffects();
@@ -249,61 +250,243 @@ function init3DTiltAndGlow() {
 }
 
 
-/**
- * 初始化加载动画
- */
-window.addEventListener('load',()=> {
-    setTimeout(() => {
-        initLoaderAnimation();
-    },100);
-});
-
 function initLoaderAnimation() {
     const loader = document.getElementById('loader');
     const loaderPercent = document.getElementById('loaderPercent');
     const loaderBar = document.querySelector('.loader-progress-bar');
+    const loaderStatus = document.getElementById('loaderStatus');
     if (!loader || !loaderPercent || !loaderBar) return;
 
     // 从子页面返回时跳过加载动画
     if (sessionStorage.getItem('skipLoader') === 'true') {
-        let progressValue = 100;
         sessionStorage.removeItem('skipLoader');
-        loaderPercent.textContent = progressValue + '%';
-        loaderBar.style.width = progressValue + '%';
-        setTimeout(() => {
-            loader.classList.add('hidden');
-        }, 500);
+        loaderPercent.textContent = '100%';
+        loaderBar.style.transform = 'scaleX(1)';
+        loader.setAttribute('aria-valuenow', '100');
+        loader.setAttribute('aria-hidden', 'true');
+        loader.classList.add('hidden');
+        loader.hidden = true;
         return;
     }
 
+    const motionEngine = window.anime;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const minimumDuration = reducedMotion ? 650 : 3000;
+    const maximumDuration = 8000;
+    const progressRampDuration = reducedMotion ? 500 : 2600;
+    const startTime = performance.now();
+    let pageReady = document.readyState === 'complete';
     let progress = 0;
-    loaderBar.style.width = '0%';
-    loaderPercent.textContent = '0%';
+    let lastRenderedProgress = -1;
+    let lastAnnouncedProgress = -10;
+    let progressFrame = null;
+    let isCompleting = false;
 
-    const progressInterval = setInterval(() => {
-        progress += (Math.random() * 15) + 5;
-        if (progress >= 100) {
-            progress = 100;
-            clearInterval(progressInterval);
-            setTimeout(() => {
-                if (typeof anime !== 'undefined') {
-                    anime({
-                        targets: loader,
-                        opacity: [1, 0],
-                        duration: 500,
-                        easing: 'easeInOutQuad',
-                        complete: () => {
-                            loader.classList.add('hidden');
-                        }
-                    });
-                } else {
-                    loader.classList.add('hidden');
-                }
-            }, 300);
+    if (!pageReady) {
+        window.addEventListener('load', () => {
+            pageReady = true;
+        }, { once: true });
+    }
+
+    const renderProgress = (value, announce = false) => {
+        const safeValue = Math.max(0, Math.min(100, value));
+        const roundedValue = Math.floor(safeValue);
+        loaderBar.style.transform = `scaleX(${safeValue / 100})`;
+
+        if (roundedValue !== lastRenderedProgress) {
+            loaderPercent.textContent = `${roundedValue}%`;
+            loader.setAttribute('aria-valuenow', String(roundedValue));
+            lastRenderedProgress = roundedValue;
         }
 
-        const progressValue = Math.floor(progress);
-        loaderPercent.textContent = progressValue + '%';
-        loaderBar.style.width = progressValue + '%';
-    }, 100);
+        if (loaderStatus && (announce || roundedValue >= lastAnnouncedProgress + 10)) {
+            loaderStatus.textContent = `Loading homepage: ${roundedValue}%`;
+            lastAnnouncedProgress = roundedValue;
+        }
+    };
+
+    const hideLoader = () => {
+        loader.classList.add('hidden');
+        loader.setAttribute('aria-hidden', 'true');
+        window.setTimeout(() => {
+            loader.hidden = true;
+        }, reducedMotion ? 180 : 440);
+    };
+
+    const completeLoader = () => {
+        if (isCompleting) return;
+        isCompleting = true;
+        if (progressFrame !== null) cancelAnimationFrame(progressFrame);
+
+        const finish = () => {
+            progress = 100;
+            renderProgress(100, true);
+            window.setTimeout(hideLoader, reducedMotion ? 0 : 110);
+        };
+
+        if (motionEngine && !reducedMotion) {
+            const progressState = { value: progress };
+            motionEngine({
+                targets: progressState,
+                value: 100,
+                duration: 280,
+                easing: 'easeOutQuad',
+                update: () => renderProgress(progressState.value),
+                complete: finish
+            });
+        } else {
+            finish();
+        }
+    };
+
+    const easeOutCubic = value => 1 - Math.pow(1 - value, 3);
+    const updateProgress = now => {
+        const elapsed = now - startTime;
+        let targetProgress;
+
+        if (elapsed < progressRampDuration) {
+            targetProgress = 85 * easeOutCubic(elapsed / progressRampDuration);
+        } else {
+            const waitingRatio = Math.min(1, (elapsed - progressRampDuration) / (maximumDuration - progressRampDuration));
+            targetProgress = 85 + (10 * waitingRatio);
+        }
+
+        progress += (targetProgress - progress) * 0.16;
+        renderProgress(progress);
+
+        if ((pageReady && elapsed >= minimumDuration) || elapsed >= maximumDuration) {
+            completeLoader();
+            return;
+        }
+
+        progressFrame = requestAnimationFrame(updateProgress);
+    };
+
+    renderProgress(0, true);
+    startLoaderScene(loader, motionEngine, reducedMotion);
+    progressFrame = requestAnimationFrame(updateProgress);
+}
+
+const loaderMoleculeLayout = [
+    [0.06, 0.13, 0.09, -16], [0.22, 0.08, 0.12, 12], [0.42, 0.18, 0.08, -8],
+    [0.13, 0.34, 0.13, 9], [0.33, 0.31, 0.1, -13], [0.57, 0.37, 0.08, 18],
+    [0.04, 0.53, 0.11, -6], [0.22, 0.56, 0.08, 16], [0.45, 0.51, 0.12, -19],
+    [0.64, 0.58, 0.07, 11], [0.12, 0.75, 0.09, 14], [0.31, 0.84, 0.13, -10],
+    [0.5, 0.73, 0.08, 21], [0.68, 0.81, 0.11, -15], [0.7, 0.16, 0.07, 8],
+    [0.53, 0.9, 0.08, -22], [0.29, 0.67, 0.07, 17], [0.7, 0.43, 0.09, -9]
+];
+
+function startLoaderScene(loader, motionEngine, reducedMotion) {
+    const activeWord = loader.querySelector('.loader-pahs-word--active');
+    const idleWord = loader.querySelector('.loader-pahs-word--idle');
+    const glow = loader.querySelector('.loader-pahs-glow');
+
+    if (reducedMotion || !motionEngine) {
+        if (activeWord) activeWord.style.opacity = '1';
+        if (idleWord) idleWord.style.opacity = '0.12';
+        if (glow) glow.style.opacity = '0.22';
+        return;
+    }
+
+    requestAnimationFrame(() => {
+        animateLoaderMolecules(loader, motionEngine);
+        animateLoaderSignals(loader, motionEngine);
+        animateLoaderSensor(loader, motionEngine);
+    });
+}
+
+function animateLoaderMolecules(loader, motionEngine) {
+    const field = loader.querySelector('[data-loader-molecules]');
+    const target = loader.querySelector('[data-loader-target]');
+    if (!field || !target) return;
+
+    const fieldRect = field.getBoundingClientRect();
+    const targetRect = target.getBoundingClientRect();
+    const targetX = targetRect.left + (targetRect.width / 2) - fieldRect.left;
+    const targetY = targetRect.top + (targetRect.height / 2) - fieldRect.top;
+    const particles = [...field.querySelectorAll('[data-loader-particle]')]
+        .filter(particle => getComputedStyle(particle).display !== 'none');
+
+    particles.forEach((particle, index) => {
+        const [xRatio, yRatio, sizeRatio, rotation] = loaderMoleculeLayout[index];
+        particle.style.left = '0';
+        particle.style.top = '0';
+        particle.style.width = `${sizeRatio * 100}%`;
+
+        const particleRect = particle.getBoundingClientRect();
+        const startX = (fieldRect.width * xRatio) - (particleRect.width / 2);
+        const startY = (fieldRect.height * yRatio) - (particleRect.height / 2);
+        const endX = targetX - (particleRect.width / 2) + (((index % 3) - 1) * 3);
+        const endY = targetY - (particleRect.height / 2) + (((index % 5) - 2) * 2);
+
+        motionEngine.set(particle, {
+            translateX: startX,
+            translateY: startY,
+            rotate: rotation,
+            scale: 0.76 + ((index % 4) * 0.08),
+            opacity: 0.38 + ((index % 5) * 0.1)
+        });
+
+        motionEngine({
+            targets: particle,
+            translateX: endX,
+            translateY: endY,
+            rotate: rotation + ((index % 2 === 0 ? 1 : -1) * 42),
+            scale: 0.16,
+            opacity: 0,
+            duration: 1500 + ((index % 6) * 135),
+            delay: 180 + ((index % 6) * 105) + (Math.floor(index / 6) * 80),
+            easing: 'easeInQuad'
+        });
+    });
+}
+
+function animateLoaderSignals(loader, motionEngine) {
+    const signals = [...loader.querySelectorAll('[data-loader-signal]')]
+        .filter(signal => getComputedStyle(signal).display !== 'none');
+
+    signals.forEach((signal, index) => {
+        motionEngine({
+            targets: signal,
+            translateX: [-24, 18 + (index * 7)],
+            translateY: [((index % 3) - 1) * 5, ((index % 3) - 1) * 14],
+            scale: [0.48, 1 + ((index % 3) * 0.08)],
+            opacity: [0, 0.9, 0.62],
+            duration: 1550 + ((index % 3) * 230),
+            delay: 520 + (index * 135),
+            easing: 'easeOutCubic'
+        });
+    });
+}
+
+function animateLoaderSensor(loader, motionEngine) {
+    const shadowColor = getComputedStyle(loader).getPropertyValue('--loader-shadow').trim();
+    const timeline = motionEngine.timeline({ easing: 'easeOutQuad' });
+
+    timeline
+        .add({
+            targets: '.loader-pahs-circuit',
+            opacity: [0.58, 1],
+            duration: 520
+        }, 0)
+        .add({
+            targets: '.loader-pahs-glow',
+            opacity: [0.08, 0.42, 0.2],
+            duration: 1150
+        }, 420)
+        .add({
+            targets: '.loader-pahs-word--idle',
+            opacity: [0.78, 0.1],
+            duration: 620
+        }, 680)
+        .add({
+            targets: '.loader-pahs-word--active',
+            opacity: [0, 1],
+            duration: 620
+        }, 700)
+        .add({
+            targets: '.loader-receptor-core',
+            boxShadow: [`0 0 0 0 ${shadowColor}`, `0 0 24px 8px ${shadowColor}`, `0 0 10px 2px ${shadowColor}`],
+            duration: 920
+        }, 540);
 }
