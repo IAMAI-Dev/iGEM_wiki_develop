@@ -253,14 +253,18 @@ function init3DTiltAndGlow() {
 function initLoaderAnimation() {
     const loader = document.getElementById('loader');
     const loaderPercent = document.getElementById('loaderPercent');
+    const loaderWordFill = document.querySelector('.loader-pahs-fill--word');
     const loaderBarFill = document.querySelector('.loader-pahs-fill--bar');
     const loaderStatus = document.getElementById('loaderStatus');
-    if (!loader || !loaderPercent || !loaderBarFill) return;
+    if (!loader || !loaderPercent || !loaderWordFill || !loaderBarFill) return;
 
+    const wordFillStart = 203 / 816 * 100;
+    const wordFillWidth = 450 / 816 * 100;
     const barFillStart = 205 / 816 * 100;
     const barFillWidth = 451 / 816 * 100;
-    const updateBarFillClip = (value) => {
+    const updateFillClips = (value) => {
         const ratio = Math.max(0, Math.min(100, value)) / 100;
+        loader.style.setProperty('--loader-word-right', `${100 - wordFillStart - (wordFillWidth * ratio)}%`);
         loader.style.setProperty('--loader-bar-right', `${100 - barFillStart - (barFillWidth * ratio)}%`);
     };
 
@@ -269,7 +273,7 @@ function initLoaderAnimation() {
         sessionStorage.removeItem('skipLoader');
         loaderPercent.textContent = '100%';
         loader.style.setProperty('--loader-progress', '100%');
-        updateBarFillClip(100);
+        updateFillClips(100);
         loader.setAttribute('aria-valuenow', '100');
         loader.setAttribute('aria-hidden', 'true');
         loader.classList.add('hidden');
@@ -300,7 +304,7 @@ function initLoaderAnimation() {
         const safeValue = Math.max(0, Math.min(100, value));
         const roundedValue = Math.floor(safeValue);
         loader.style.setProperty('--loader-progress', `${safeValue}%`);
-        updateBarFillClip(safeValue);
+        updateFillClips(safeValue);
 
         if (roundedValue !== lastRenderedProgress) {
             loaderPercent.textContent = `${roundedValue}%`;

@@ -87,12 +87,14 @@ body.page-loading {
 /* ========== Loader ========== */
 .loader-screen {
     --loader-progress: 0%;
+    --loader-word-right: 75.12%;
     --loader-bar-right: 74.88%;
     --loader-bg: #F0FDF4;
     --loader-circuit: #0A8A55;
     --loader-circuit-muted: rgba(10, 138, 85, 0.28);
     --loader-word-active: #65A30D;
-    --loader-word-fill: linear-gradient(90deg, #16A34A 0%, #84CC16 58%, #D9F51B 100%);
+    --loader-fill-filter: saturate(1.2) contrast(1.08) brightness(0.94);
+    --loader-fill-complete-filter: saturate(1.24) contrast(1.1) brightness(1.16);
     --loader-molecule: #0A8F58;
     --loader-molecule-edge: #B4F000;
     --loader-molecule-glow: rgba(163, 230, 53, 0.52);
@@ -122,7 +124,8 @@ body.page-loading {
     --loader-circuit: #72D46E;
     --loader-circuit-muted: rgba(114, 212, 110, 0.36);
     --loader-word-active: #DFFF18;
-    --loader-word-fill: linear-gradient(90deg, #9FDC18 0%, #DFFF18 56%, #F6FF77 100%);
+    --loader-fill-filter: saturate(1.22) contrast(1.12) brightness(1.08);
+    --loader-fill-complete-filter: saturate(1.24) contrast(1.14) brightness(1.26);
     --loader-molecule: #F4F7D9;
     --loader-molecule-edge: #BCFF18;
     --loader-molecule-glow: rgba(188, 255, 24, 0.54);
@@ -211,39 +214,32 @@ body.page-loading {
     z-index: 3;
 }
 
-.loader-pahs-word-fill {
-    --loader-word-mask: url('../image/loader/pahs-word-mask.svg?v=1.0.9');
-    position: absolute;
-    left: 24.877%;
-    top: 36.33%;
-    display: block;
-    width: 55.147%;
-    height: 22.569%;
-    pointer-events: none;
-    background: var(--loader-word-fill);
-    -webkit-mask-image: var(--loader-word-mask);
-    mask-image: var(--loader-word-mask);
+.loader-pahs-fill--word {
+    --loader-word-clip: url('../image/loader/pahs-word-structure-mask.png?v=1.0.10');
+    -webkit-mask-image: var(--loader-word-clip);
+    mask-image: var(--loader-word-clip);
     -webkit-mask-repeat: no-repeat;
     mask-repeat: no-repeat;
     -webkit-mask-position: center;
     mask-position: center;
     -webkit-mask-size: 100% 100%;
     mask-size: 100% 100%;
-    clip-path: inset(0 calc(100% - var(--loader-progress)) 0 0);
-    filter: drop-shadow(0 0 1px var(--loader-word-active)) drop-shadow(0 0 3px var(--loader-shadow));
-    will-change: clip-path, filter;
-    z-index: 2;
+    mask-mode: alpha;
 }
 
 .loader-pahs-fill {
     opacity: 1;
-    filter: drop-shadow(0 0 1px var(--loader-word-active)) drop-shadow(0 0 8px var(--loader-shadow));
-    will-change: filter;
     z-index: 2;
 }
 
 .loader-pahs-fill--bar {
     clip-path: inset(91.74% 19.61% 1.65% 25.12% round 999px);
+    filter: drop-shadow(0 0 1px var(--loader-word-active)) drop-shadow(0 0 8px var(--loader-shadow));
+    will-change: filter;
+}
+
+.loader-pahs-fill--word .loader-pahs-fill-reveal {
+    clip-path: inset(0 var(--loader-word-right) 0 24.877%);
 }
 
 .loader-pahs-fill--bar .loader-pahs-fill-reveal {
@@ -255,7 +251,7 @@ body.page-loading {
 }
 
 .loader-pahs-fill img {
-    filter: saturate(1.2) contrast(1.08) brightness(0.94);
+    filter: var(--loader-fill-filter);
 }
 
 [data-theme="dark"] .loader-pahs-layer--perspective {
@@ -268,10 +264,6 @@ body.page-loading {
     opacity: 0.92;
     mix-blend-mode: screen;
     filter: saturate(1.2) contrast(1.2) brightness(1.08) drop-shadow(0 0 7px var(--loader-circuit-muted));
-}
-
-[data-theme="dark"] .loader-pahs-fill img {
-    filter: saturate(1.22) contrast(1.12) brightness(1.08);
 }
 
 .loader-receptor-core {
@@ -465,8 +457,11 @@ body.page-loading {
     }
 }
 
-.loader-screen.is-complete .loader-pahs-word-fill,
-.loader-screen.is-complete .loader-pahs-fill {
+.loader-screen.is-complete .loader-pahs-fill--word img {
+    animation: loader-word-complete-flash 0.34s ease-out both;
+}
+
+.loader-screen.is-complete .loader-pahs-fill--bar {
     animation: loader-complete-flash 0.34s ease-out both;
 }
 
@@ -482,6 +477,17 @@ body.page-loading {
 
     52% {
         filter: brightness(1.62) drop-shadow(0 0 12px var(--loader-shadow));
+    }
+}
+
+@keyframes loader-word-complete-flash {
+    0%,
+    100% {
+        filter: var(--loader-fill-filter);
+    }
+
+    52% {
+        filter: var(--loader-fill-complete-filter);
     }
 }
 
