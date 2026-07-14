@@ -92,6 +92,7 @@ body.page-loading {
     --loader-bg: #F0FDF4;
     --loader-circuit: #0A8A55;
     --loader-circuit-muted: rgba(10, 138, 85, 0.28);
+    --loader-word-outline: #0A8A55;
     --loader-word-active: #65A30D;
     --loader-fill-filter: saturate(1.2) contrast(1.08) brightness(0.94);
     --loader-fill-complete-filter: saturate(1.24) contrast(1.1) brightness(1.16);
@@ -123,6 +124,7 @@ body.page-loading {
     --loader-bg: #022C22;
     --loader-circuit: #72D46E;
     --loader-circuit-muted: rgba(114, 212, 110, 0.36);
+    --loader-word-outline: #72D46E;
     --loader-word-active: #DFFF18;
     --loader-fill-filter: saturate(1.22) contrast(1.12) brightness(1.08);
     --loader-fill-complete-filter: saturate(1.24) contrast(1.14) brightness(1.26);
@@ -182,7 +184,8 @@ body.page-loading {
 .loader-pahs-layer,
 .loader-pahs-fill,
 .loader-pahs-fill-reveal,
-.loader-pahs-fill img {
+.loader-pahs-fill img,
+.loader-pahs-word-outline {
     position: absolute;
     inset: 0;
     display: block;
@@ -215,7 +218,7 @@ body.page-loading {
 }
 
 .loader-pahs-fill--word {
-    --loader-word-clip: url('../image/loader/pahs-word-structure-mask.png?v=1.0.10');
+    --loader-word-clip: url('../image/loader/pahs-word-structure-mask.png?v=1.0.11');
     -webkit-mask-image: var(--loader-word-clip);
     mask-image: var(--loader-word-clip);
     -webkit-mask-repeat: no-repeat;
@@ -252,6 +255,24 @@ body.page-loading {
 
 .loader-pahs-fill img {
     filter: var(--loader-fill-filter);
+}
+
+.loader-pahs-word-outline {
+    --loader-word-outline-mask: url('../image/loader/pahs-word-outline-mask.svg?v=1.0.11');
+    -webkit-mask-image: var(--loader-word-outline-mask);
+    mask-image: var(--loader-word-outline-mask);
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    mask-mode: alpha;
+    background: var(--loader-word-outline);
+    opacity: 1;
+    mix-blend-mode: normal;
+    filter: none;
+    z-index: 4;
 }
 
 [data-theme="dark"] .loader-pahs-layer--perspective {
