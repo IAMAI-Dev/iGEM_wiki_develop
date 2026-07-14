@@ -87,7 +87,6 @@ body.page-loading {
 /* ========== Loader ========== */
 .loader-screen {
     --loader-progress: 0%;
-    --loader-word-right: 75.37%;
     --loader-bar-right: 74.88%;
     --loader-bg: #F0FDF4;
     --loader-circuit: #0A8A55;
@@ -212,6 +211,30 @@ body.page-loading {
     z-index: 3;
 }
 
+.loader-pahs-word-fill {
+    --loader-word-mask: url('../image/loader/pahs-word-mask.svg?v=1.0.9');
+    position: absolute;
+    left: 24.877%;
+    top: 36.33%;
+    display: block;
+    width: 55.147%;
+    height: 22.569%;
+    pointer-events: none;
+    background: var(--loader-word-fill);
+    -webkit-mask-image: var(--loader-word-mask);
+    mask-image: var(--loader-word-mask);
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    clip-path: inset(0 calc(100% - var(--loader-progress)) 0 0);
+    filter: drop-shadow(0 0 1px var(--loader-word-active)) drop-shadow(0 0 3px var(--loader-shadow));
+    will-change: clip-path, filter;
+    z-index: 2;
+}
+
 .loader-pahs-fill {
     opacity: 1;
     filter: drop-shadow(0 0 1px var(--loader-word-active)) drop-shadow(0 0 8px var(--loader-shadow));
@@ -219,16 +242,8 @@ body.page-loading {
     z-index: 2;
 }
 
-.loader-pahs-fill--word {
-    clip-path: inset(36.33% 18.75% 41.83% 24.63%);
-}
-
 .loader-pahs-fill--bar {
     clip-path: inset(91.74% 19.61% 1.65% 25.12% round 999px);
-}
-
-.loader-pahs-fill--word .loader-pahs-fill-reveal {
-    clip-path: inset(0 var(--loader-word-right) 0 24.63%);
 }
 
 .loader-pahs-fill--bar .loader-pahs-fill-reveal {
@@ -450,6 +465,7 @@ body.page-loading {
     }
 }
 
+.loader-screen.is-complete .loader-pahs-word-fill,
 .loader-screen.is-complete .loader-pahs-fill {
     animation: loader-complete-flash 0.34s ease-out both;
 }

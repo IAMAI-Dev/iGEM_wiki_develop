@@ -18,7 +18,7 @@
     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Serif+SC:wght@400;600;700&display=swap">
 
   <!-- 全局样式 -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css', v='1.0.8') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css', v='1.0.9') }}">
 
   {% block extra_css %}{% endblock %}
 </head>
@@ -62,22 +62,17 @@
 
         <div class="loader-sensor" data-loader-sensor>
           <img class="loader-pahs-layer loader-pahs-layer--perspective"
-            src="{{ url_for('static', filename='image/loader/pahs-perspective.png', v='1.0.8') }}"
+            src="{{ url_for('static', filename='image/loader/pahs-perspective.png', v='1.0.9') }}"
             alt="" draggable="false">
-          <span class="loader-pahs-fill loader-pahs-fill--word" aria-hidden="true">
-            <span class="loader-pahs-fill-reveal">
-              <img src="{{ url_for('static', filename='image/loader/pahs-progress-fill.png', v='1.0.8') }}"
-                alt="" draggable="false">
-            </span>
-          </span>
+          <span class="loader-pahs-word-fill" aria-hidden="true"></span>
           <span class="loader-pahs-fill loader-pahs-fill--bar" aria-hidden="true">
             <span class="loader-pahs-fill-reveal">
-              <img src="{{ url_for('static', filename='image/loader/pahs-progress-fill.png', v='1.0.8') }}"
+              <img src="{{ url_for('static', filename='image/loader/pahs-progress-fill.png', v='1.0.9') }}"
                 alt="" draggable="false">
             </span>
           </span>
           <img class="loader-pahs-layer loader-pahs-layer--structure"
-            src="{{ url_for('static', filename='image/loader/pahs-structure.png', v='1.0.8') }}"
+            src="{{ url_for('static', filename='image/loader/pahs-structure.png', v='1.0.9') }}"
             alt="" draggable="false">
           <span class="loader-receptor-core" data-loader-target></span>
 
@@ -117,7 +112,7 @@
 
   {# 全局脚本 #}
   <script src="{{ url_for('static', filename='anime.min.js') }}"></script>
-  <script type="module" src="{{ url_for('static', filename='js/base.js', v='1.0.6') }}"></script>
+  <script type="module" src="{{ url_for('static', filename='js/base.js', v='1.0.7') }}"></script>
   
   {% block extra_js %}{% endblock %}
 </body>
