@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>{% block title %}WIKI{% endblock %} | iGEM Wiki</title>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='image/logo-icon.png') }}">
   {% block meta_description %}{% endblock %}
 
   <!-- 字体图标 -->
@@ -17,7 +18,7 @@
     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Serif+SC:wght@400;600;700&display=swap">
 
   <!-- 全局样式 -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css', v='1.0.2') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css', v='1.0.12') }}">
 
   {% block extra_css %}{% endblock %}
 </head>
@@ -48,27 +49,62 @@
 
   {# 首页加载动画（仅非子页面） #}
   {% if not is_subpage %}
-  <div class="loader-screen" id="loader">
-    <div class="loader-content">
-      <div class="loader-code-text">
-        <div class="code-line">
-          <img src="{{ url_for('static', filename='image/logo.png') }}" style="width: 150px;" alt="logo">
-          <p>PAHs</p>
+  <div class="loader-screen" id="loader" role="progressbar" aria-label="Loading homepage"
+    aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+    <div class="loader-shell">
+      <div class="loader-stage" aria-hidden="true">
+        <div class="loader-molecule-field" data-loader-molecules>
+          {% for index in range(18) %}
+          <span class="loader-mask loader-molecule loader-molecule--{{ (index % 3) + 1 }}"
+            data-loader-particle="{{ index }}"></span>
+          {% endfor %}
+        </div>
+
+        <div class="loader-sensor" data-loader-sensor>
+          <img class="loader-pahs-layer loader-pahs-layer--perspective"
+            src="{{ url_for('static', filename='image/loader/pahs-perspective.png', v='1.0.12') }}"
+            alt="" draggable="false">
+          <span class="loader-pahs-fill loader-pahs-fill--word" aria-hidden="true">
+            <span class="loader-pahs-fill-reveal"></span>
+          </span>
+          <span class="loader-pahs-fill loader-pahs-fill--bar" aria-hidden="true">
+            <span class="loader-pahs-fill-reveal">
+              <img src="{{ url_for('static', filename='image/loader/pahs-progress-fill.png', v='1.0.12') }}"
+                alt="" draggable="false">
+            </span>
+          </span>
+          <img class="loader-pahs-layer loader-pahs-layer--structure"
+            src="{{ url_for('static', filename='image/loader/pahs-structure.png', v='1.0.12') }}"
+            alt="" draggable="false">
+          <span class="loader-pahs-word-outline" aria-hidden="true"></span>
+          <span class="loader-receptor-core" data-loader-target></span>
+
+          <div class="loader-dots" data-loader-dots>
+            <span class="loader-dot" data-loader-pin="0"></span>
+            <span class="loader-dot" data-loader-pin="1"></span>
+            <span class="loader-dot" data-loader-pin="2"></span>
+          </div>
+
+          <div class="loader-percentage" id="loaderPercent" aria-hidden="true">0%</div>
+        </div>
+
+        <div class="loader-fluorescence-field" data-loader-fluorescence>
+          {% for index in range(6) %}
+          {% set signal_type = (index % 3) + 1 %}
+          <span class="loader-fluorescence-signal loader-fluorescence-signal--{{ signal_type }}"
+            data-loader-signal="{{ index }}" data-loader-lane="{{ index // 2 }}">
+            <span class="loader-mask loader-fluorescence-edge loader-fluorescence-edge--{{ signal_type }}"></span>
+            <img class="loader-fluorescence-art"
+              src="{{ url_for('static', filename='image/loader/fluorescence-' ~ signal_type ~ '.png') }}"
+              alt="" draggable="false">
+          </span>
+          {% endfor %}
         </div>
       </div>
-
-      <div class="loader-progress-wrapper">
-        <div class="loader-progress-bar"></div>
-      </div>
-
-      <div class="loader-dots">
-        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-      </div>
-      <div class="loader-percentage" id="loaderPercent">
-        0%
-      </div>
+      <span class="sr-only" id="loaderStatus" aria-live="polite">Loading homepage: 0%</span>
     </div>
   </div>
+  <noscript><style>#loader { display: none; }</style></noscript>
   {% endif %}
 
   {# 导航栏 #}
@@ -79,10 +115,9 @@
 
   {# 全局脚本 #}
   <script src="{{ url_for('static', filename='anime.min.js') }}"></script>
-  <script type="module" src="{{ url_for('static', filename='js/base.js', v='1.0.2') }}"></script>
+  <script type="module" src="{{ url_for('static', filename='js/base.js', v='1.0.8') }}"></script>
   
   {% block extra_js %}{% endblock %}
 </body>
 
 </html>
-
