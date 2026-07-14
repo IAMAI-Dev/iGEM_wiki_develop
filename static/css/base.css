@@ -193,9 +193,9 @@ body.page-loading {
 }
 
 .loader-pahs-layer--perspective {
-    inset: -3% -2%;
-    width: 104%;
-    height: 106%;
+    inset: -1.25% -0.75%;
+    width: 101.5%;
+    height: 102.5%;
     opacity: 0.34;
     mix-blend-mode: multiply;
     filter: saturate(1.38) contrast(1.18) brightness(0.84) drop-shadow(0 0 9px var(--loader-shadow));
@@ -206,7 +206,7 @@ body.page-loading {
     opacity: 0.88;
     mix-blend-mode: multiply;
     filter: saturate(1.28) contrast(1.32) brightness(0.82) drop-shadow(0 0 1px var(--loader-fluorescence-edge)) drop-shadow(0 0 5px var(--loader-circuit-muted));
-    z-index: 2;
+    z-index: 3;
 }
 
 .loader-pahs-fill {
@@ -214,7 +214,7 @@ body.page-loading {
     clip-path: inset(0 calc(100% - var(--loader-progress)) 0 0);
     filter: drop-shadow(0 0 1px var(--loader-word-active)) drop-shadow(0 0 8px var(--loader-shadow));
     will-change: clip-path, filter;
-    z-index: 4;
+    z-index: 2;
 }
 
 .loader-pahs-fill img {

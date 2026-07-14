@@ -18,7 +18,7 @@
     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Serif+SC:wght@400;600;700&display=swap">
 
   <!-- 全局样式 -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css', v='1.0.5') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css', v='1.0.6') }}">
 
   {% block extra_css %}{% endblock %}
 </head>
@@ -64,13 +64,13 @@
           <img class="loader-pahs-layer loader-pahs-layer--perspective"
             src="{{ url_for('static', filename='image/loader/pahs-perspective.png') }}"
             alt="" draggable="false">
-          <img class="loader-pahs-layer loader-pahs-layer--structure"
-            src="{{ url_for('static', filename='image/loader/pahs-structure.png') }}"
-            alt="" draggable="false">
           <span class="loader-pahs-fill" aria-hidden="true">
             <img src="{{ url_for('static', filename='image/loader/pahs-progress-fill.png') }}"
               alt="" draggable="false">
           </span>
+          <img class="loader-pahs-layer loader-pahs-layer--structure"
+            src="{{ url_for('static', filename='image/loader/pahs-structure.png') }}"
+            alt="" draggable="false">
           <span class="loader-receptor-core" data-loader-target></span>
 
           <div class="loader-dots" data-loader-dots>
