@@ -226,6 +226,7 @@ h2 {
 .closed_book_case {
     position: absolute;
     inset: 0;
+    z-index: 3;
     transform-style: preserve-3d;
     pointer-events: none;
     transition: transform 1s cubic-bezier(0.16, 1, 0.3, 1);
