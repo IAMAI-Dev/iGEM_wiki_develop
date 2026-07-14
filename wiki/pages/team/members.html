@@ -3,7 +3,7 @@
 {% block title %}Team Members{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/members.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/members.css', v='1.0.4') }}">
 {% endblock %}
 
 {% block content %}
@@ -33,6 +33,13 @@
         <div class="group_wrapper">
             <div class="group_slides" id="groupSlidesContainer">
                 <div class="carousel_item">
+                    <div class="closed_book_case" aria-hidden="true">
+                        <span class="closed_book_case_back"></span>
+                        <span class="closed_book_case_spine"></span>
+                        <span class="closed_book_case_fore_edge"></span>
+                        <span class="closed_book_case_top"></span>
+                        <span class="closed_book_case_bottom"></span>
+                    </div>
                     <div class="carousel_card">
                         <div class="group_book_3d">
                             <div class="group_book_3d_item" style="--i: 0">
@@ -101,6 +108,13 @@
                     <div class="carousel_title artist-name-en">Experiment Group</div>
                 </div>
                 <div class="carousel_item">
+                    <div class="closed_book_case" aria-hidden="true">
+                        <span class="closed_book_case_back"></span>
+                        <span class="closed_book_case_spine"></span>
+                        <span class="closed_book_case_fore_edge"></span>
+                        <span class="closed_book_case_top"></span>
+                        <span class="closed_book_case_bottom"></span>
+                    </div>
                     <div class="carousel_card">
                         <div class="group_book_3d">
                             <div class="group_book_3d_item" style="--i: 0">
@@ -234,6 +248,13 @@
                     <div class="carousel_title artist-name-en">HP Group</div>
                 </div>
                 <div class="carousel_item">
+                    <div class="closed_book_case" aria-hidden="true">
+                        <span class="closed_book_case_back"></span>
+                        <span class="closed_book_case_spine"></span>
+                        <span class="closed_book_case_fore_edge"></span>
+                        <span class="closed_book_case_top"></span>
+                        <span class="closed_book_case_bottom"></span>
+                    </div>
                     <div class="carousel_card">
                         <div class="group_book_3d">
                             <div class="group_book_3d_item" style="--i: 0">
@@ -284,6 +305,13 @@
                     <div class="carousel_title artist-name-en">Art Group</div>
                 </div>
                 <div class="carousel_item">
+                    <div class="closed_book_case" aria-hidden="true">
+                        <span class="closed_book_case_back"></span>
+                        <span class="closed_book_case_spine"></span>
+                        <span class="closed_book_case_fore_edge"></span>
+                        <span class="closed_book_case_top"></span>
+                        <span class="closed_book_case_bottom"></span>
+                    </div>
                     <div class="carousel_card">
                         <div class="group_book_3d">
                             <div class="group_book_3d_item" style="--i: 0">
@@ -335,6 +363,13 @@
                     <div class="carousel_title artist-name-en">Wiki Group</div>
                 </div>
                 <div class="carousel_item">
+                    <div class="closed_book_case" aria-hidden="true">
+                        <span class="closed_book_case_back"></span>
+                        <span class="closed_book_case_spine"></span>
+                        <span class="closed_book_case_fore_edge"></span>
+                        <span class="closed_book_case_top"></span>
+                        <span class="closed_book_case_bottom"></span>
+                    </div>
                     <div class="carousel_card">
                         <div class="group_book_3d">
                             <div class="group_book_3d_item" style="--i: 0">
@@ -393,5 +428,5 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="{{ url_for('static', filename='js/members.js', v='1.0.2') }}"></script>
+<script src="{{ url_for('static', filename='js/members.js', v='1.0.3') }}"></script>
 {% endblock %}
