@@ -87,6 +87,8 @@ body.page-loading {
 /* ========== Loader ========== */
 .loader-screen {
     --loader-progress: 0%;
+    --loader-word-right: 75.37%;
+    --loader-bar-right: 74.88%;
     --loader-bg: #F0FDF4;
     --loader-circuit: #0A8A55;
     --loader-circuit-muted: rgba(10, 138, 85, 0.28);
@@ -177,6 +179,7 @@ body.page-loading {
 
 .loader-pahs-layer,
 .loader-pahs-fill,
+.loader-pahs-fill-reveal,
 .loader-pahs-fill img {
     position: absolute;
     inset: 0;
@@ -211,10 +214,29 @@ body.page-loading {
 
 .loader-pahs-fill {
     opacity: 1;
-    clip-path: inset(0 calc(100% - var(--loader-progress)) 0 0);
     filter: drop-shadow(0 0 1px var(--loader-word-active)) drop-shadow(0 0 8px var(--loader-shadow));
-    will-change: clip-path, filter;
+    will-change: filter;
     z-index: 2;
+}
+
+.loader-pahs-fill--word {
+    clip-path: inset(36.33% 18.75% 41.83% 24.63%);
+}
+
+.loader-pahs-fill--bar {
+    clip-path: inset(91.74% 19.61% 1.65% 25.12% round 999px);
+}
+
+.loader-pahs-fill--word .loader-pahs-fill-reveal {
+    clip-path: inset(0 var(--loader-word-right) 0 24.63%);
+}
+
+.loader-pahs-fill--bar .loader-pahs-fill-reveal {
+    clip-path: inset(0 var(--loader-bar-right) 0 25.12%);
+}
+
+.loader-pahs-fill-reveal {
+    will-change: clip-path;
 }
 
 .loader-pahs-fill img {
