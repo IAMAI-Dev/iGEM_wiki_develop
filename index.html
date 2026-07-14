@@ -18,7 +18,7 @@
     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Serif+SC:wght@400;600;700&display=swap">
 
   <!-- 全局样式 -->
-  <link rel="stylesheet" href="static/css/base.css?v=1.0.5">
+  <link rel="stylesheet" href="static/css/base.css?v=1.0.12">
 
   
 <link rel="stylesheet" href="static/css/index.css?v=1.0.2">
@@ -115,15 +115,21 @@
 
         <div class="loader-sensor" data-loader-sensor>
           <img class="loader-pahs-layer loader-pahs-layer--perspective"
-            src="static/image/loader/pahs-perspective.png"
+            src="static/image/loader/pahs-perspective.png?v=1.0.12"
             alt="" draggable="false">
-          <img class="loader-pahs-layer loader-pahs-layer--structure"
-            src="static/image/loader/pahs-structure.png"
-            alt="" draggable="false">
-          <span class="loader-pahs-fill" aria-hidden="true">
-            <img src="static/image/loader/pahs-progress-fill.png"
-              alt="" draggable="false">
+          <span class="loader-pahs-fill loader-pahs-fill--word" aria-hidden="true">
+            <span class="loader-pahs-fill-reveal"></span>
           </span>
+          <span class="loader-pahs-fill loader-pahs-fill--bar" aria-hidden="true">
+            <span class="loader-pahs-fill-reveal">
+              <img src="static/image/loader/pahs-progress-fill.png?v=1.0.12"
+                alt="" draggable="false">
+            </span>
+          </span>
+          <img class="loader-pahs-layer loader-pahs-layer--structure"
+            src="static/image/loader/pahs-structure.png?v=1.0.12"
+            alt="" draggable="false">
+          <span class="loader-pahs-word-outline" aria-hidden="true"></span>
           <span class="loader-receptor-core" data-loader-target></span>
 
           <div class="loader-dots" data-loader-dots>
@@ -683,7 +689,7 @@
 
   
   <script src="static/anime.min.js"></script>
-  <script type="module" src="static/js/base.js?v=1.0.5"></script>
+  <script type="module" src="static/js/base.js?v=1.0.8"></script>
   
   
 <script src="static/js/index.js?v=1.0.2"></script>
