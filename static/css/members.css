@@ -204,18 +204,35 @@ h2 {
     transition: --spine-shift 0.5s ease;
 }
 
-.group_book_3d::before {
+.group_book_3d::before,
+.group_book_3d::after {
     content: '';
     position: absolute;
-    right: 3px;
-    width: 100%;
-    height: 100%;
-    border-radius: 4px;
-    background: #e4e0d5;
-    box-shadow:
-        3px 3px 0 #e2e0ca, 6px 6px 0 #cbc5ba, 10px 10px 20px rgb(46 43 43 / 50%);
+    inset: 0;
+    border-radius: 0 4px 4px 0;
+    pointer-events: none;
+}
+
+.group_book_3d::before {
     /* 最底层的柔和投影 */
+    box-shadow: 10px 10px 20px rgb(46 43 43 / 50%);
+    z-index: 0;
+}
+
+.group_book_3d::after {
+    /* 仅在封面右侧和下方露出的双层页边 */
+    box-shadow:
+        3px 3px 0 #e2e0ca,
+        6px 6px 0 #cbc5ba;
+    opacity: 0;
     z-index: 1;
+    transition: opacity 0.26s ease-out;
+}
+
+.carousel_card.is_active .group_book_3d::after {
+    opacity: 1;
+    transition-duration: 0.72s;
+    transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
 .group_book_3d.book_open {

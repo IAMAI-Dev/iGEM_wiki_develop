@@ -55,6 +55,7 @@
             const titles = document.querySelectorAll('.carousel_title');
             cards.forEach((card, index) => {
                 const isActive = activeIndex === index;
+                card.classList.toggle('is_active', isActive);
                 const rotateY = (activeIndex - index) * 60;
                 const scale = isActive ? 1 : 0.8;
                 const carouselTransform = `rotateY(${rotateY}deg) scale(${scale})`;
