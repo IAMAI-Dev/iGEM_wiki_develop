@@ -21,3 +21,6 @@ Thumbs.db
 # Other
 *.log
 svg/
+
+# Local AI agent instructions
+AGENTS.md
