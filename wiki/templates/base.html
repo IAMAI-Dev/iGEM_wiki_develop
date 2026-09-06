@@ -17,6 +17,18 @@
   <link rel="stylesheet"
     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Serif+SC:wght@400;600;700&display=swap">
 
+  <!-- TeX 数学公式渲染 -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)'], ['$','$']],
+        displayMath: [['\\[', '\\]'], ['$$','$$']]
+      },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
   <!-- 全局样式 -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css', v='1.0.12') }}">
 

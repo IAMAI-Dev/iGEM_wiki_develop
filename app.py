@@ -38,7 +38,21 @@ def wetlab_salicylic_acid():
         is_subpage=True,
         active_nav='Wet-Lab',
         current_path='/wetlab/salicylic-acid')
+    
+@app.route('/drylab/naphthalene/')
+def drylab_naphthalene():
+    return render_template('pages/drylab/naphthalene.html',
+        is_subpage=True,
+        active_nav='Dry-Lab',
+        current_path='/drylab/naphthalene')
 
+@app.route('/drylab/salicylic-acid/')
+def drylab_salicylic_acid():
+    return render_template('pages/drylab/salicylic-acid.html',
+        is_subpage=True,
+        active_nav='Dry-Lab',
+        current_path='/drylab/salicylic-acid')
+    
 @app.route('/team/members/')
 def team_members():
     return render_template('pages/team/members.html',
