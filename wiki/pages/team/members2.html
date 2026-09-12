@@ -1,0 +1,255 @@
+{% extends 'templates/base.html' %}
+
+{% block title %}Team Members{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/members.css', v='1.0.9') }}">
+{% endblock %}
+
+{% block content %}
+<div class="members">
+    <section id="groupPhoto" class="group-photo">
+        <img class="group-photo-img" src="{{ url_for('static', filename='image/team/GroupPhoto.jpg') }}"
+            alt="Team Group Photo">
+        <h2 class="introduction-en">meet&nbsp;our&nbsp;team</h2>
+    </section>
+    <!-- Project Leader -->
+    <section id="projectLeader" class="project-leader-container">
+        <div class="project-title-container">
+            <p class="project-title title-en">Project Leader</p>
+            <hr>
+        </div>
+        <div class="leader-introduction-container">
+            <div class="leader-container">
+                <div class="leader-img-container">
+                    <img class="leader-img" src="{{ url_for('static', filename='image/team/WikiGroupTwo.png') }}"
+                        alt="Project Leader">
+                    <!-- <div class="leader-name-title">
+                        <h3 class="name-en" style="color:black;justify-self: center;">Jiahua Wong</h3>
+                        <h4 class="introduction-en" style="color:#f5b643;justify-self: center;">TEAM LADER&WETLAB MEMBER</h4>
+                    </div> -->
+                </div>
+                <div class="leader-introduction introduction-en">
+                    <p style="color:#f5b643;font-size:2rem;">
+                        “  Every small breakthrough taught me rigor, patience, and the resolve never to give up.”
+                    </p>
+                    <br>
+                    <p>
+                        When I first joined the iGEM experimental team, I was full of anticipation to realize our bold designs in the lab.
+                        Yet the journey turned out far tougher than expected: repeated failed transformations, faint gel bands, and erratic fluctuating data. I often spent long hours by the workbench, troubleshooting non‑stop.
+                    </p>  
+                    <br>
+                    <p>
+                        This experience not only honed my practical laboratory skills but also helped me understand the resilience a researcher ought to possess.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="projectAdvisor" class="project-advisor-container">
+        <div class="project-title-container">
+            <p class="project-title title-en">Project Advisor</p>
+            <hr>
+        </div>
+        <div class="advisor-introduction-container">
+            <div class="advisor-container">
+                <div class="advisor-img-container">
+                    <img class="advisor-img" src="{{ url_for('static', filename='image/team/WikiGroupTwo.png') }}"
+                        alt="Project Advisor">
+                </div>
+                <div class="advisor-introduction introduction-en">
+                    <div class="advisor-name-title">
+                        <h3 class="name-en" style="color:black;justify-self: center;">Prof. Yuhong Zhang</h3>
+                        <h4 class="introduction-en" style="color:#f5b643;justify-self: center;">PROJECT ADVISOR</h4>
+                    </div>
+                    <p>
+                        As the project advisor, I have had the privilege of guiding our team through the intricate landscape of synthetic biology. Witnessing their growth and resilience has been truly rewarding.
+                    </p>
+                </div>
+            </div>
+            <div class="advisor-container">
+                <div class="advisor-img-container">
+                    <img class="advisor-img" src="{{ url_for('static', filename='image/team/WikiGroupTwo.png') }}"
+                        alt="Project Advisor">
+                </div>
+                <div class="advisor-introduction introduction-en">
+                    <div class="advisor-name-title">
+                        <h3 class="name-en" style="color:black;justify-self: center;">Prof. Yuhong Zhang</h3>
+                        <h4 class="introduction-en" style="color:#f5b643;justify-self: center;">PROJECT ADVISOR</h4>
+                    </div>
+                    <p>
+                        As the project advisor, I have had the privilege of guiding our team through the intricate landscape of synthetic biology. Witnessing their growth and resilience has been truly rewarding.
+                    </p>
+                </div>
+            </div>
+            <div class="advisor-container">
+                <div class="advisor-img-container">
+                    <img class="advisor-img" src="{{ url_for('static', filename='image/team/WikiGroupTwo.png') }}"
+                        alt="Project Advisor">
+                </div>
+                <div class="advisor-introduction introduction-en">
+                    <div class="advisor-name-title">
+                        <h3 class="name-en" style="color:black;justify-self: center;">Prof. Yuhong Zhang</h3>
+                        <h4 class="introduction-en" style="color:#f5b643;justify-self: center;">PROJECT ADVISOR</h4>
+                    </div>
+                    <p>
+                        As the project advisor, I have had the privilege of guiding our team through the intricate landscape of synthetic biology. Witnessing their growth and resilience has been truly rewarding.
+                    </p>
+                </div>
+            </div>
+            <div class="advisor-container">
+                <div class="advisor-img-container">
+                    <img class="advisor-img" src="{{ url_for('static', filename='image/team/WikiGroupTwo.png') }}"
+                        alt="Project Advisor">
+                </div>
+                <div class="advisor-introduction introduction-en">
+                    <div class="advisor-name-title">
+                        <h3 class="name-en" style="color:black;justify-self: center;">Prof. Yuhong Zhang</h3>
+                        <h4 class="introduction-en" style="color:#f5b643;justify-self: center;">PROJECT ADVISOR</h4>
+                    </div>
+                    <p>
+                        As the project advisor, I have had the privilege of guiding our team through the intricate landscape of synthetic biology. Witnessing their growth and resilience has been truly rewarding.
+                    </p>
+                </div>
+            </div>
+            <div class="advisor-container">
+                <div class="advisor-img-container">
+                    <img class="advisor-img" src="{{ url_for('static', filename='image/team/WikiGroupTwo.png') }}"
+                        alt="Project Advisor">
+                </div>
+                <div class="advisor-introduction introduction-en">
+                    <div class="advisor-name-title">
+                        <h3 class="name-en" style="color:black;justify-self: center;">Prof. Yuhong Zhang</h3>
+                        <h4 class="introduction-en" style="color:#f5b643;justify-self: center;">PROJECT ADVISOR</h4>
+                    </div>
+                    <p>
+                        As the project advisor, I have had the privilege of guiding our team through the intricate landscape of synthetic biology. Witnessing their growth and resilience has been truly rewarding.
+                    </p>
+                </div>
+            </div>
+            <div class="advisor-container">
+                <div class="advisor-img-container">
+                    <img class="advisor-img" src="{{ url_for('static', filename='image/team/WikiGroupTwo.png') }}"
+                        alt="Project Advisor">
+                </div>
+                <div class="advisor-introduction introduction-en">
+                    <div class="advisor-name-title">
+                        <h3 class="name-en" style="color:black;justify-self: center;">Prof. Yuhong Zhang</h3>
+                        <h4 class="introduction-en" style="color:#f5b643;justify-self: center;">PROJECT ADVISOR</h4>
+                    </div>
+                    <p>
+                        As the project advisor, I have had the privilege of guiding our team through the intricate landscape of synthetic biology. Witnessing their growth and resilience has been truly rewarding.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="projectStudent" class="project-student-container">
+        <div class="project-title-container">
+            <p class="project-title title-en">Project Student</p>
+            <hr>
+        </div>
+        <div class="student-introduction-container">
+            <div class="student-container">
+                <div class="student-img-container">
+                    <img class="student-img" src="{{ url_for('static', filename='image/team/WikiGroupTwo.png') }}"
+                        alt="Project Student">
+                </div>
+                <div class="student-introduction introduction-en">
+                    <div class="student-name-title">
+                        <h3 class="name-en" style="color:black;justify-self: center;">Jiahua Wong</h3>
+                        <h4 class="introduction-en" style="color:#f5b643;justify-self: center;">PROJECT STUDENT</h4>
+                    </div>
+                    <p>
+                        As a project student, I have been deeply involved in the hands-on aspects of our research. The challenges and successes we have encountered have been invaluable learning experiences.
+                    </p>
+                </div>
+            </div>
+            <div class="student-container">
+                <div class="student-img-container">
+                    <img class="student-img" src="{{ url_for('static', filename='image/team/WikiGroupTwo.png') }}"
+                        alt="Project Student">
+                </div>
+                <div class="student-introduction introduction-en">
+                    <div class="student-name-title">
+                        <h3 class="name-en" style="color:black;justify-self: center;">Jiahua Wong</h3>
+                        <h4 class="introduction-en" style="color:#f5b643;justify-self: center;">PROJECT STUDENT</h4>
+                    </div>
+                    <p>
+                        As a project student, I have been deeply involved in the hands-on aspects of our research. The challenges and successes we have encountered have been invaluable learning experiences.
+                    </p>
+                </div>
+            </div>
+            <div class="student-container">
+                <div class="student-img-container">
+                    <img class="student-img" src="{{ url_for('static', filename='image/team/WikiGroupTwo.png') }}"
+                        alt="Project Student">
+                </div>
+                <div class="student-introduction introduction-en">
+                    <div class="student-name-title">
+                        <h3 class="name-en" style="color:black;justify-self: center;">Jiahua Wong</h3>
+                        <h4 class="introduction-en" style="color:#f5b643;justify-self: center;">PROJECT STUDENT</h4>
+                    </div>
+                    <p>
+                        As a project student, I have been deeply involved in the hands-on aspects of our research. The challenges and successes we have encountered have been invaluable learning experiences.
+                    </p>
+                </div>
+            </div>
+            <div class="student-container">
+                <div class="student-img-container">
+                    <img class="student-img" src="{{ url_for('static', filename='image/team/WikiGroupTwo.png') }}"
+                        alt="Project Student">
+                </div>
+                <div class="student-introduction introduction-en">
+                    <div class="student-name-title">
+                        <h3 class="name-en" style="color:black;justify-self: center;">Jiahua Wong</h3>
+                        <h4 class="introduction-en" style="color:#f5b643;justify-self: center;">PROJECT STUDENT</h4>
+                    </div>
+                    <p>
+                        As a project student, I have been deeply involved in the hands-on aspects of our research. The challenges and successes we have encountered have been invaluable learning experiences.
+                    </p>
+                </div>
+            </div>
+            <div class="student-container">
+                <div class="student-img-container">
+                    <img class="student-img" src="{{ url_for('static', filename='image/team/WikiGroupTwo.png') }}"
+                        alt="Project Student">
+                </div>
+                <div class="student-introduction introduction-en">
+                    <div class="student-name-title">
+                        <h3 class="name-en" style="color:black;justify-self: center;">Jiahua Wong</h3>
+                        <h4 class="introduction-en" style="color:#f5b643;justify-self: center;">PROJECT STUDENT</h4>
+                    </div>
+                    <p>
+                        As a project student, I have been deeply involved in the hands-on aspects of our research. The challenges and successes we have encountered have been invaluable learning experiences.
+                    </p>
+                </div>
+            </div>
+            <div class="student-container">
+                <div class="student-img-container">
+                    <img class="student-img" src="{{ url_for('static', filename='image/team/WikiGroupTwo.png') }}"
+                        alt="Project Student">
+                </div>
+                <div class="student-introduction introduction-en">
+                    <div class="student-name-title">
+                        <h3 class="name-en" style="color:black;justify-self: center;">Jiahua Wong</h3>
+                        <h4 class="introduction-en" style="color:#f5b643;justify-self: center;">PROJECT STUDENT</h4>
+                    </div>
+                    <p>
+                        As a project student, I have been deeply involved in the hands-on aspects of our research. The challenges and successes we have encountered have been invaluable learning experiences.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='gsap.min.js') }}"></script>
+<script src="{{ url_for('static', filename='ScrollTrigger.min.js') }}"></script>
+<script src="{{ url_for('static', filename='SplitText.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/members.js', v='1.0.4') }}"></script>
+{% endblock %}
