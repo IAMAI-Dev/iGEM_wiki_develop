@@ -1,433 +1,413 @@
-(function () {
-    if (!window.gsap || !window.ScrollTrigger || !window.SplitText) {
-        return;
-    }
-    // 注册
-    gsap.registerPlugin(ScrollTrigger, SplitText);
-    // section ONE
-    const loaderScreen = document.querySelector(".loader-screen");
-    let split;
-    function runHeroAnim() {
-        const chip = document.querySelector(".chip-wrap .chip");
-        const lineTop = document.querySelector(".chip-wrap .line-top");
-        const lineBottom = document.querySelector(".chip-wrap .line-bottom");
-        const lineLeft = document.querySelector(".chip-wrap .line-left");
-        const lineRight = document.querySelector(".chip-wrap .line-right");
-        if (!chip) return;
-
-        const heroTl = gsap.timeline();
-
-        // 1. 中心芯片脉冲式入场
-        heroTl.fromTo(chip,
-            { scale: 0.85, opacity: 0, filter: "drop-shadow(0 0 0px rgba(110, 168, 254, 0))" },
-            {
-                scale: 1,
-                autoAlpha: 1,
-                filter: "drop-shadow(0 0 22px rgba(110, 168, 254, 0.55))",
-                duration: 0.7,
-                ease: "power2.out"
-            }
-        )
-            // 芯片接通电光脉冲
-            .to(chip, {
-                filter: "drop-shadow(0 0 30px rgba(143, 196, 255, 0.7))",
-                duration: 0.2,
-                ease: "power1.out"
-            }, "-=0.15")
-            .to(chip, {
-                filter: "drop-shadow(0 0 18px rgba(110, 168, 254, 0.45))",
-                duration: 0.4,
-                ease: "power2.out"
-            }, "-=0.05");
-
-        // 2. 四条线路同时延伸（正确写法：to + className 追加类）
-        heroTl.to(lineTop, {
-            className: "piece line-top grow",
-            duration: 0,
-        }, 0.6);
-        heroTl.to(lineBottom, {
-            className: "piece line-bottom grow",
-            duration: 0,
-        }, 0.6);
-        heroTl.to(lineLeft, {
-            className: "piece line-left grow",
-            duration: 0,
-        }, 0.6);
-        heroTl.to(lineRight, {
-            className: "piece line-right grow",
-            duration: 0,
-        }, 0.6);
-        // 3. 等待线路生长完成（CSS 过渡 2s，这里留足时间）后，整体慢慢模糊
-        heroTl.to(".chip-wrap .piece", {
-            filter: "blur(6px)",
-            opacity: 0.6,
-            duration: 1.2,
-            ease: "power2.out"
-        }, 2.4); // 0.6s 开始生长 + 2s 生长时长 ≈ 2.6s 长齐，提前一点开始模糊更自然
-
-        // 4. 模糊开始后，触发标题掉落入场
-        const titleEl = document.querySelector(".hero-title");
-        const hrTop = document.querySelector(".hr-top");
-        const hrBottom = document.querySelector(".hr-bottom");
-        const heroText = document.querySelector(".hero-text");
-        if (!titleEl) return;
-        // 以单词为单位分割标题
-        split = SplitText.create(titleEl, {
-            type: 'words'
+const CHAPTERS = ['beginning', 'air', 'soil', 'rain', 'sample', 'lab', 'pathway', 'signal', 'return'].map((name, i) => [name, i / 9]);
+const FOCUS = [[1080, 660, .70], [490, 560, .62], [1040, 720, .65], [530, 640, .60], [1080, 660, .75], [1080, 650, .57], [1080, 630, .68], [540, 650, .62], [1110, 650, .57]];
+const LAYOUT = ['left', 'right', 'left', 'right', 'left', 'left', 'left', 'right', 'left'];
+const clamp = (v, min = 0, max = 1) => Math.max(min, Math.min(max, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+const ease = (a, b, p) => { const t = clamp((p - a) / (b - a)); return t * t * (3 - 2 * t); };
+const range = (p, a, b, c, d) => ease(a, b, p) * (1 - ease(c, d, p));
+let controller = null;
+let resumeProgress = null;
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+function canAnimate() {
+    return !reducedMotion.matches && !!window.gsap && !!window.ScrollTrigger && window.innerHeight >= (window.innerWidth < 768 ? 600 : 500);
+}
+function boot() {
+    controller?.destroy();
+    controller = null;
+    const root = document.querySelector('[data-story-root]');
+    if (root && canAnimate()) controller = createStory(root);
+}
+function createStory(root) {
+    const { gsap, ScrollTrigger } = window;
+    gsap.registerPlugin(ScrollTrigger);
+    const find = name => root.querySelector('[data-story-' + name + ']');
+    const stage = find('stage');
+    const canvas = find('particles');
+    const ctx = canvas.getContext('2d');
+    const environments = [...root.querySelectorAll('[data-environment]')];
+    const arts = [...root.querySelectorAll('[data-scene-art]')];
+    const copies = [...root.querySelectorAll('[data-story-chapter]')];
+    const shared = Object.fromEntries(['bottle', 'hand', 'drop', 'cell', 'salicylate'].map(name => [name, root.querySelector('[data-shared-' + name + ']')]));
+    const car = root.querySelector('[data-car-v2]');
+    const pipette = root.querySelector('[data-pipette-v2]');
+    const state = { p: 0 };
+    let width = innerWidth, height = innerHeight, mobile = width < 768;
+    let cover = 1, offsetX = 0, offsetY = 0;
+    let disposed = false, resizeTimer = null, tickerActive = false, lenis = null;
+    let three = null, threeRequested = false, threeFailed = false;
+    let lastChapter = -1, lastAriaProgress = -1;
+    const cleanups = [];
+    const on = (target, event, fn, options) => {
+        target.addEventListener(event, fn, options);
+        cleanups.push(() => target.removeEventListener(event, fn, options));
+    };
+    const alpha = (el, value) => { if (el) el.style.opacity = clamp(value).toFixed(4); };
+    root.classList.add('is-enhanced');
+    function measure() {
+        width = innerWidth; height = innerHeight; mobile = width < 768;
+        root.style.setProperty('--story-height', height + 'px');
+        cover = Math.max(width / 1600, height / 1000);
+        offsetX = (width - 1600 * cover) / 2; offsetY = (height - 1000 * cover) / 2;
+        const dpr = Math.min(devicePixelRatio || 1, mobile ? 1.5 : 2);
+        canvas.width = Math.round(width * dpr); canvas.height = Math.round(height * dpr);
+        ctx?.setTransform(dpr, 0, 0, dpr, 0, 0);
+        arts.forEach((art, i) => {
+            const [x, y, scale] = FOCUS[i];
+            art.setAttribute('transform', mobile ? `translate(800 735) scale(${scale}) translate(${-x} ${-y})` : 'translate(0 0)');
         });
-        // 入场动画
-        heroTl.from(split.words, {
-            y: -100,
-            opacity: 0,
-            rotation: gsap.utils.random(-80, 90),
-            duration: 1,
-            ease: 'back.out(1.2)',
-            stagger: 0.15,
-            // 动画开始前，把容器打开
-            onStart: () => {
-                gsap.set(titleEl, {
-                    visibility: 'visible',
-                    opacity: 1
-                })
-            }
-        }, 2.6);
-
-        // 2. 两条横线分别从左右两端向中间延伸
-        heroTl
-            .to([hrTop, hrBottom], {
-                width: '100%',
-                autoAlpha: 1,
-                duration: 0.8,
-                ease: 'power2.out',
-                stagger: 0.1, // 上下两条错开 0.1 秒，更有层次感
-            }, 3.6) // 标题快结束时就开始出线，衔接更紧
-
-        // 3. 中间副标题淡入上浮
-        heroTl.to(heroText, {
-            opacity: 1,
-            visibility: 'visible',
-            y: 0,
-            duration: 0.6,
-            ease: 'power2.out',
-        }, 4.0); // 横线快画完时文字开始出来
-        return heroTl;
+        three?.resize(width, height, dpr);
     }
-
-    if (loaderScreen) {
-        // 监听加载完成事件
-        loaderScreen.addEventListener('transitionend', function handler(e) {
-            if (e.propertyName === 'opacity' || e.propertyName === 'visibility') {
-                runHeroAnim();
-                loaderScreen.removeEventListener('transitionend', handler);
+    function project(scene, x, y, scale = 1) {
+        const [fx, fy, zoom] = FOCUS[scene];
+        return { x: (mobile ? (x - fx) * zoom + 800 : x) * cover + offsetX,
+            y: (mobile ? (y - fy) * zoom + 735 : y) * cover + offsetY,
+            scale: scale * cover * (mobile ? zoom : 1) };
+    }
+    const mix = (a, b, t) => ({ x: lerp(a.x, b.x, t), y: lerp(a.y, b.y, t), scale: lerp(a.scale, b.scale, t) });
+    function pose(el, point, opacity = 1) {
+        el.setAttribute('transform', `translate(${point.x} ${point.y}) scale(${point.scale})`);
+        alpha(el, opacity);
+    }
+    const sprite = document.createElement('canvas'); sprite.width = sprite.height = 96;
+    const sc = sprite.getContext('2d');
+    if (sc) {
+        const g = sc.createRadialGradient(48, 48, 0, 48, 48, 48);
+        g.addColorStop(0, 'rgba(177,192,175,.64)'); g.addColorStop(.4, 'rgba(130,154,139,.36)'); g.addColorStop(1, 'rgba(103,131,115,0)');
+        sc.fillStyle = g; sc.fillRect(0, 0, 96, 96);
+    }
+    function puff(x, y, radius, opacity) {
+        if (!ctx || opacity < .001 || x + radius < 0 || x - radius > width || y + radius < 0 || y - radius > height) return;
+        ctx.globalAlpha = clamp(opacity);
+        ctx.drawImage(sprite, x - radius, y - radius, radius * 2, radius * 2);
+    }
+    function dot(x, y, r, opacity) {
+        if (!ctx || opacity < .001) return;
+        ctx.globalAlpha = clamp(opacity); ctx.fillStyle = '#dfbc80'; ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+    }
+    const carAt = f => ({ x: lerp(990, 1400, ease(0, .78, f)), y: lerp(727, 748, ease(0, .78, f)) });
+    function drawParticles(q, current, t) {
+        if (!ctx) return;
+        ctx.clearRect(0, 0, width, height);
+        const n = mobile ? 30 : 52;
+        if (q < 1.01) {
+            for (let j = 0; j < n; j++) {
+                const age = (q * 1.3 + j / n) % 1;
+                const birth = carAt(clamp(q - age * .18));
+                const a = project(0, birth.x - 236 - age * 220, birth.y + 10 - age * 155);
+                puff(a.x, a.y, (10 + age * 65) * a.scale, Math.sin(age * Math.PI) * (1 - ease(.7, 1, q)));
             }
-        });
-        // 设置定时器
-        const timer = setInterval(() => {
-            if (loaderScreen.classList.contains('hidden')) {
-                const op = parseFloat(getComputedStyle(loaderScreen).opacity);
-                if (op <= 0.01) {
-                    clearInterval(timer);
-                    runHeroAnim();
+        }
+        if (q > .7 && q < 2) {
+            for (const [sx, sy, size] of [[310, 270, 1.15], [646, 410, .78]]) {
+                for (let j = 0; j < n; j++) {
+                    const age = ((q - .7) * .65 + j / n) % 1;
+                    const a = project(1, sx + age * 210, sy - age * 370 - Math.sin(j * 2.4) * age * 33);
+                    const driftY = current === 1 ? -height * t : 0;
+                    puff(a.x, a.y + driftY, (12 + age * 95) * a.scale * size, Math.sin(age * Math.PI) * ease(.7, 1, q));
                 }
             }
-        }, 150);
-    }
-    // section TWO
-    const pahsImage = document.querySelector("#sources .pahs-image img");
-    const askH2 = document.querySelector("#sources .ask h2");
-    const sourcesContent = document.querySelector("#sources .sources-content p");
-    const chimney = document.querySelector("#sources .chimney");
-    const smoke1 = document.querySelector("#sources .smoke1");
-    const smoke2 = document.querySelector("#sources .smoke2");
-    const smoke3 = document.querySelector("#sources .smoke3");
-    const chimneyText = document.querySelector("#sources .chimney-text");
-    // 水体场景元素
-    const rainLayer = document.querySelector("#sources .rain-layer");
-    const riverLayer = document.querySelector("#sources .river-layer");
-    const fishLayer = document.querySelector("#sources .fish-layer");
-    const waterText = document.querySelector("#sources .water-text");
-
-    // ========== 新增：初始化雨滴动画 ==========
-    let rippleTimer = null;
-    function initRainEffect() {
-        if (!rainLayer) return;
-
-        // 创建内部三层结构
-        const rainBg = document.createElement('div');
-        rainBg.className = 'rain-bg';
-        const rainFg = document.createElement('div');
-        rainFg.className = 'rain-fg';
-        const rippleBox = document.createElement('div');
-        rippleBox.className = 'ripple-container';
-        rainLayer.append(rainBg, rainFg, rippleBox);
-
-        // 生成背景雨滴（细、淡、慢）
-        const BG_COUNT = 60;
-        for (let i = 0; i < BG_COUNT; i++) {
-            const drop = document.createElement('div');
-            drop.className = 'drop';
-            drop.style.left = Math.random() * 100 + '%';
-            rainBg.appendChild(drop);
         }
-        // 生成前景雨滴（粗、亮、快）
-        const FG_COUNT = 80;
-        for (let i = 0; i < FG_COUNT; i++) {
-            const drop = document.createElement('div');
-            drop.className = 'drop';
-            drop.style.left = Math.random() * 100 + '%';
-            rainFg.appendChild(drop);
-        }
-
-        // 背景雨下落循环
-        gsap.to('.rain-bg .drop', {
-            y: '110vh',
-            duration: 1.8,
-            ease: 'none',
-            repeat: -1,
-            stagger: {
-                each: 0.03,
-                repeat: -1,
-                from: 'random'
-            }
-        });
-        // 前景雨下落循环
-        gsap.to('.rain-fg .drop', {
-            y: '110vh',
-            duration: 0.9,
-            ease: 'none',
-            repeat: -1,
-            stagger: {
-                each: 0.02,
-                repeat: -1,
-                from: 'random'
-            }
-        });
-
-        // 雨滴落地涟漪
-        function createRipple() {
-            const ripple = document.createElement('div');
-            ripple.className = 'ripple';
-            ripple.style.left = Math.random() * 100 + '%';
-            rippleBox.appendChild(ripple);
-            gsap.fromTo(ripple,
-                { scale: 0.3, opacity: 0.8 },
-                {
-                    scale: 2.5,
-                    opacity: 0,
-                    duration: 0.6,
-                    ease: 'power1.out',
-                    onComplete: () => ripple.remove()
+        // The same particle IDs move from airborne dust to soil and runoff.
+        if (q >= 1 && q <= 4.7) {
+            for (let j = 0; j < 32; j++) {
+                const seed = j * 2.399;
+                const air = project(1, 330 + (j * 37) % 220, 270 - (j * 43) % 200);
+                const soil = project(2, 800 + (j * 61) % 520, 591 + (j * 31) % 210);
+                const settle = ease(1.55, 2.5, q);
+                let a = mix(air, soil, settle);
+                let opacity = range(q, 1, 1.2, 4.35, 4.7);
+                if (q > 2.7) {
+                    const river = project(3, 790 + (j * 31) % 370, 816 + (j * 23) % 130);
+                    if (j % 3 === 0) a = mix(soil, river, ease(2.7, 3.7, q));
+                    else { a.x -= width * ease(2.7, 3, q); opacity *= 1 - ease(2.7, 3, q); }
+                    if (q > 3.7) a = mix(a, project(4, 1080 + Math.cos(seed) * 30, 710 + Math.sin(seed) * 20), ease(3.7, 4.65, q));
                 }
-            );
+                dot(a.x, a.y, Math.max(1.2, a.scale * (2 + j % 3)), opacity * .8);
+            }
         }
-        // 启动涟漪生成
-        rippleTimer = setInterval(createRipple, 80);
+        const rain = range(q, 2.5, 2.8, 3.6, 3.98);
+        if (rain > 0) {
+            ctx.globalAlpha = rain * .3; ctx.strokeStyle = '#d0e5d8'; ctx.lineWidth = 1; ctx.beginPath();
+            for (let j = 0; j < (mobile ? 50 : 95); j++) {
+                const x = (j * 157.37) % width, y = (j * 89.13 + q * 1700) % (height + 80) - 40;
+                ctx.moveTo(x, y); ctx.lineTo(x - 8, y + 27);
+            }
+            ctx.stroke();
+        }
+        if (current === 0 && t > 0) {
+            const veil = Math.sin(Math.PI * t);
+            for (let j = 0; j < 20; j++) puff(width * (j % 5) / 4 + t * 70, height * Math.floor(j / 5) / 3, width * .30, veil * .85);
+        }
+        if (current === 3 && t > 0) {
+            const y = height * (1 - t);
+            ctx.globalAlpha = Math.sin(t * Math.PI) * .6; ctx.strokeStyle = '#d0eee0'; ctx.lineWidth = 4;
+            ctx.beginPath(); ctx.moveTo(0, y); ctx.bezierCurveTo(width * .3, y - 35, width * .7, y + 35, width, y); ctx.stroke();
+        }
+        ctx.globalAlpha = 1;
     }
-    // 页面初始化就生成雨滴，初始透明隐藏
-    initRainEffect();
-
-    // 时间轴
-    const tl = gsap.timeline();
-    // 【第一部分：旧内容入场】
-    tl.to(pahsImage, {
-        autoAlpha: 1,
-        x: 90,
-        duration: 0.48,
-        ease: 'power1.out',
-    }, 0.56);
-    tl.to(askH2, {
-        x: 300,
-        y: -250,
-        duration: 0.24,
-        fontSize: '3rem',
-        ease: 'power1.out',
-    }, 0.4);
-    tl.to(sourcesContent, {
-        autoAlpha: 1,
-        x: -100,
-        duration: 0.32,
-        ease: 'power1.out',
-    }, 0.88);
-
-    // 【第二部分：旧内容消失，烟囱出场】
-    tl.to(askH2, {
-        autoAlpha: 0,
-        x: 350,
-        duration: 0.52,
-        ease: 'power1.out',
-    }, 1.52);
-    tl.to(sourcesContent, {
-        autoAlpha: 0,
-        x: 50,
-        duration: 0.52,
-        ease: 'power1.out',
-    }, 1.52);
-    tl.to(pahsImage, {
-        autoAlpha: 0,
-        x: -120,
-        duration: 0.52,
-        ease: 'power1.out',
-    }, 1.52);
-
-    tl.to(chimney, {
-        autoAlpha: 1,
-        scale: 0.4,
-        y: 90,
-        skewX: 15,
-        skewY: -3,
-        duration: 0.32
-    }, 1.88)
-        .to(chimney, {
-            scale: 0.8,
-            y: 0,
-            skewX: 0,
-            skewY: 0,
-            duration: 0.32
-        }, 2.16);
-
-    tl.to(smoke1, {
-        autoAlpha: 1,
-        x: -30,
-        y: -80,
-        duration: 0.4,
-        ease: 'power1.out',
-    }, 2.4);
-    tl.to(smoke2, {
-        autoAlpha: 1,
-        x: -100,
-        y: -130,
-        duration: 0.4,
-        ease: 'power1.out',
-    }, 2.68);
-    tl.to(smoke3, {
-        autoAlpha: 1,
-        scale: 2,
-        x: -300,
-        y: -200,
-        duration: 0.4,
-        ease: 'power1.out',
-    }, 3.0);
-
-    tl.to(chimneyText, {
-        autoAlpha: 1,
-        x: -50,
-        y: -50,
-        duration: 0.2,
-        ease: 'power1.out',
-    }, 3.48);
-    tl.to(chimneyText, {
-        autoAlpha: 0,
-        x: -80,
-        y: -80,
-        duration: 0.24,
-        ease: 'power1.out',
-    }, 3.88);
-
-    tl.to(smoke3, {
-        autoAlpha: 0,
-        scale: 1.5,
-        x: -300,
-        y: -300,
-        duration: 0.4,
-        ease: 'power1.out',
-    }, 4.32);
-    tl.to(smoke2, {
-        autoAlpha: 0,
-        x: -100,
-        y: -200,
-        duration: 0.4,
-        ease: 'power1.out',
-    }, 4.52);
-    tl.to(smoke1, {
-        autoAlpha: 0,
-        x: -30,
-        y: -150,
-        duration: 0.4,
-        ease: 'power1.out',
-    }, 4.72);
-
-    tl.to(chimney, {
-        scaleY: 0.5,
-        scaleX: 1.05,
-        duration: 0.4
-    }, 4.88)
-        .to(chimney, {
-            scaleY: 0,
-            scaleX: 1.1,
-            autoAlpha: 0,
-            blur: 8,
-            duration: 0.24
-        }, 5.0);
-
-    // 【第三部分：水体污染叙事】
-    tl.to(rainLayer, {
-        autoAlpha: 0.8,
-        duration: 0.32,
-        ease: 'power1.out',
-    }, 5.16);
-
-    tl.to(riverLayer, {
-        autoAlpha: 0.7,
-        duration: 0.24,
-        ease: 'power1.out',
-    }, 5.4);
-    tl.to(riverLayer, {
-        maskPosition: '0 100%',
-        yPercent: 5,
-        duration: 1.0,
-        ease: 'power1.out',
-    }, 5.4);
-
-    // 鱼在河流之后出现（修正原时序错误）
-    tl.to(fishLayer, {
-        autoAlpha: 1,
-        yPercent: 50,
-        duration: 0.6,
-        ease: 'power1.inOut',
-    }, 5.8);
-
-    tl.to([rainLayer, riverLayer, fishLayer], {
-        filter: 'blur(4px)',
-        duration: 0.24,
-        ease: 'power1.out',
-    }, 6.2);
-
-    tl.to(waterText, {
-        autoAlpha: 1,
-        y: 0,
-        duration: 0.24,
-        ease: 'power1.out',
-    }, 6.32);
-
-    ScrollTrigger.create({
-        trigger: '#sources',
-        start: 'top top',
-        end: '+=12000',
-        pin: true,
-        pinSpacing: true,
-        markers: false,
-        animation: tl,
-        scrub: true,
-        anticipatePin: 0.2,
-        invalidateOnRefresh: true,
-        onRefresh() {
-            gsap.set(askH2, { xPercent: -50, yPercent: -50 });
-            gsap.set(pahsImage, { xPercent: -120, yPercent: -50 });
-            gsap.set(sourcesContent, { xPercent: 10, yPercent: -10 });
-            gsap.set(chimney, { xPercent: -10, yPercent: -10, scale: 0.3 });
-            gsap.set(smoke1, { xPercent: -10, yPercent: -10 });
-            gsap.set(smoke2, { xPercent: -20, yPercent: -20 });
-            gsap.set(smoke3, { xPercent: -30, yPercent: -30, scale: 1 });
-            gsap.set(chimneyText, { xPercent: -78, yPercent: -170 });
-            // 水体元素初始状态重置
-            gsap.set(rainLayer, { autoAlpha: 0 });
-            gsap.set(riverLayer, {
-                autoAlpha: 0,
-                maskPosition: '0 0',
-                yPercent: -5
-            });
-            gsap.set(fishLayer, { autoAlpha: 0, xPercent: -20 });
-            gsap.set(waterText, { autoAlpha: 0, y: 20 });
+    async function loadThree() {
+        if (threeRequested || threeFailed || disposed) return;
+        threeRequested = true;
+        try {
+            const { createCellRenderer } = await import('./home-three.js?v=3.0.0');
+            if (disposed) return;
+            three = createCellRenderer(find('three'), () => { threeFailed = true; three?.destroy(); three = null; });
+            three.resize(width, height, Math.min(devicePixelRatio || 1, mobile ? 1.5 : 2));
+            render();
+        } catch { threeFailed = true; }
+    }
+    function render() {
+        if (disposed) return;
+        const q = Math.min(state.p * 9, 8.99999), current = Math.floor(q), f = q - current;
+        const t = current < 8 ? ease(.7, 1, f) : 0;
+        environments.forEach((el, i) => {
+            const active = i === current || (i === current + 1 && t > 0);
+            el.style.visibility = active ? 'visible' : 'hidden';
+            el.style.display = active ? 'block' : 'none';
+            el.style.opacity = '1'; el.style.transform = 'none'; el.style.clipPath = 'none'; el.style.zIndex = i === current ? '0' : '1';
+        });
+        if (t > 0) {
+            const out = environments[current], next = environments[current + 1];
+            if (current === 1) {
+                out.style.transform = `translateY(${-t * 100}%)`; next.style.transform = `translateY(${(1 - t) * 100}%)`;
+            } else if (current === 2) {
+                out.style.transform = `translateX(${-t * 100}%)`; next.style.transform = `translateX(${(1 - t) * 100}%)`;
+            } else if (current === 3) {
+                next.style.clipPath = `inset(${(1 - t) * 100}% 0 0 0)`;
+            } else if (current === 5) {
+                const drop = project(5, 1120, 760);
+                next.style.clipPath = `circle(${t * 150}% at ${drop.x / width * 100}% ${drop.y / height * 100}%)`;
+            } else {
+                out.style.opacity = String(1 - t); next.style.opacity = String(t);
+                if (current !== 7) {
+                    out.style.transform = `translateX(${-t * 80}px)`; next.style.transform = `translateX(${(1 - t) * 80}px)`;
+                }
+            }
         }
+        const c = carAt(q); car.setAttribute('transform', `translate(${c.x} ${c.y}) scale(1.8)`);
+        root.querySelectorAll('[data-story-wheel]').forEach(wheel => wheel.setAttribute('transform', `rotate(${(c.x - 990) / 45 * 180 / Math.PI})`));
+        alpha(root.querySelector('[data-soil-dots]'), ease(1.8, 2.5, q));
+        const bottleMove = ease(4.7, 5, q);
+        let bottle = mix(project(4, 1080, 830 - ease(4.15, 4.55, q) * 145), project(5, 935, 792), bottleMove);
+        let bottleAlpha = range(q, 3.9, 4.15, 5.58, 5.7);
+        if (q >= 7.7) { bottle = project(8, 1460, 788, .7); bottleAlpha = ease(7.7, 8, q); }
+        pose(shared.bottle, bottle, bottleAlpha);
+        if (q < 4.5) shared.bottle.setAttribute('transform', shared.bottle.getAttribute('transform') + ` rotate(${-65 * (1 - ease(4.05, 4.45, q))})`);
+        root.querySelector('[data-bottle-water]').setAttribute('transform', `translate(0 ${140 * (1 - ease(4.04, 4.3, q))})`);
+        alpha(shared.hand, 1 - ease(4.68, 4.93, q));
+        const pipetteX = lerp(935, 1120, ease(5.27, 5.45, q));
+        const pipetteY = 490 - 150 * ease(5.12, 5.27, q) + 175 * ease(5.45, 5.55, q);
+        pipette.setAttribute('transform', `translate(${pipetteX} ${pipetteY})`);
+        pose(shared.drop, project(5, 1120, lerp(675, 795, ease(5.54, 5.7, q))), range(q, 5.53, 5.58, 5.72, 5.86));
+        const cellPoint = mix(project(7, 540, 650, 1.08), project(8, 1190, 615, .28), ease(7.7, 8, q));
+        const cellAlpha = ease(6.7, 7, q);
+        pose(shared.cell, cellPoint, cellAlpha);
+        const binding = ease(6.72, 7.22, q);
+        const molecule = mix(project(6, 1245, 625, .85), { x: cellPoint.x + 180 * cellPoint.scale, y: cellPoint.y - 35 * cellPoint.scale, scale: cellPoint.scale * .18 }, binding);
+        pose(shared.salicylate, molecule, range(q, 6.3, 6.56, 7.18, 7.28));
+        alpha(root.querySelector('[data-naphthalene-v2]'), 1 - ease(6.25, 6.6, q) * .65);
+        alpha(root.querySelector('[data-cell-transcript]'), range(q, 7.2, 7.34, 7.52, 7.65));
+        alpha(root.querySelector('[data-cell-proteins]'), ease(7.38, 7.6, q));
+        alpha(root.querySelector('[data-cell-promoter]'), .3 + ease(7.2, 7.35, q) * .7);
+        alpha(find('note'), range(q, 3.9, 4.15, 8.1, 8.4));
+        const left = lerp(LAYOUT[current] === 'left' ? 1 : 0, LAYOUT[Math.min(8, current + 1)] === 'left' ? 1 : 0, t);
+        root.style.setProperty('--shade-left', left);
+        root.style.setProperty('--shade-right', 1 - left);
+        if (document.body.dataset.theme === 'light') {
+            const micro = i => i === 6 || i === 7 ? 1 : 0;
+            const amount = lerp(micro(current), micro(Math.min(8, current + 1)), t);
+            const color = (a, b) => a.map((value, i) => Math.round(lerp(value, b[i], amount))).join(', ');
+            root.style.setProperty('--story-shade', color([231, 238, 221], [6, 35, 29]));
+            root.style.setProperty('--story-paper', 'rgb(' + color([23, 62, 48], [237, 240, 220]) + ')');
+            root.style.setProperty('--story-muted', 'rgb(' + color([59, 93, 75], [192, 212, 189]) + ')');
+        } else {
+            ['--story-shade', '--story-paper', '--story-muted'].forEach(name => root.style.removeProperty(name));
+        }
+        const chapter = t > .5 ? current + 1 : current;
+        copies.forEach((copy, i) => {
+            const opacity = i === current ? 1 - ease(.7, .91, f) * (current < 8 ? 1 : 0) : i === current + 1 ? ease(.86, 1, f) : 0;
+            copy.style.opacity = opacity.toFixed(3); copy.style.visibility = opacity > .001 ? 'visible' : 'hidden';
+            copy.style.transform = `translateY(${i === current + 1 ? (1 - t) * 20 : 0}px)`;
+        });
+        if (chapter !== lastChapter) {
+            copies.forEach((copy, i) => { copy.classList.toggle('is-current', i === chapter); copy.inert = i !== chapter; copy.setAttribute('aria-hidden', String(i !== chapter)); });
+            root.dataset.chapter = CHAPTERS[chapter][0]; root.dataset.layout = LAYOUT[chapter]; lastChapter = chapter;
+        }
+        find('progress').style.setProperty('--story-progress', state.p);
+        const ariaProgress = Math.round(state.p * 100);
+        if (ariaProgress !== lastAriaProgress) { find('progress').setAttribute('aria-valuenow', ariaProgress); lastAriaProgress = ariaProgress; }
+        drawParticles(q, current, t);
+        if (q > 6.4) loadThree();
+        three?.render({ ...cellPoint, scale: cellPoint.scale / .12 }, q / 9, cellAlpha, document.body.dataset.theme);
+    }
+    measure();
+    const timeline = gsap.timeline({ paused: true, onUpdate: render });
+    timeline.to(state, { p: 1, duration: 100, ease: 'none' });
+    CHAPTERS.forEach(([name, start]) => timeline.addLabel(name, start * 100));
+    const trigger = ScrollTrigger.create({ id: 'homepage-story', trigger: root, start: 0,
+        end: () => height * (mobile ? 12 : 16), pin: stage, pinSpacing: true,
+        animation: timeline, scrub: true, invalidateOnRefresh: true });
+    function stopTicker() {
+        if (!tickerActive) return;
+        gsap.ticker.remove(tick);
+        tickerActive = false;
+    }
+    function tick(time) {
+        lenis?.raf(time * 1000);
+        if (!lenis?.isScrolling) stopTicker();
+    }
+    function wakeTicker() {
+        if (disposed || document.hidden || !lenis || tickerActive) return;
+        tickerActive = true;
+        gsap.ticker.add(tick);
+    }
+    function setupLenis() {
+        lenis?.destroy();
+        lenis = null;
+        stopTicker();
+        if (mobile || !window.Lenis) return;
+        lenis = new window.Lenis({ autoRaf: false, lerp: 0.1, smoothWheel: true, anchors: false });
+        lenis.on('scroll', ScrollTrigger.update);
+    }
+    setupLenis();
+    on(window, 'wheel', wakeTicker, { passive: true });
+    on(window, 'keydown', wakeTicker);
+    on(window, 'touchmove', wakeTicker, { passive: true });
+    on(window, 'scroll', wakeTicker, { passive: true });
+    on(document, 'visibilitychange', () => {
+        if (document.hidden) stopTicker();
+        else { render(); wakeTicker(); }
     });
-})();
+    const aliases = { Project: 'beginning', Description: 'beginning', road: 'beginning', Engineering: 'pathway',
+        'Wet Lab': 'signal', Design: 'signal', Result: 'return', 'Dry Lab': 'return', Team: 'return' };
+    function chapterName(hash) {
+        let name;
+        try { name = decodeURIComponent(hash.replace(/^#/, '')); } catch { return null; }
+        if (name.startsWith('story-')) name = name.slice(6);
+        name = aliases[name] || name;
+        return CHAPTERS.some(([key]) => key === name) ? name : null;
+    }
+    function seek(name, immediate = false) {
+        const cue = CHAPTERS.find(([key]) => key === name);
+        if (!cue) return;
+        const p = name === 'return' ? 0.985 : cue[1] + (cue[1] ? 0.026 : 0);
+        const target = trigger.start + (trigger.end - trigger.start) * p;
+        if (lenis) {
+            lenis.scrollTo(target, { immediate, duration: 1.15 });
+            wakeTicker();
+        } else {
+            window.scrollTo({ top: target, behavior: immediate ? 'instant' : 'smooth' });
+        }
+    }
+    on(document, 'click', event => {
+        const link = event.target.closest('a[href^="#"]');
+        if (!link || event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+        // Leave mobile navigation accordion buttons to the existing menu handler.
+        if (mobile && link.matches('.has-dropdown > .nav-link')) return;
+        const name = link.dataset.storyJump || chapterName(link.hash);
+        if (!name) return;
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        document.querySelectorAll('.dropdown-menu.active').forEach(menu => menu.classList.remove('active'));
+        const menu = document.querySelector('#navMenu');
+        if (menu?.classList.contains('active')) document.querySelector('#menuToggle')?.click();
+        history.replaceState(null, '', '#story-' + name);
+        seek(name);
+    }, true);
+    on(window, 'hashchange', () => {
+        const name = chapterName(location.hash);
+        if (name) seek(name);
+    });
+    on(window, 'resize', () => {
+        clearTimeout(resizeTimer);
+        if (mobile && width === window.innerWidth && Math.abs(height - window.innerHeight) < 160) return;
+        resizeTimer = setTimeout(() => {
+            const p = state.p;
+            const previousMobile = mobile;
+            measure();
+            if (previousMobile !== mobile) setupLenis();
+            ScrollTrigger.refresh();
+            const position = trigger.start + (trigger.end - trigger.start) * p;
+            if (lenis) lenis.scrollTo(position, { immediate: true });
+            else window.scrollTo(0, position);
+            render();
+        }, 160);
+    });
+    const preferences = new MutationObserver(() => render());
+    preferences.observe(document.body, { attributes: true, attributeFilter: ['data-theme', 'data-lang'] });
+    const loader = document.querySelector('#loader');
+    let loaderObserver = null;
+    const finishSetup = () => {
+        if (disposed) return;
+        ScrollTrigger.refresh();
+        const name = chapterName(location.hash);
+        const navigation = performance.getEntriesByType('navigation')[0];
+        if (name && navigation?.type !== 'reload' && navigation?.type !== 'back_forward') seek(name, true);
+        render();
+    };
+    if (loader && !loader.hidden && !loader.classList.contains('hidden')) {
+        loaderObserver = new MutationObserver(() => {
+            if (loader.hidden || loader.classList.contains('hidden')) {
+                loaderObserver.disconnect();
+                finishSetup();
+            }
+        });
+        loaderObserver.observe(loader, { attributes: true, attributeFilter: ['hidden', 'class'] });
+    } else finishSetup();
+    document.fonts?.ready.then(() => { if (!disposed) ScrollTrigger.refresh(); });
+    render();
+    return {
+        getProgress: () => state.p,
+        restore(p) {
+            const position = trigger.start + (trigger.end - trigger.start) * clamp(p);
+            if (lenis) lenis.scrollTo(position, { immediate: true });
+            else window.scrollTo(0, position);
+            ScrollTrigger.update();
+        },
+        destroy() {
+            if (disposed) return;
+            disposed = true;
+            clearTimeout(resizeTimer);
+            stopTicker();
+            lenis?.destroy();
+            three?.destroy();
+            preferences.disconnect();
+            loaderObserver?.disconnect();
+            cleanups.forEach(cleanup => cleanup());
+            trigger.kill(true);
+            timeline.kill();
+            root.classList.remove('is-enhanced');
+            environments.forEach(el => el.removeAttribute('style'));
+            arts.forEach(el => el.removeAttribute('transform'));
+            root.removeAttribute('data-chapter');
+            root.removeAttribute('data-layout');
+            ['--shade-left', '--shade-right', '--story-shade', '--story-paper', '--story-muted'].forEach(name => root.style.removeProperty(name));
+            root.querySelector('[data-bottle-water]').removeAttribute('transform');
+            Object.values(shared).forEach(el => { el.removeAttribute('transform'); el.removeAttribute('style'); });
+            copies.forEach(copy => {
+                copy.removeAttribute('style');
+                copy.removeAttribute('aria-hidden');
+                copy.inert = false;
+            });
+            ctx?.clearRect(0, 0, width, height);
+        }
+    };
+}
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot, { once: true });
+else boot();
+reducedMotion.addEventListener('change', boot);
+window.addEventListener('resize', () => {
+    if (Boolean(controller) !== canAnimate()) boot();
+});
+window.addEventListener('pagehide', () => {
+    resumeProgress = controller?.getProgress() ?? null;
+    controller?.destroy();
+    controller = null;
+});
+window.addEventListener('pageshow', event => {
+    if (event.persisted) {
+        document.body.classList.remove('page-fade-out');
+        boot();
+        if (resumeProgress !== null) controller?.restore(resumeProgress);
+    }
+});
