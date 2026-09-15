@@ -5,13 +5,34 @@ export const CUTS = [.55, .59, .56, .55, .67, .60, .61, .61, 1];
 const TOTAL = LENGTHS.reduce((sum, value) => sum + value, 0);
 export const CHAPTERS = NAMES.map((name, i) => [name, LENGTHS.slice(0, i).reduce((sum, value) => sum + value, 0) / TOTAL]);
 export const LAYOUT = ['left', 'right', 'left', 'right', 'left', 'left', 'left', 'right', 'left'];
-const FOCUS = [[980, 675, .62], [650, 560, .50], [1080, 665, .68], [610, 650, .66], [1080, 685, .77], [1080, 655, .61], [1070, 630, .66], [540, 650, .66], [1150, 655, .50]];
+const FOCUS = [[980, 675, .62], [650, 560, .50], [1080, 665, .68], [700, 650, .60], [1080, 685, .77], [1080, 655, .61], [1070, 630, .66], [540, 650, .66], [1150, 655, .50]];
 export const clamp = (v, min = 0, max = 1) => Math.max(min, Math.min(max, v));
 export const lerp = (a, b, t) => a + (b - a) * t;
 export const ease = (a, b, p) => { const t = clamp((p - a) / (b - a)); return t * t * (3 - 2 * t); };
 export const range = (p, a, b, c, d) => ease(a, b, p) * (1 - ease(c, d, p));
 export const mix = (a, b, t) => ({ x: lerp(a.x, b.x, t), y: lerp(a.y, b.y, t), scale: lerp(a.scale, b.scale, t) });
 export const carAt = q => ({ x: lerp(990, 1400, ease(0, .75, q)), y: lerp(727, 748, ease(0, .75, q)) });
+// Emission positions are historical: advancing the car never drags old exhaust along.
+export function exhaustAt(q, birth) {
+    const age = Math.max(0, q - birth), car = carAt(birth);
+    const velocity = (carAt(birth + .001).x - car.x) / .001;
+    return { x: car.x - 236 + velocity * .075 * (1 - Math.exp(-age / .075)) - 165 * age,
+        y: car.y + 10 - 160 * age + Math.sin(age * 9) * age * 18,
+        radius: 10 + 170 * Math.min(age, .56), age };
+}
+// One centreline defines both scenes' water, the concrete edges and moving grains.
+export function waterAt(t) {
+    const u = clamp(t), v = 1 - u;
+    return { x: v * v * v * 300 + 3 * v * v * u * 730 + 3 * v * u * u * 720 + u * u * u * 945,
+        y: v * v * v * 535 + 3 * v * v * u * 557 + 3 * v * u * u * 785 + u * u * u * 848 };
+}
+export function waterRoute() {
+    return [{ x: -1600, y: 438 }, { x: -600, y: 489 }, ...Array.from({ length: 81 }, (_, i) => waterAt(i / 80))];
+}
+export function projectWater(frame, t) {
+    const p = waterAt(t);
+    return frame.q < 3 ? project(frame, 2, p.x + 820, p.y + 45) : project(frame, 3, p.x, p.y);
+}
 export const project = (frame, i, x, y, scale = 1) => ({ x: frame.cameras[i].x + x * frame.cameras[i].scale, y: frame.cameras[i].y + y * frame.cameras[i].scale, scale: scale * frame.cameras[i].scale });
 
 export function storyFrame(progress, width, height) {
@@ -34,12 +55,13 @@ export function storyFrame(progress, width, height) {
         return { x: sx - x * scale, y: sy - y * scale, scale };
     };
     const c = carAt(q);
-    const smokeSource = { x: c.x - 350, y: c.y - 88 };
+    const smokeSource = exhaustAt(q, .12);
+    const smokeRadius = smokeSource.radius;
     if (t > 0) {
         switch (index) {
             case 0:
                 cameras[0] = mix(bases[0], focus(0, smokeSource.x, smokeSource.y, 11), ease(0, .47, t));
-                cameras[1] = mix(focus(1, 470, 145, 11 * bases[0].scale / bases[1].scale), bases[1], ease(.53, 1, t));
+                cameras[1] = mix(focus(1, 470, 145, 11 * smokeRadius / 105 * bases[0].scale / bases[1].scale), bases[1], ease(.53, 1, t));
                 break;
             case 1:
                 cameras[1] = mix(bases[1], focus(1, 450, 1150, 1.7, width * .53, -height * .12), t);
@@ -80,17 +102,16 @@ export function storyFrame(progress, width, height) {
     if (q >= 4) cameras[3] = focus(3, 1000, 837, 1.7, width * .60, height * .68);
     if (q >= 7) cameras[6] = focus(6, 1245, 625, 2, width * .62, height * .60);
     frame.car = c;
-    frame.smoke = q < 1 ? at(0, smokeSource.x, smokeSource.y, 105) : at(1, 470, 145, 105);
+    frame.smoke = q < 1 ? at(0, smokeSource.x, smokeSource.y, smokeRadius) : at(1, 470, 145, 105);
     if (index === 0 && t > .5) frame.smoke = at(1, 470, 145, 105);
     frame.grain = q < 2
-        ? mix(at(1, 450, 290), at(2, 1120, 580), ease(1.53, 1.97, q))
-        : q < 3 ? at(2, 1120, 580) : at(3, 300, 535);
+        ? mix(at(1, 450, 290), at(2, 1120, 544), ease(1.53, 1.97, q))
+        : q < 3 ? at(2, 1120, 544) : at(3, 300, 499);
     if (q < 2) frame.grain.scale *= 1 + Math.sin(ease(1.53, 1.97, q) * Math.PI) * 2;
-    frame.clod = q < 3 ? at(2, 1120, 580) : at(3, 300, 535);
+    frame.clod = q < 3 ? at(2, 1120, 544) : at(3, 300, 499);
     if (q > 2.4) {
         const flow = ease(2.4, 3.65, q);
-        const a = at(3, 300, 535), b = at(3, 630, 620), c = at(3, 945, 848);
-        const stream = mix(mix(a, b, flow), mix(b, c, flow), flow);
+        const stream = projectWater(frame, flow);
         frame.grain = mix(frame.clod, stream, ease(2.56, 3, q));
         if (q > 3.55) frame.grain = mix(frame.grain, at(4, 1080, 756), ease(3.55, 4.12, q));
     }

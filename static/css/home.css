@@ -92,6 +92,9 @@ html:has(.home-story.is-enhanced) { scroll-behavior: auto; }
 .story-progress { height: 2px; flex: 1; max-width: 300px; background: rgba(157, 191, 166, .4); }
 .story-progress span { display: block; height: 100%; background: var(--story-paper); transform: scaleX(var(--story-progress, 0)); transform-origin: left; }
 .home-story.is-enhanced .story-science-note { display: block; position: absolute; bottom: 110px; right: 6vw; width: min(370px, 30vw); color: var(--story-paper); opacity: 0; font-size: 10px; line-height: 1.6; z-index: 7; text-align: right; }
+@media (min-width: 768px) {
+    .home-story.is-enhanced[data-chapter="sample"] .story-science-note { left: 6vw; right: auto; text-align: left; }
+}
 
 @media (max-width: 767px) {
     body:has(.home-story) .nav-menu:not(.active) { visibility: hidden; pointer-events: none; }

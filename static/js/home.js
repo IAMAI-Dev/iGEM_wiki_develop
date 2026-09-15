@@ -1,4 +1,4 @@
-import { CHAPTERS, CUTS, LAYOUT, clamp, lerp, ease, range, mix, carAt, project, storyFrame } from './home-motion.js?v=4.0.1';
+import { CHAPTERS, CUTS, LAYOUT, clamp, lerp, ease, range, mix, exhaustAt, waterAt, waterRoute, projectWater, project, storyFrame } from './home-motion.js?v=5.0.0';
 let controller = null;
 let resumeProgress = null;
 const progressKey = 'homepage-story-progress';
@@ -32,6 +32,12 @@ function createStory(root) {
     const beats = copies.map(copy => [...copy.querySelectorAll('[data-story-beat]')]);
     const shared = Object.fromEntries(['bottle', 'drop', 'cell', 'salicylate', 'clod', 'grain', 'ripple'].map(name => [name, root.querySelector('[data-shared-' + name + ']')]));
     const hands = [...root.querySelectorAll('[data-shared-hand]')];
+    const handOriginals = [...root.querySelectorAll('#v4-hand-back *, #v4-hand-front *')].map(el => [el, el.getAttribute('d')]);
+    const handContours = [...root.querySelectorAll('[data-hand-outline]')].map(el => {
+        const closed = el.getAttribute('d');
+        const numbers = path => path.match(/-?\d+(?:\.\d+)?/g).map(Number);
+        return { el, closed, from: numbers(closed), to: numbers(el.dataset.handOpen) };
+    });
     const car = root.querySelector('[data-car-v2]');
     const wheels = [...root.querySelectorAll('[data-story-wheel]')];
     const pipette = root.querySelector('[data-pipette-v2]');
@@ -40,12 +46,37 @@ function createStory(root) {
     let disposed = false, resizeTimer = null, tickerActive = false, lenis = null;
     let three = null, threeRequested = false, threeFailed = false;
     let lastChapter = -1, lastAriaProgress = -1;
+    let pendingProgress = null;
     const cleanups = [];
     const on = (target, event, fn, options) => {
         target.addEventListener(event, fn, options);
         cleanups.push(() => target.removeEventListener(event, fn, options));
     };
     const alpha = (el, value) => { if (el) el.style.opacity = clamp(value).toFixed(4); };
+    const route = waterRoute();
+    const routePath = (offset, depth = 0, reverse = false) => {
+        const points = route.map((p, i) => {
+            const a = route[Math.max(0, i - 1)], b = route[Math.min(route.length - 1, i + 1)];
+            const length = Math.hypot(b.x - a.x, b.y - a.y);
+            return [p.x - (b.y - a.y) / length * offset, p.y + (b.x - a.x) / length * offset + depth];
+        });
+        return (reverse ? points.reverse() : points).map(p => p.join(' ')).join('L');
+    };
+    root.querySelectorAll('[data-channel-band]').forEach(el => {
+        const [a, b, da, db] = el.dataset.channelBand.split(',').map(Number);
+        el.setAttribute('d', 'M' + routePath(a, da) + 'L' + routePath(b, db, true) + 'Z');
+    });
+    const sharedWater = root.querySelector('[data-shared-water]');
+    sharedWater?.querySelectorAll('path').forEach(el => el.setAttribute('d', 'M' + routePath(0)));
+    const joints = root.querySelector('[data-channel-joints]');
+    [.05, .26, .48, .69, .89].forEach(t => {
+        const p = waterAt(t), b = waterAt(t + .002);
+        const angle = Math.atan2(b.y - p.y, b.x - p.x) * 180 / Math.PI;
+        const joint = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        joint.setAttribute('d', 'M0-39V-29L0-12M0 13L0 13V22M0 22V50');
+        joint.setAttribute('transform', 'translate(' + p.x + ' ' + p.y + ') rotate(' + angle + ')');
+        joints?.append(joint);
+    });
     const show = (el, visible) => { if (el) el.style.visibility = visible ? 'visible' : 'hidden'; };
     function pose(el, point, opacity = 1, angle = 0) {
         if (!el) return;
@@ -93,16 +124,16 @@ function createStory(root) {
         ctx.globalAlpha = clamp(opacity); ctx.fillStyle = '#d9b678';
         ctx.beginPath(); ctx.arc(x, y, Math.max(.8, radius), 0, Math.PI * 2); ctx.fill();
     }
-    function plume(frame, scene, sx, sy, strength, road = false) {
+    function plume(frame, scene, sx, sy, strength) {
         const n = mobile ? 30 : 48;
         for (let j = 0; j < n; j++) {
-            const age = (j / n + frame.q * (road ? .61 : .28)) % 1;
+            const age = (j / n + frame.q * .28) % 1;
             const spread = age * age;
             const eddy = Math.sin(j * 2.399 + frame.q * 2.1);
-            const x = sx + (road ? -205 : 190) * age + eddy * spread * (road ? 64 : 70);
-            const y = sy - (road ? 128 : 340) * age + Math.cos(j * 1.71) * spread * 52;
+            const x = sx + 190 * age + eddy * spread * 70;
+            const y = sy - 340 * age + Math.cos(j * 1.71) * spread * 52;
             const point = project(frame, scene, x, y);
-            const radius = (9 + age * (road ? 92 : 116)) * point.scale;
+            const radius = (9 + age * 116) * point.scale;
             puff(point.x, point.y, radius, Math.sin(age * Math.PI) * strength, j, eddy * .4);
         }
     }
@@ -111,8 +142,14 @@ function createStory(root) {
         const at = (i, x, y, scale = 1) => project(frame, i, x, y, scale);
         ctx.clearRect(0, 0, width, height);
         if (q < 1) {
-            const c = carAt(q);
-            plume(frame, 0, c.x - 236, c.y + 10, 1 - ease(.40, .54, t), true);
+            for (let j = 0; j < 40; j++) {
+                const birth = -.48 + j * .03;
+                if (Math.abs(birth - .12) < .001 || birth > q) continue;
+                const p = exhaustAt(q, birth);
+                const point = at(0, p.x, p.y);
+                puff(point.x, point.y, p.radius * point.scale,
+                    ease(0, .025, p.age) * (1 - ease(.38, .85, p.age)) * (1 - ease(.40, .54, t)), j, p.age * (j % 2 ? 1 : -1));
+            }
         }
         if (q > .75 && q < 2) {
             const intensity = ease(.48, .65, t) * (index === 0 ? 1 : 0) + (index === 1 ? 1 : 0);
@@ -122,7 +159,7 @@ function createStory(root) {
         // This is the road's retained plume cluster, enlarged through the source-to-source match.
         if (q < 1.6) {
             const a = frame.smoke;
-            const opacity = q < 1 ? 1 : 1 - ease(1.2, 1.6, q);
+            const opacity = q < 1 ? ease(.12, .17, q) : 1 - ease(1.2, 1.6, q);
             for (let j = 0; j < 15; j++) {
                 const angle = j * 2.399 + q * .2;
                 const distance = Math.sqrt(j / 15) * .62;
@@ -160,8 +197,7 @@ function createStory(root) {
                 if (q >= 2.56) {
                     if (j % 3 === 0) {
                         const flow = clamp((q - 2.56) / 1.25 - j * .004);
-                        const p0 = at(3, 300, 535), p1 = at(3, 630, 620), p2 = at(3, 945, 848);
-                        const stream = mix(mix(p0, p1, flow), mix(p1, p2, flow), flow);
+                        const stream = projectWater(frame, flow);
                         point = mix(ground, stream, ease(2.56, 3, q));
                         if (q > 3.55) point = mix(point, at(4, 1080 + (seed(j) - .5) * 110, 749 + seed(j + 5) * 25), ease(3.55, 4.1, q));
                     } else opacity *= 1 - ease(2.80, 3, q);
@@ -184,7 +220,7 @@ function createStory(root) {
         if (threeRequested || threeFailed || disposed) return;
         threeRequested = true;
         try {
-            const { createCellRenderer } = await import('./home-three.js?v=4.0.1');
+            const { createCellRenderer } = await import('./home-three.js?v=5.0.0');
             if (disposed) return;
             three = createCellRenderer(find('three'), () => { threeFailed = true; three?.destroy(); three = null; });
             three.resize(width, height, Math.min(devicePixelRatio || 1, mobile ? 1.5 : 2));
@@ -239,21 +275,41 @@ function createStory(root) {
         pose(shared.clod, frame.clod, range(q, 1.72, 1.93, 3.28, 3.5));
         pose(root.querySelector('[data-shared-pah]'), { ...frame.smoke, scale: frame.smoke.scale / 230 }, current === 0 ? range(t, .22, .38, .68, .84) * .65 : 0);
         pose(shared.grain, frame.grain, range(q, 1.32, 1.55, 4.12, 4.26));
-        const film = root.querySelector('[data-surface-film]');
-        alpha(film, ease(2.30, 2.53, q));
-        film?.setAttribute('stroke-dashoffset', 1 - ease(2.30, 2.65, q));
-        const rainDrop = at(2, 1120, lerp(380, 575, ease(2.28, 2.46, q)), .32);
+        const waterCamera = q < 3 ? at(2, 820, 45) : at(3, 0, 0);
+        pose(sharedWater, waterCamera, range(q, 2.30, 2.53, 3.83, 4.02));
+        const startX = lerp(250, -1600, ease(2.56, 3, q));
+        const wetEnd = waterAt(lerp(.12, 1, ease(2.53, 3.30, q)));
+        const wetRoute = [{ x: startX, y: 535 + (startX - 300) * 22 / 430 }, ...route.filter(p => p.x > startX && p.x < wetEnd.x), wetEnd];
+        sharedWater?.querySelectorAll('path').forEach((el, i) => {
+            el.setAttribute('stroke-width', lerp(i ? 1 : 4, i ? 2 : 17, ease(2.56, 3, q)));
+            el.setAttribute('d', wetRoute.length ? 'M' + wetRoute.map(p => p.x + ' ' + p.y).join('L') : '');
+        });
+        const rainDrop = at(2, 1120, lerp(380, 540, ease(2.28, 2.46, q)), .32);
         pose(root.querySelector('[data-shared-raindrop]'), rainDrop, range(q, 2.27, 2.30, 2.45, 2.49));
         pose(shared.ripple, frame.ripple, range(q, 3.22, 3.48, 4.45, 4.62));
         if (shared.ripple) shared.ripple.style.strokeDashoffset = String(-q * 15);
         const waterline = root.querySelector('[data-waterline-front]');
         pose(waterline, at(4, 1080, 749), range(q, 4.05, 4.09, 4.24, 4.30));
         pose(shared.bottle, frame.bottle, frame.bottleAlpha, frame.bottleAngle);
-        root.querySelector('[data-bottle-water]')?.setAttribute('transform', 'rotate(' + (-frame.bottleAngle) + ' 0 -100) translate(0 ' + (140 * (1 - ease(4.07, 4.23, q))) + ')');
+        const liquidLevel = lerp(100, lerp(-85, -156, ease(4.24, 4.56, q)), ease(4.07, 4.23, q));
+        root.querySelector('[data-bottle-water]')?.setAttribute('transform', 'rotate(' + (-frame.bottleAngle) + ') translate(0 ' + liquidLevel + ')');
         hands.forEach(hand => {
-            alpha(hand, 1 - ease(5.01, 5.15, q));
-            hand.setAttribute('transform', 'translate(' + (ease(5.01, 5.15, q) * 210) + ' ' + (-ease(5.01, 5.15, q) * 60) + ')');
+            const retreat = ease(5.12, 5.29, q);
+            alpha(hand, 1 - ease(5.23, 5.32, q));
+            hand.setAttribute('transform', 'translate(' + (retreat * 420) + ' ' + (-ease(5.035, 5.16, q) * 80 - retreat * 88) + ')');
         });
+        // A continuous contour unfolds from the palm; joints are not separate capsules.
+        const opening = ease(5.035, 5.18, q);
+        handContours.forEach(({ el, closed, from, to }) => {
+            let i = 0;
+            el.setAttribute('d', closed.replace(/-?\d+(?:\.\d+)?/g, () => {
+                const value = lerp(from[i], to[i], opening); i++;
+                return value.toFixed(3) + ' ';
+            }));
+        });
+        alpha(root.querySelector('[data-hand-wrap]'), (1 - opening) * .9);
+        alpha(root.querySelector('[data-hand-outline="fingers"]'), opening);
+        alpha(root.querySelector('[data-hand-soft-detail]'), 1 - opening);
         pipette.setAttribute('transform', 'translate(' + frame.pipette.x + ' ' + frame.pipette.y + ')');
         pose(shared.drop, frame.drop, range(q, 5.52, 5.57, 5.84, 5.99));
         const dropShape = shared.drop?.querySelector('path');
@@ -267,7 +323,7 @@ function createStory(root) {
         alpha(root.querySelector('[data-cell-transcript]'), range(q, 7.21, 7.35, 7.53, 7.65));
         alpha(root.querySelector('[data-cell-proteins]'), ease(7.38, 7.62, q));
         alpha(root.querySelector('[data-cell-promoter]'), .3 + ease(7.23, 7.37, q) * .7);
-        alpha(root.querySelector('[data-bench-contact]'), range(q, 4.95, 5.01, 5.70, 5.86));
+        alpha(root.querySelector('[data-bench-contact]'), range(q, 4.98, 5.01, 5.70, 5.86) * .28);
         alpha(find('note'), range(q, 3.95, 4.15, 8.1, 8.4) * (t > 0 ? 1 - Math.sin(Math.PI * t) * .8 : 1));
         const screen = root.querySelector('[data-cell-screen]');
         const clip = root.querySelector('[data-monitor-clip]');
@@ -429,20 +485,32 @@ function createStory(root) {
     preferences.observe(document.body, { attributes: true, attributeFilter: ['data-theme', 'data-lang'] });
     const loader = document.querySelector('#loader');
     let loaderObserver = null;
-    const finishSetup = () => {
+    const finishSetup = async () => {
+        // A direct story anchor must be resolved after fonts and the browser's initial layout.
+        await document.fonts?.ready;
+        await new Promise(resolve => requestAnimationFrame(resolve));
         if (disposed) return;
+        const previousProgress = state.p;
         ScrollTrigger.refresh();
         // Refresh changes the pinned document height; update Lenis before restoring a position.
         lenis?.resize();
         const name = chapterName(location.hash);
         const navigation = performance.getEntriesByType('navigation')[0];
-        if (initialProgress !== null) {
-            const position = trigger.start + (trigger.end - trigger.start) * initialProgress;
+        const restoreProgress = pendingProgress ?? initialProgress;
+        if (restoreProgress !== null) {
+            const position = trigger.start + (trigger.end - trigger.start) * restoreProgress;
+            pendingProgress = null;
             initialProgress = null;
             if (lenis) lenis.scrollTo(position, { immediate: true });
             else window.scrollTo(0, position);
             ScrollTrigger.update();
         } else if (name && navigation?.type !== 'reload' && navigation?.type !== 'back_forward') seek(name, true);
+        else if (previousProgress > 0) {
+            const position = trigger.start + (trigger.end - trigger.start) * previousProgress;
+            if (lenis) lenis.scrollTo(position, { immediate: true });
+            else window.scrollTo(0, position);
+            ScrollTrigger.update();
+        }
         render();
     };
     if (loader && !loader.hidden && !loader.classList.contains('hidden')) {
@@ -454,11 +522,12 @@ function createStory(root) {
         });
         loaderObserver.observe(loader, { attributes: true, attributeFilter: ['hidden', 'class'] });
     } else finishSetup();
-    document.fonts?.ready.then(() => { if (!disposed) ScrollTrigger.refresh(); });
     render();
     return {
         getProgress: () => state.p,
         restore(p) {
+            pendingProgress = clamp(p);
+            lenis?.resize();
             const position = trigger.start + (trigger.end - trigger.start) * clamp(p);
             if (lenis) lenis.scrollTo(position, { immediate: true });
             else window.scrollTo(0, position);
@@ -485,6 +554,9 @@ function createStory(root) {
             root.querySelector('[data-bottle-water]').removeAttribute('transform');
             Object.values(shared).filter(Boolean).forEach(el => { el.removeAttribute('transform'); el.removeAttribute('style'); });
             hands.forEach(el => { el.removeAttribute('transform'); el.removeAttribute('style'); });
+            handOriginals.forEach(([el, d]) => { el.removeAttribute('transform'); el.removeAttribute('style'); if (d !== null) el.setAttribute('d', d); });
+            sharedWater?.removeAttribute('transform'); sharedWater?.removeAttribute('style');
+            joints?.replaceChildren();
             beats.flat().forEach(el => { el.removeAttribute('style'); el.removeAttribute('aria-hidden'); });
             environments.forEach(el => { el.firstElementChild.setAttribute('viewBox', '0 0 1600 1000'); el.querySelector('.scene-backdrop').removeAttribute('transform'); el.querySelector('.scene-backdrop').removeAttribute('style'); });
             arts.forEach(el => el.removeAttribute('style'));
