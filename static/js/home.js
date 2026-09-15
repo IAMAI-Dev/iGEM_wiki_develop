@@ -1,12 +1,13 @@
-const CHAPTERS = ['beginning', 'air', 'soil', 'rain', 'sample', 'lab', 'pathway', 'signal', 'return'].map((name, i) => [name, i / 9]);
-const FOCUS = [[1080, 660, .70], [490, 560, .62], [1040, 720, .65], [530, 640, .60], [1080, 660, .75], [1080, 650, .57], [1080, 630, .68], [540, 650, .62], [1110, 650, .57]];
-const LAYOUT = ['left', 'right', 'left', 'right', 'left', 'left', 'left', 'right', 'left'];
-const clamp = (v, min = 0, max = 1) => Math.max(min, Math.min(max, v));
-const lerp = (a, b, t) => a + (b - a) * t;
-const ease = (a, b, p) => { const t = clamp((p - a) / (b - a)); return t * t * (3 - 2 * t); };
-const range = (p, a, b, c, d) => ease(a, b, p) * (1 - ease(c, d, p));
+import { CHAPTERS, CUTS, LAYOUT, clamp, lerp, ease, range, mix, carAt, project, storyFrame } from './home-motion.js?v=4.0.1';
 let controller = null;
 let resumeProgress = null;
+const progressKey = 'homepage-story-progress';
+let initialProgress = null;
+try {
+    const navigation = performance.getEntriesByType('navigation')[0];
+    const saved = sessionStorage.getItem(progressKey);
+    if (saved !== null && ['reload', 'back_forward'].includes(navigation?.type) && Number.isFinite(Number(saved))) initialProgress = clamp(Number(saved));
+} catch { /* Storage may be unavailable; ordinary navigation remains usable. */ }
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 function canAnimate() {
     return !reducedMotion.matches && !!window.gsap && !!window.ScrollTrigger && window.innerHeight >= (window.innerWidth < 768 ? 600 : 500);
@@ -23,16 +24,19 @@ function createStory(root) {
     const find = name => root.querySelector('[data-story-' + name + ']');
     const stage = find('stage');
     const canvas = find('particles');
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas?.getContext('2d');
+    if (!stage || !ctx) return null;
     const environments = [...root.querySelectorAll('[data-environment]')];
     const arts = [...root.querySelectorAll('[data-scene-art]')];
     const copies = [...root.querySelectorAll('[data-story-chapter]')];
-    const shared = Object.fromEntries(['bottle', 'hand', 'drop', 'cell', 'salicylate'].map(name => [name, root.querySelector('[data-shared-' + name + ']')]));
+    const beats = copies.map(copy => [...copy.querySelectorAll('[data-story-beat]')]);
+    const shared = Object.fromEntries(['bottle', 'drop', 'cell', 'salicylate', 'clod', 'grain', 'ripple'].map(name => [name, root.querySelector('[data-shared-' + name + ']')]));
+    const hands = [...root.querySelectorAll('[data-shared-hand]')];
     const car = root.querySelector('[data-car-v2]');
+    const wheels = [...root.querySelectorAll('[data-story-wheel]')];
     const pipette = root.querySelector('[data-pipette-v2]');
     const state = { p: 0 };
     let width = innerWidth, height = innerHeight, mobile = width < 768;
-    let cover = 1, offsetX = 0, offsetY = 0;
     let disposed = false, resizeTimer = null, tickerActive = false, lenis = null;
     let three = null, threeRequested = false, threeFailed = false;
     let lastChapter = -1, lastAriaProgress = -1;
@@ -42,106 +46,137 @@ function createStory(root) {
         cleanups.push(() => target.removeEventListener(event, fn, options));
     };
     const alpha = (el, value) => { if (el) el.style.opacity = clamp(value).toFixed(4); };
+    const show = (el, visible) => { if (el) el.style.visibility = visible ? 'visible' : 'hidden'; };
+    function pose(el, point, opacity = 1, angle = 0) {
+        if (!el) return;
+        el.setAttribute('transform', 'translate(' + point.x + ' ' + point.y + ') scale(' + point.scale + ') rotate(' + angle + ')');
+        alpha(el, opacity);
+        show(el, opacity > .001);
+    }
     root.classList.add('is-enhanced');
     function measure() {
         width = innerWidth; height = innerHeight; mobile = width < 768;
         root.style.setProperty('--story-height', height + 'px');
-        cover = Math.max(width / 1600, height / 1000);
-        offsetX = (width - 1600 * cover) / 2; offsetY = (height - 1000 * cover) / 2;
         const dpr = Math.min(devicePixelRatio || 1, mobile ? 1.5 : 2);
         canvas.width = Math.round(width * dpr); canvas.height = Math.round(height * dpr);
-        ctx?.setTransform(dpr, 0, 0, dpr, 0, 0);
-        arts.forEach((art, i) => {
-            const [x, y, scale] = FOCUS[i];
-            art.setAttribute('transform', mobile ? `translate(800 735) scale(${scale}) translate(${-x} ${-y})` : 'translate(0 0)');
-        });
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        // SVG art, shared objects and Canvas now use exactly the same CSS-pixel projection.
+        environments.forEach(env => env.firstElementChild.setAttribute('viewBox', '0 0 ' + width + ' ' + height));
         three?.resize(width, height, dpr);
     }
-    function project(scene, x, y, scale = 1) {
-        const [fx, fy, zoom] = FOCUS[scene];
-        return { x: (mobile ? (x - fx) * zoom + 800 : x) * cover + offsetX,
-            y: (mobile ? (y - fy) * zoom + 735 : y) * cover + offsetY,
-            scale: scale * cover * (mobile ? zoom : 1) };
+    const seed = n => { const value = Math.sin(n * 127.1 + 311.7) * 43758.5453; return value - Math.floor(value); };
+    const sprites = Array.from({ length: 4 }, (_, k) => {
+        const sprite = document.createElement('canvas');
+        sprite.width = sprite.height = 160;
+        const brush = sprite.getContext('2d');
+        for (let j = 0; j < 13; j++) {
+            const a = j * 2.399 + k, r = 11 + seed(j + k * 29) * 28;
+            const x = 80 + Math.cos(a) * r, y = 80 + Math.sin(a) * r;
+            const radius = 25 + seed(j * 9 + k) * 31;
+            const g = brush.createRadialGradient(x, y, 0, x, y, radius);
+            g.addColorStop(0, 'rgba(191,204,185,.22)');
+            g.addColorStop(.42, 'rgba(144,165,147,.15)');
+            g.addColorStop(1, 'rgba(94,122,109,0)');
+            brush.fillStyle = g; brush.fillRect(0, 0, 160, 160);
+        }
+        return sprite;
+    });
+    function puff(x, y, radius, opacity, j = 0, angle = 0) {
+        if (opacity < .001 || x + radius < 0 || x - radius > width || y + radius < 0 || y - radius > height) return;
+        ctx.save(); ctx.globalAlpha = clamp(opacity);
+        ctx.translate(x, y); ctx.rotate(angle);
+        ctx.drawImage(sprites[j % 4], -radius, -radius * .83, radius * 2, radius * 1.66);
+        ctx.restore();
     }
-    const mix = (a, b, t) => ({ x: lerp(a.x, b.x, t), y: lerp(a.y, b.y, t), scale: lerp(a.scale, b.scale, t) });
-    function pose(el, point, opacity = 1) {
-        el.setAttribute('transform', `translate(${point.x} ${point.y}) scale(${point.scale})`);
-        alpha(el, opacity);
+    function dot(x, y, radius, opacity) {
+        if (opacity < .001) return;
+        ctx.globalAlpha = clamp(opacity); ctx.fillStyle = '#d9b678';
+        ctx.beginPath(); ctx.arc(x, y, Math.max(.8, radius), 0, Math.PI * 2); ctx.fill();
     }
-    const sprite = document.createElement('canvas'); sprite.width = sprite.height = 96;
-    const sc = sprite.getContext('2d');
-    if (sc) {
-        const g = sc.createRadialGradient(48, 48, 0, 48, 48, 48);
-        g.addColorStop(0, 'rgba(177,192,175,.64)'); g.addColorStop(.4, 'rgba(130,154,139,.36)'); g.addColorStop(1, 'rgba(103,131,115,0)');
-        sc.fillStyle = g; sc.fillRect(0, 0, 96, 96);
+    function plume(frame, scene, sx, sy, strength, road = false) {
+        const n = mobile ? 30 : 48;
+        for (let j = 0; j < n; j++) {
+            const age = (j / n + frame.q * (road ? .61 : .28)) % 1;
+            const spread = age * age;
+            const eddy = Math.sin(j * 2.399 + frame.q * 2.1);
+            const x = sx + (road ? -205 : 190) * age + eddy * spread * (road ? 64 : 70);
+            const y = sy - (road ? 128 : 340) * age + Math.cos(j * 1.71) * spread * 52;
+            const point = project(frame, scene, x, y);
+            const radius = (9 + age * (road ? 92 : 116)) * point.scale;
+            puff(point.x, point.y, radius, Math.sin(age * Math.PI) * strength, j, eddy * .4);
+        }
     }
-    function puff(x, y, radius, opacity) {
-        if (!ctx || opacity < .001 || x + radius < 0 || x - radius > width || y + radius < 0 || y - radius > height) return;
-        ctx.globalAlpha = clamp(opacity);
-        ctx.drawImage(sprite, x - radius, y - radius, radius * 2, radius * 2);
-    }
-    function dot(x, y, r, opacity) {
-        if (!ctx || opacity < .001) return;
-        ctx.globalAlpha = clamp(opacity); ctx.fillStyle = '#dfbc80'; ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
-    }
-    const carAt = f => ({ x: lerp(990, 1400, ease(0, .78, f)), y: lerp(727, 748, ease(0, .78, f)) });
-    function drawParticles(q, current, t) {
-        if (!ctx) return;
+    function drawParticles(frame) {
+        const { q, t, index } = frame;
+        const at = (i, x, y, scale = 1) => project(frame, i, x, y, scale);
         ctx.clearRect(0, 0, width, height);
-        const n = mobile ? 30 : 52;
-        if (q < 1.01) {
-            for (let j = 0; j < n; j++) {
-                const age = (q * 1.3 + j / n) % 1;
-                const birth = carAt(clamp(q - age * .18));
-                const a = project(0, birth.x - 236 - age * 220, birth.y + 10 - age * 155);
-                puff(a.x, a.y, (10 + age * 65) * a.scale, Math.sin(age * Math.PI) * (1 - ease(.7, 1, q)));
-            }
+        if (q < 1) {
+            const c = carAt(q);
+            plume(frame, 0, c.x - 236, c.y + 10, 1 - ease(.40, .54, t), true);
         }
-        if (q > .7 && q < 2) {
-            for (const [sx, sy, size] of [[310, 270, 1.15], [646, 410, .78]]) {
-                for (let j = 0; j < n; j++) {
-                    const age = ((q - .7) * .65 + j / n) % 1;
-                    const a = project(1, sx + age * 210, sy - age * 370 - Math.sin(j * 2.4) * age * 33);
-                    const driftY = current === 1 ? -height * t : 0;
-                    puff(a.x, a.y + driftY, (12 + age * 95) * a.scale * size, Math.sin(age * Math.PI) * ease(.7, 1, q));
+        if (q > .75 && q < 2) {
+            const intensity = ease(.48, .65, t) * (index === 0 ? 1 : 0) + (index === 1 ? 1 : 0);
+            plume(frame, 1, 310, 270, intensity);
+            plume(frame, 1, 680, 350, intensity * .75);
+        }
+        // This is the road's retained plume cluster, enlarged through the source-to-source match.
+        if (q < 1.6) {
+            const a = frame.smoke;
+            const opacity = q < 1 ? 1 : 1 - ease(1.2, 1.6, q);
+            for (let j = 0; j < 15; j++) {
+                const angle = j * 2.399 + q * .2;
+                const distance = Math.sqrt(j / 15) * .62;
+                puff(a.x + Math.cos(angle) * a.scale * distance, a.y + Math.sin(angle) * a.scale * distance * .65,
+                    a.scale * (.85 + seed(j) * .50), opacity * .72, j, angle * .13);
+            }
+            const internal = index === 0 ? range(t, .24, .36, .70, .84) : 0;
+            for (let j = 0; j < 7; j++) {
+                const x = a.x + (seed(j + 10) - .5) * width * .6;
+                const y = a.y + (seed(j + 40) - .5) * height * .42;
+                dot(x, y, 3 + seed(j) * 5, internal * .8);
+                if (internal > 0) {
+                    ctx.globalAlpha = internal * .26; ctx.strokeStyle = '#e1d29c'; ctx.lineWidth = 1.4;
+                    ctx.beginPath();
+                    for (let k = 0; k <= 6; k++) { const angle = k * Math.PI / 3; const px = x + Math.cos(angle) * 16, py = y + Math.sin(angle) * 16; if (k) ctx.lineTo(px, py); else ctx.moveTo(px, py); }
+                    ctx.stroke();
                 }
             }
         }
-        // The same particle IDs move from airborne dust to soil and runoff.
-        if (q >= 1 && q <= 4.7) {
-            for (let j = 0; j < 32; j++) {
-                const seed = j * 2.399;
-                const air = project(1, 330 + (j * 37) % 220, 270 - (j * 43) % 200);
-                const soil = project(2, 800 + (j * 61) % 520, 591 + (j * 31) % 210);
-                const settle = ease(1.55, 2.5, q);
-                let a = mix(air, soil, settle);
-                let opacity = range(q, 1, 1.2, 4.35, 4.7);
-                if (q > 2.7) {
-                    const river = project(3, 790 + (j * 31) % 370, 816 + (j * 23) % 130);
-                    if (j % 3 === 0) a = mix(soil, river, ease(2.7, 3.7, q));
-                    else { a.x -= width * ease(2.7, 3, q); opacity *= 1 - ease(2.7, 3, q); }
-                    if (q > 3.7) a = mix(a, project(4, 1080 + Math.cos(seed) * 30, 710 + Math.sin(seed) * 20), ease(3.7, 4.65, q));
+        // Front lip occludes the smoke at the chimney mouth, in the same camera coordinates.
+        if (q > .91 && q < 2) {
+            [[310, 270, 1.15], [680, 350, .78]].forEach(([x, y, s]) => {
+                const a = at(1, x, y, s);
+                ctx.globalAlpha = (index === 0 ? ease(.55, .9, t) : 1);
+                ctx.strokeStyle = '#a8b6a0'; ctx.lineWidth = 4 * a.scale;
+                ctx.beginPath(); ctx.ellipse(a.x, a.y, 38 * a.scale, 11 * a.scale, 0, 0, Math.PI); ctx.stroke();
+            });
+        }
+        if (q >= 1.3 && q < 4.65) {
+            for (let j = 0; j < 26; j++) {
+                const a = at(1, 410 + seed(j) * 220, 260 + seed(j + 10) * 130);
+                const ground = at(2, 1080 + seed(j + 30) * 160, 579 + seed(j + 20) * 180);
+                let point = mix(a, ground, ease(1.5 + j * .006, 2.25 + j * .006, q));
+                let opacity = range(q, 1.3, 1.55, 4.45, 4.65);
+                if (q >= 2.56) {
+                    if (j % 3 === 0) {
+                        const flow = clamp((q - 2.56) / 1.25 - j * .004);
+                        const p0 = at(3, 300, 535), p1 = at(3, 630, 620), p2 = at(3, 945, 848);
+                        const stream = mix(mix(p0, p1, flow), mix(p1, p2, flow), flow);
+                        point = mix(ground, stream, ease(2.56, 3, q));
+                        if (q > 3.55) point = mix(point, at(4, 1080 + (seed(j) - .5) * 110, 749 + seed(j + 5) * 25), ease(3.55, 4.1, q));
+                    } else opacity *= 1 - ease(2.80, 3, q);
                 }
-                dot(a.x, a.y, Math.max(1.2, a.scale * (2 + j % 3)), opacity * .8);
+                dot(point.x, point.y, point.scale * (2 + j % 3), opacity * .65);
             }
         }
-        const rain = range(q, 2.5, 2.8, 3.6, 3.98);
+        const rain = range(q, 2.34, 2.62, 3.70, 4.10);
         if (rain > 0) {
-            ctx.globalAlpha = rain * .3; ctx.strokeStyle = '#d0e5d8'; ctx.lineWidth = 1; ctx.beginPath();
-            for (let j = 0; j < (mobile ? 50 : 95); j++) {
-                const x = (j * 157.37) % width, y = (j * 89.13 + q * 1700) % (height + 80) - 40;
-                ctx.moveTo(x, y); ctx.lineTo(x - 8, y + 27);
+            ctx.globalAlpha = rain * .33; ctx.strokeStyle = '#d5e8d6'; ctx.lineWidth = .9; ctx.beginPath();
+            for (let j = 0; j < (mobile ? 45 : 80); j++) {
+                const x = seed(j + 100) * width, y = (seed(j + 240) * height + q * 1450) % (height + 70) - 35;
+                ctx.moveTo(x, y); ctx.lineTo(x - 7, y + 25);
             }
             ctx.stroke();
-        }
-        if (current === 0 && t > 0) {
-            const veil = Math.sin(Math.PI * t);
-            for (let j = 0; j < 20; j++) puff(width * (j % 5) / 4 + t * 70, height * Math.floor(j / 5) / 3, width * .30, veil * .85);
-        }
-        if (current === 3 && t > 0) {
-            const y = height * (1 - t);
-            ctx.globalAlpha = Math.sin(t * Math.PI) * .6; ctx.strokeStyle = '#d0eee0'; ctx.lineWidth = 4;
-            ctx.beginPath(); ctx.moveTo(0, y); ctx.bezierCurveTo(width * .3, y - 35, width * .7, y + 35, width, y); ctx.stroke();
         }
         ctx.globalAlpha = 1;
     }
@@ -149,7 +184,7 @@ function createStory(root) {
         if (threeRequested || threeFailed || disposed) return;
         threeRequested = true;
         try {
-            const { createCellRenderer } = await import('./home-three.js?v=3.0.0');
+            const { createCellRenderer } = await import('./home-three.js?v=4.0.1');
             if (disposed) return;
             three = createCellRenderer(find('three'), () => { threeFailed = true; three?.destroy(); three = null; });
             three.resize(width, height, Math.min(devicePixelRatio || 1, mobile ? 1.5 : 2));
@@ -158,61 +193,98 @@ function createStory(root) {
     }
     function render() {
         if (disposed) return;
-        const q = Math.min(state.p * 9, 8.99999), current = Math.floor(q), f = q - current;
-        const t = current < 8 ? ease(.7, 1, f) : 0;
+        const frame = storyFrame(state.p, width, height);
+        const { q, index: current, f, t, cameras, cover } = frame;
+        const at = (i, x, y, scale = 1) => project(frame, i, x, y, scale);
         environments.forEach((el, i) => {
             const active = i === current || (i === current + 1 && t > 0);
-            el.style.visibility = active ? 'visible' : 'hidden';
             el.style.display = active ? 'block' : 'none';
-            el.style.opacity = '1'; el.style.transform = 'none'; el.style.clipPath = 'none'; el.style.zIndex = i === current ? '0' : '1';
+            el.style.opacity = '1'; el.style.clipPath = 'none'; el.style.maskImage = 'none'; el.style.zIndex = i === current ? '0' : '1';
+            if (!active) return;
+            const m = cameras[i];
+            arts[i].style.opacity = '1';
+            el.querySelector('.scene-backdrop').style.opacity = '1';
+            arts[i].setAttribute('transform', 'matrix(' + m.scale + ' 0 0 ' + m.scale + ' ' + m.x + ' ' + m.y + ')');
+            el.querySelector('.scene-backdrop').setAttribute('transform', 'translate(' + ((width - 1600 * cover) / 2) + ' ' + ((height - 1000 * cover) / 2) + ') scale(' + cover + ')');
         });
         if (t > 0) {
-            const out = environments[current], next = environments[current + 1];
-            if (current === 1) {
-                out.style.transform = `translateY(${-t * 100}%)`; next.style.transform = `translateY(${(1 - t) * 100}%)`;
+            const next = environments[current + 1];
+            if (current === 0) next.style.opacity = String(ease(.46, .54, t));
+            else if (current === 1) {
+                // The real soil silhouette rises over the receding yard; its sky never forms a panel edge.
+                next.querySelector('.scene-backdrop').style.opacity = String(ease(.76, 1, t));
+                arts[1].style.opacity = String(1 - ease(0, .32, t));
+                arts[2].style.opacity = String(ease(.08, .35, t));
             } else if (current === 2) {
-                out.style.transform = `translateX(${-t * 100}%)`; next.style.transform = `translateX(${(1 - t) * 100}%)`;
+                const edge = lerp(118, -18, t);
+                next.style.maskImage = 'linear-gradient(90deg, transparent ' + (edge - 16) + '%, black ' + (edge + 16) + '%)';
             } else if (current === 3) {
-                next.style.clipPath = `inset(${(1 - t) * 100}% 0 0 0)`;
+                const edge = lerp(115, -15, t);
+                next.style.maskImage = 'linear-gradient(180deg, transparent ' + (edge - 12) + '%, black ' + (edge + 12) + '%)';
+                next.querySelector('.scene-backdrop').style.opacity = String(ease(.60, 1, t));
+            } else if (current === 4) {
+                next.style.opacity = String(ease(.12, .84, t));
             } else if (current === 5) {
-                const drop = project(5, 1120, 760);
-                next.style.clipPath = `circle(${t * 150}% at ${drop.x / width * 100}% ${drop.y / height * 100}%)`;
-            } else {
-                out.style.opacity = String(1 - t); next.style.opacity = String(t);
-                if (current !== 7) {
-                    out.style.transform = `translateX(${-t * 80}px)`; next.style.transform = `translateX(${(1 - t) * 80}px)`;
-                }
+                const r = 15 * frame.drop.scale * ease(.02, .4, t);
+                next.style.clipPath = 'circle(' + r + 'px at ' + frame.drop.x + 'px ' + frame.drop.y + 'px)';
+            } else if (current === 6) {
+                next.style.opacity = String(ease(.1, .85, t));
+                arts[6].style.opacity = String(1 - ease(0, .33, t));
             }
+            else if (current === 7) next.style.opacity = String(ease(0, .2, t));
         }
-        const c = carAt(q); car.setAttribute('transform', `translate(${c.x} ${c.y}) scale(1.8)`);
-        root.querySelectorAll('[data-story-wheel]').forEach(wheel => wheel.setAttribute('transform', `rotate(${(c.x - 990) / 45 * 180 / Math.PI})`));
+        car.setAttribute('transform', 'translate(' + frame.car.x + ' ' + frame.car.y + ') scale(1.8)');
+        wheels.forEach(wheel => wheel.setAttribute('transform', 'rotate(' + ((frame.car.x - 990) / 45 * 180 / Math.PI) + ')'));
         alpha(root.querySelector('[data-soil-dots]'), ease(1.8, 2.5, q));
-        const bottleMove = ease(4.7, 5, q);
-        let bottle = mix(project(4, 1080, 830 - ease(4.15, 4.55, q) * 145), project(5, 935, 792), bottleMove);
-        let bottleAlpha = range(q, 3.9, 4.15, 5.58, 5.7);
-        if (q >= 7.7) { bottle = project(8, 1460, 788, .7); bottleAlpha = ease(7.7, 8, q); }
-        pose(shared.bottle, bottle, bottleAlpha);
-        if (q < 4.5) shared.bottle.setAttribute('transform', shared.bottle.getAttribute('transform') + ` rotate(${-65 * (1 - ease(4.05, 4.45, q))})`);
-        root.querySelector('[data-bottle-water]').setAttribute('transform', `translate(0 ${140 * (1 - ease(4.04, 4.3, q))})`);
-        alpha(shared.hand, 1 - ease(4.68, 4.93, q));
-        const pipetteX = lerp(935, 1120, ease(5.27, 5.45, q));
-        const pipetteY = 490 - 150 * ease(5.12, 5.27, q) + 175 * ease(5.45, 5.55, q);
-        pipette.setAttribute('transform', `translate(${pipetteX} ${pipetteY})`);
-        pose(shared.drop, project(5, 1120, lerp(675, 795, ease(5.54, 5.7, q))), range(q, 5.53, 5.58, 5.72, 5.86));
-        const cellPoint = mix(project(7, 540, 650, 1.08), project(8, 1190, 615, .28), ease(7.7, 8, q));
-        const cellAlpha = ease(6.7, 7, q);
-        pose(shared.cell, cellPoint, cellAlpha);
-        const binding = ease(6.72, 7.22, q);
-        const molecule = mix(project(6, 1245, 625, .85), { x: cellPoint.x + 180 * cellPoint.scale, y: cellPoint.y - 35 * cellPoint.scale, scale: cellPoint.scale * .18 }, binding);
-        pose(shared.salicylate, molecule, range(q, 6.3, 6.56, 7.18, 7.28));
-        alpha(root.querySelector('[data-naphthalene-v2]'), 1 - ease(6.25, 6.6, q) * .65);
-        alpha(root.querySelector('[data-cell-transcript]'), range(q, 7.2, 7.34, 7.52, 7.65));
-        alpha(root.querySelector('[data-cell-proteins]'), ease(7.38, 7.6, q));
-        alpha(root.querySelector('[data-cell-promoter]'), .3 + ease(7.2, 7.35, q) * .7);
-        alpha(find('note'), range(q, 3.9, 4.15, 8.1, 8.4));
+        pose(shared.clod, frame.clod, range(q, 1.72, 1.93, 3.28, 3.5));
+        pose(root.querySelector('[data-shared-pah]'), { ...frame.smoke, scale: frame.smoke.scale / 230 }, current === 0 ? range(t, .22, .38, .68, .84) * .65 : 0);
+        pose(shared.grain, frame.grain, range(q, 1.32, 1.55, 4.12, 4.26));
+        const film = root.querySelector('[data-surface-film]');
+        alpha(film, ease(2.30, 2.53, q));
+        film?.setAttribute('stroke-dashoffset', 1 - ease(2.30, 2.65, q));
+        const rainDrop = at(2, 1120, lerp(380, 575, ease(2.28, 2.46, q)), .32);
+        pose(root.querySelector('[data-shared-raindrop]'), rainDrop, range(q, 2.27, 2.30, 2.45, 2.49));
+        pose(shared.ripple, frame.ripple, range(q, 3.22, 3.48, 4.45, 4.62));
+        if (shared.ripple) shared.ripple.style.strokeDashoffset = String(-q * 15);
+        const waterline = root.querySelector('[data-waterline-front]');
+        pose(waterline, at(4, 1080, 749), range(q, 4.05, 4.09, 4.24, 4.30));
+        pose(shared.bottle, frame.bottle, frame.bottleAlpha, frame.bottleAngle);
+        root.querySelector('[data-bottle-water]')?.setAttribute('transform', 'rotate(' + (-frame.bottleAngle) + ' 0 -100) translate(0 ' + (140 * (1 - ease(4.07, 4.23, q))) + ')');
+        hands.forEach(hand => {
+            alpha(hand, 1 - ease(5.01, 5.15, q));
+            hand.setAttribute('transform', 'translate(' + (ease(5.01, 5.15, q) * 210) + ' ' + (-ease(5.01, 5.15, q) * 60) + ')');
+        });
+        pipette.setAttribute('transform', 'translate(' + frame.pipette.x + ' ' + frame.pipette.y + ')');
+        pose(shared.drop, frame.drop, range(q, 5.52, 5.57, 5.84, 5.99));
+        const dropShape = shared.drop?.querySelector('path');
+        const rounding = ease(5.63, 5.72, q);
+        dropShape?.setAttribute('d', 'M0 ' + lerp(-24, -15, rounding) + 'C' + lerp(-4, -8.28, rounding) + ' ' + lerp(-10, -15, rounding) + ' -15 ' + lerp(-2, -8.28, rounding) + ' -15 ' + lerp(8, 0, rounding) + 'C-15 ' + lerp(28, 20, rounding) + ' 15 ' + lerp(28, 20, rounding) + ' 15 ' + lerp(8, 0, rounding) + 'C15 ' + lerp(-2, -8.28, rounding) + ' ' + lerp(4, 8.28, rounding) + ' ' + lerp(-10, -15, rounding) + ' 0 ' + lerp(-24, -15, rounding) + 'Z');
+        alpha(dropShape, 1 - ease(5.67, 5.82, q));
+        pose(shared.cell, frame.cell, frame.cellAlpha);
+        pose(shared.salicylate, frame.molecule, range(q, 6.25, 6.48, 7.23, 7.35));
+        alpha(root.querySelector('[data-naphthalene-v2]'), 1 - ease(6.24, 6.58, q) * .7);
+        alpha(root.querySelector('[data-pathway-steps]'), ease(6.12, 6.44, q));
+        alpha(root.querySelector('[data-cell-transcript]'), range(q, 7.21, 7.35, 7.53, 7.65));
+        alpha(root.querySelector('[data-cell-proteins]'), ease(7.38, 7.62, q));
+        alpha(root.querySelector('[data-cell-promoter]'), .3 + ease(7.23, 7.37, q) * .7);
+        alpha(root.querySelector('[data-bench-contact]'), range(q, 4.95, 5.01, 5.70, 5.86));
+        alpha(find('note'), range(q, 3.95, 4.15, 8.1, 8.4) * (t > 0 ? 1 - Math.sin(Math.PI * t) * .8 : 1));
+        const screen = root.querySelector('[data-cell-screen]');
+        const clip = root.querySelector('[data-monitor-clip]');
+        let canvasClip = 'none';
+        if (q >= 7.61 && screen && clip) {
+            const corner = at(8, 1065, 544), end = at(8, 1315, 690);
+            clip.setAttribute('x', corner.x); clip.setAttribute('y', corner.y);
+            clip.setAttribute('width', end.x - corner.x); clip.setAttribute('height', end.y - corner.y);
+            screen.setAttribute('clip-path', 'url(#v3-screen-clip)');
+            canvasClip = 'inset(' + Math.max(0, corner.y) + 'px ' + Math.max(0, width - end.x) + 'px ' + Math.max(0, height - end.y) + 'px ' + Math.max(0, corner.x) + 'px)';
+        } else screen?.removeAttribute('clip-path');
+        find('three').style.clipPath = canvasClip;
         const left = lerp(LAYOUT[current] === 'left' ? 1 : 0, LAYOUT[Math.min(8, current + 1)] === 'left' ? 1 : 0, t);
-        root.style.setProperty('--shade-left', left);
-        root.style.setProperty('--shade-right', 1 - left);
+        const textStrength = t > 0 ? 1 - Math.sin(Math.PI * t) * .85 : 1;
+        root.style.setProperty('--shade-left', left * textStrength);
+        root.style.setProperty('--shade-right', (1 - left) * textStrength);
+        root.style.setProperty('--shade-reading', textStrength);
         if (document.body.dataset.theme === 'light') {
             const micro = i => i === 6 || i === 7 ? 1 : 0;
             const amount = lerp(micro(current), micro(Math.min(8, current + 1)), t);
@@ -220,14 +292,33 @@ function createStory(root) {
             root.style.setProperty('--story-shade', color([231, 238, 221], [6, 35, 29]));
             root.style.setProperty('--story-paper', 'rgb(' + color([23, 62, 48], [237, 240, 220]) + ')');
             root.style.setProperty('--story-muted', 'rgb(' + color([59, 93, 75], [192, 212, 189]) + ')');
-        } else {
-            ['--story-shade', '--story-paper', '--story-muted'].forEach(name => root.style.removeProperty(name));
-        }
-        const chapter = t > .5 ? current + 1 : current;
+        } else ['--story-shade', '--story-paper', '--story-muted'].forEach(name => root.style.removeProperty(name));
+        const chapter = t > .62 ? Math.min(8, current + 1) : current;
         copies.forEach((copy, i) => {
-            const opacity = i === current ? 1 - ease(.7, .91, f) * (current < 8 ? 1 : 0) : i === current + 1 ? ease(.86, 1, f) : 0;
-            copy.style.opacity = opacity.toFixed(3); copy.style.visibility = opacity > .001 ? 'visible' : 'hidden';
-            copy.style.transform = `translateY(${i === current + 1 ? (1 - t) * 20 : 0}px)`;
+            let opacity = 0, dx = 0, dy = 0, reading = 0;
+            if (i === current) {
+                opacity = current === 8 ? 1 : 1 - ease(0, .36, t);
+                const movement = ease(0, .56, t);
+                const direction = [0, -1, 0, 0, 0, 1, 0, 1, 0][i];
+                dx = direction ? 0 : movement * (LAYOUT[i] === 'left' ? -width * .10 : width * .10);
+                dy = direction ? movement * height * .18 * direction : -movement * height * .025;
+                reading = clamp(f / CUTS[i]);
+            } else if (i === current + 1 && t > .73) {
+                opacity = ease(.73, 1, t);
+                dy = (1 - ease(.73, 1, t)) * height * .1;
+            }
+            alpha(copy, opacity); show(copy, opacity > .001);
+            copy.style.transform = 'translate(' + dx + 'px, ' + dy + 'px)';
+            const beatIndex = Math.min(2, Math.floor(reading * 3));
+            beats[i].forEach((beat, j) => {
+                let a = j === beatIndex ? 1 : 0;
+                const within = reading * 3 - beatIndex;
+                if (j === beatIndex && beatIndex > 0) a = ease(.075, .15, within);
+                if (j === beatIndex - 1) a = 1 - ease(0, .06, within);
+                alpha(beat, a); show(beat, a > .001);
+                beat.style.transform = 'translateY(' + ((1 - a) * (j === beatIndex ? 13 : -13)) + 'px)';
+                beat.setAttribute('aria-hidden', String(j !== beatIndex || opacity < .01));
+            });
         });
         if (chapter !== lastChapter) {
             copies.forEach((copy, i) => { copy.classList.toggle('is-current', i === chapter); copy.inert = i !== chapter; copy.setAttribute('aria-hidden', String(i !== chapter)); });
@@ -236,16 +327,16 @@ function createStory(root) {
         find('progress').style.setProperty('--story-progress', state.p);
         const ariaProgress = Math.round(state.p * 100);
         if (ariaProgress !== lastAriaProgress) { find('progress').setAttribute('aria-valuenow', ariaProgress); lastAriaProgress = ariaProgress; }
-        drawParticles(q, current, t);
+        drawParticles(frame);
         if (q > 6.4) loadThree();
-        three?.render({ ...cellPoint, scale: cellPoint.scale / .12 }, q / 9, cellAlpha, document.body.dataset.theme);
+        three?.render({ ...frame.cell, scale: frame.cell.scale / .12 }, q / 9, frame.cellAlpha, document.body.dataset.theme);
     }
     measure();
     const timeline = gsap.timeline({ paused: true, onUpdate: render });
     timeline.to(state, { p: 1, duration: 100, ease: 'none' });
     CHAPTERS.forEach(([name, start]) => timeline.addLabel(name, start * 100));
     const trigger = ScrollTrigger.create({ id: 'homepage-story', trigger: root, start: 0,
-        end: () => height * (mobile ? 12 : 16), pin: stage, pinSpacing: true,
+        end: () => height * (mobile ? 16 : 20), pin: stage, pinSpacing: true,
         animation: timeline, scrub: true, invalidateOnRefresh: true });
     function stopTicker() {
         if (!tickerActive) return;
@@ -327,6 +418,7 @@ function createStory(root) {
             measure();
             if (previousMobile !== mobile) setupLenis();
             ScrollTrigger.refresh();
+            lenis?.resize();
             const position = trigger.start + (trigger.end - trigger.start) * p;
             if (lenis) lenis.scrollTo(position, { immediate: true });
             else window.scrollTo(0, position);
@@ -340,9 +432,17 @@ function createStory(root) {
     const finishSetup = () => {
         if (disposed) return;
         ScrollTrigger.refresh();
+        // Refresh changes the pinned document height; update Lenis before restoring a position.
+        lenis?.resize();
         const name = chapterName(location.hash);
         const navigation = performance.getEntriesByType('navigation')[0];
-        if (name && navigation?.type !== 'reload' && navigation?.type !== 'back_forward') seek(name, true);
+        if (initialProgress !== null) {
+            const position = trigger.start + (trigger.end - trigger.start) * initialProgress;
+            initialProgress = null;
+            if (lenis) lenis.scrollTo(position, { immediate: true });
+            else window.scrollTo(0, position);
+            ScrollTrigger.update();
+        } else if (name && navigation?.type !== 'reload' && navigation?.type !== 'back_forward') seek(name, true);
         render();
     };
     if (loader && !loader.hidden && !loader.classList.contains('hidden')) {
@@ -381,9 +481,17 @@ function createStory(root) {
             arts.forEach(el => el.removeAttribute('transform'));
             root.removeAttribute('data-chapter');
             root.removeAttribute('data-layout');
-            ['--shade-left', '--shade-right', '--story-shade', '--story-paper', '--story-muted'].forEach(name => root.style.removeProperty(name));
+            ['--shade-left', '--shade-right', '--shade-reading', '--story-shade', '--story-paper', '--story-muted'].forEach(name => root.style.removeProperty(name));
             root.querySelector('[data-bottle-water]').removeAttribute('transform');
-            Object.values(shared).forEach(el => { el.removeAttribute('transform'); el.removeAttribute('style'); });
+            Object.values(shared).filter(Boolean).forEach(el => { el.removeAttribute('transform'); el.removeAttribute('style'); });
+            hands.forEach(el => { el.removeAttribute('transform'); el.removeAttribute('style'); });
+            beats.flat().forEach(el => { el.removeAttribute('style'); el.removeAttribute('aria-hidden'); });
+            environments.forEach(el => { el.firstElementChild.setAttribute('viewBox', '0 0 1600 1000'); el.querySelector('.scene-backdrop').removeAttribute('transform'); el.querySelector('.scene-backdrop').removeAttribute('style'); });
+            arts.forEach(el => el.removeAttribute('style'));
+            root.querySelectorAll('[data-shared-raindrop], [data-shared-pah], [data-waterline-front]').forEach(el => { el.removeAttribute('transform'); el.removeAttribute('style'); });
+            root.querySelectorAll('[data-cell-transcript], [data-cell-proteins], [data-cell-promoter], [data-naphthalene-v2], [data-pathway-steps]').forEach(el => el.removeAttribute('style'));
+            root.querySelector('[data-cell-screen]')?.removeAttribute('clip-path');
+            find('three').style.clipPath = 'none';
             copies.forEach(copy => {
                 copy.removeAttribute('style');
                 copy.removeAttribute('aria-hidden');
@@ -401,6 +509,9 @@ window.addEventListener('resize', () => {
 });
 window.addEventListener('pagehide', () => {
     resumeProgress = controller?.getProgress() ?? null;
+    if (resumeProgress !== null) {
+        try { sessionStorage.setItem(progressKey, String(resumeProgress)); } catch { /* Optional restoration must not block cleanup. */ }
+    }
     controller?.destroy();
     controller = null;
 });

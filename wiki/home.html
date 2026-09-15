@@ -4,20 +4,56 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='vendor/lenis/lenis.css', v='1.3.26') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css', v='3.0.0') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css', v='4.0.1') }}">
 {% endblock %}
 
 {% block content %}
 {% set chapters = [
-  ('beginning', 'On the road', '公路', 'Emissions on the road', '公路上的排放', 'As a car passes, its exhaust disperses. Pollutants produced by fuel combustion, including polycyclic aromatic hydrocarbons (PAHs), can remain in the air.', '汽车驶过后，尾气逐渐散去。燃料燃烧产生的污染物却可能继续留在空气中，其中包括多环芳烃（PAHs）。'),
-  ('air', 'Industrial emissions', '工业排放', 'Above the industrial district', '工业区上空', 'Industrial combustion can also release PAHs. Some travel through the air attached to fine particles and may settle far from their source.', '工业燃烧过程也可能排放多环芳烃。部分污染物附着在细小颗粒上，随空气扩散，最终沉降到其他地方。'),
-  ('soil', 'Deposition', '沉降与积累', 'Pollutants settle in soil', '污染物\n在土壤中积累', 'Some airborne pollutants settle onto the ground with particles and accumulate in soil. They can remain there after the visible smoke has cleared.', '空气中的一些污染物会随颗粒沉降到地面，并在土壤中积累。即使烟雾已经散去，土壤中的污染物仍可能长期存在。'),
-  ('rain', 'Surface runoff', '地表径流', 'Rain carries particles downstream', '雨水将颗粒\n带入河道', 'Rainwater flows over the ground and carries some loose particles into streams and rivers. Other particles remain in the soil, so rainfall moves part of the pollution rather than removing it.', '雨水沿着地表流动，将部分松动的颗粒带入沟渠和河流。另一些颗粒仍留在土壤中，因此降雨可能转移污染，并不意味着污染已经消失。'),
-  ('sample', 'Water sampling', '河边取样', 'Taking a water sample', '从河里取一份水样', 'A water sample is collected and taken to the laboratory. Its appearance alone cannot tell us whether PAHs are present.', '水样被装入采样瓶，随后带回实验室。仅凭水的外观，无法判断其中是否含有多环芳烃。'),
-  ('lab', 'In the laboratory', '实验室', 'From the river to the lab', '把样品带回实验室', 'In the laboratory, small volumes of liquid can be handled under controlled conditions. The following illustration introduces the metabolic pathway and sensing mechanism studied in our project.', '在实验室里，我们可以在可控条件下处理少量液体。接下来的画面介绍项目所研究的代谢途径和感应原理。'),
-  ('pathway', 'Naphthalene metabolism', '萘的代谢', 'Following naphthalene metabolism', '观察萘的代谢过程', 'Several enzyme steps convert naphthalene into salicylate. Our sensing system detects this intermediate to provide information about the metabolic process.', '萘经过多步酶促反应，可以转化为水杨酸。我们的感应系统检测水杨酸，为研究代谢过程提供信息。'),
-  ('signal', 'Fluorescence', '荧光读出', 'Reading the fluorescent signal', '读取细胞的\n荧光信号', 'Salicylate binds to NahR, which activates Psal and promotes eGFP production. Under suitable excitation light, the resulting green fluorescence can be measured.', '水杨酸与调控蛋白 NahR 结合后，可激活 Psal，促进荧光蛋白 eGFP 的表达。在适当的激发光下，我们可以测量这些蛋白产生的绿色荧光。'),
-  ('return', 'Our project', '项目研究', 'Explore the research', '了解我们的研究', 'Our project investigates how PAHs can be detected and degraded. Explore the experiments, the models, and the team behind this work.', '我们的项目围绕多环芳烃的检测与降解展开。你可以继续了解实验过程、模型分析，以及参与这项研究的团队。')
+  ('beginning', 'On the road', '公路', 'Emissions on the road', '公路上的排放', [
+    ('A car passes. Behind it, exhaust spreads into the air above the road.', '汽车驶过，尾气在车后散开，逐渐混入道路上方的空气。'),
+    ('Fuel combustion can release polycyclic aromatic hydrocarbons, or PAHs. Some pollutants remain after the visible exhaust has dispersed.', '燃料燃烧可能产生多环芳烃（PAHs）。即使看不见尾气了，部分污染物仍可能留在空气中。'),
+    ('Some PAHs attach to airborne particles. Air can carry those particles beyond the road where they began.', '一些多环芳烃会附着在空气中的颗粒上，随空气扩散，离开最初排放的道路。')
+  ]),
+  ('air', 'Industrial emissions', '工业排放', 'Above the industrial district', '工业区上空', [
+    ('Road traffic is one source of PAHs. Industrial combustion is another.', '除了道路上的汽车，工业燃烧也是多环芳烃的来源之一。'),
+    ('Smoke spreads above the chimneys. Its appearance alone cannot tell us which pollutants are present, or how much there is.', '烟雾从烟囱口升起，向四周扩散。仅凭烟雾的颜色和浓淡，无法判断其中有哪些污染物、含量有多少。'),
+    ('Particles travel with the air before some settle onto the ground. This is one way pollutants reach the soil.', '颗粒随空气移动，其中一部分会沉降到地面。附着在颗粒上的污染物，也随之进入土壤。')
+  ]),
+  ('soil', 'Deposition', '沉降与积累', 'Pollutants settle in soil', '污染物在土壤中积累', [
+    ('A particle lands beside a young plant. In the soil below, roots grow between grains of earth and small pores.', '一颗尘粒落在幼苗旁。地表之下，根系穿过土壤团块之间的孔隙，向更深处延伸。'),
+    ('Some PAHs bind to soil particles and can persist there. Their distribution depends on the soil and the compounds involved.', '一些多环芳烃会吸附在土壤颗粒上，并在其中停留。不同土壤和不同污染物的积累情况并不相同。'),
+    ('Rain wets the surface. As water begins to flow, some loose particles move with it; others stay behind.', '雨滴打湿地表，积水开始流动。部分松散颗粒被水流带走，另一些仍留在原处。')
+  ]),
+  ('rain', 'Surface runoff', '地表径流', 'Rain carries particles downstream', '雨水将颗粒带入河道', [
+    ('Small streams of rainwater meet along the slope and flow into a drainage channel.', '雨水沿坡面汇成细流，流入排水沟，再向河岸汇集。'),
+    ('The water carries soil and suspended particles. Some of those particles may also carry PAHs.', '水流夹带着泥沙和悬浮颗粒，其中一些颗粒上可能附着多环芳烃。'),
+    ('At the outlet, runoff enters the river. This movement transfers part of the pollution; it does not mean the pollutants have disappeared.', '径流从排水口进入河道。污染物可能随水流转移，但这并不意味着污染已经消失。')
+  ]),
+  ('sample', 'Water sampling', '河边取样', 'Taking a water sample', '从河里取一份水样', [
+    ('At the riverbank, a sample bottle enters the water. The illustration follows a sample from collection to the laboratory.', '采样瓶从河岸边伸入水中。这里用一次取样过程，展示水样如何从环境进入实验室。'),
+    ('The bottle fills and is lifted from the river. Clear-looking water can still contain substances we cannot identify by eye.', '采样瓶装入水后，被缓缓提起。看起来清澈的水，也可能含有肉眼无法识别的物质。'),
+    ('The sample is labelled before it reaches the bench. A record of where and how it was collected helps later analysis.', '水样送上实验台之前，需要做好标记。取样地点和采样方式等记录，是后续分析的重要依据。')
+  ]),
+  ('lab', 'In the laboratory', '实验室', 'From the river to the lab', '把样品带回实验室', [
+    ('The bottle is set on the bench. Small volumes of liquid can now be transferred and studied under controlled conditions.', '采样瓶放到实验台上。研究人员可以取出少量液体，在可控条件下开展分析。'),
+    ('A pipette takes up a small volume and releases it into an observation area.', '移液器吸取少量液体，将液滴转移到观察区域。'),
+    ('Our project studies a metabolic pathway and a sensing system. To explain their connection, we follow naphthalene, one member of the PAH family.', '我们的项目研究代谢途径与感应系统之间的联系。下面以多环芳烃中的萘为例，说明这两个过程如何衔接。')
+  ]),
+  ('pathway', 'Naphthalene metabolism', '萘的代谢', 'Following naphthalene', '观察萘的代谢过程', [
+    ('Naphthalene has two connected carbon rings. It is the starting compound in the pathway shown here.', '萘具有两个相连的碳环，是这里展示的代谢途径的起点。'),
+    ('Several enzyme-catalysed reactions convert naphthalene into salicylate. This is a sequence of chemical changes, not a single instantaneous step.', '经过多步酶促反应，萘可以转化为水杨酸。这一过程包含连续的化学变化，需要分步完成。'),
+    ('Salicylate is the compound recognised by our sensing system. Following it connects the metabolic pathway to the fluorescent readout.', '感应系统识别的对象是水杨酸。通过检测水杨酸，我们把代谢过程与后续的荧光读出联系起来。')
+  ]),
+  ('signal', 'Fluorescence', '荧光读出', 'Reading the fluorescent signal', '读取细胞的荧光信号', [
+    ('Salicylate binds to the regulatory protein NahR. This interaction enables the next stage of the response.', '水杨酸与调控蛋白 NahR 结合，感应系统由此产生响应。'),
+    ('Activated NahR promotes expression from Psal. Transcription and translation lead to production of the fluorescent protein eGFP.', '活化的 NahR 促进 Psal 调控下的基因表达。经过转录和翻译，细胞产生荧光蛋白 eGFP。'),
+    ('With suitable excitation light, eGFP produces green fluorescence. Measurements and controls are needed to interpret that signal.', '在合适的激发光下，eGFP 会产生绿色荧光。要解释这一信号，还需要测量结果和对照实验。')
+  ]),
+  ('return', 'Our project', '项目研究', 'Explore the research', '了解我们的研究', [
+    ('The view returns to the laboratory. A sample, a record and a signal each tell us something different.', '视野回到实验室。样品、记录和荧光信号，分别提供了研究所需的不同信息。'),
+    ('Our project investigates PAH detection and degradation. Experiments and models help us examine the steps connecting the two.', '我们的项目围绕多环芳烃的检测与降解展开，通过实验和模型研究其中各个环节。'),
+    ('Explore the experiments, follow the models, or meet the team carrying out this work.', '你可以继续了解实验过程、查看模型分析，或认识参与这项研究的团队。')
+  ])
 ] %}
 <main id="Project" class="home-story" data-story-root>
   <div class="story-stage" data-story-stage>
@@ -32,7 +68,7 @@
       <span data-text-en="FROM THE ENVIRONMENT TO THE LAB" data-text-zh="从环境到实验室">FROM THE ENVIRONMENT TO THE LAB</span>
     </div>
     <div class="story-reader" data-story-reader>
-      {% for id, eyebrow_en, eyebrow_zh, title_en, title_zh, text_en, text_zh in chapters %}
+      {% for id, eyebrow_en, eyebrow_zh, title_en, title_zh, passages in chapters %}
       <article class="story-copy{% if loop.first %} is-current{% endif %}" id="story-{{ id }}" data-story-chapter="{{ id }}" data-copy-layout="{{ 'right' if id in ['air', 'rain', 'signal'] else 'left' }}">
         <p class="story-eyebrow"><span class="story-index">{{ '%02d' | format(loop.index) }}</span><span data-text-en="{{ eyebrow_en }}" data-text-zh="{{ eyebrow_zh }}">{{ eyebrow_en }}</span></p>
         {% if loop.first %}
@@ -40,12 +76,16 @@
         {% else %}
         <h2 data-text-en="{{ title_en }}" data-text-zh="{{ title_zh }}">{{ title_en }}</h2>
         {% endif %}
-        <p class="story-prose" data-text-en="{{ text_en }}" data-text-zh="{{ text_zh }}">{{ text_en }}</p>
+        <div class="story-passages">
+          {% for text_en, text_zh in passages %}
+          <p class="story-prose" data-story-beat="{{ loop.index0 }}" data-text-en="{{ text_en }}" data-text-zh="{{ text_zh }}">{{ text_en }}</p>
+          {% endfor %}
+        </div>
         <svg class="story-still" viewBox="0 140 1600 860" aria-hidden="true"><use href="#v2-art-{{ id }}"/>{% if id in ['sample', 'lab', 'return'] %}<use href="#v2-bottle" transform="translate(1080 780)"/>{% elif id == 'signal' %}<use href="#story-cell-static" transform="translate(750 630)"/>{% endif %}</svg>
         {% if loop.last %}
         <div class="story-links">
           <a href="{{ url_for('wetlab_salicylic_acid') }}"><span data-text-en="Inside the lab" data-text-zh="走进实验室">Inside the lab</span><span aria-hidden="true">↗</span></a>
-          <a href="{{ url_for('drylab_naphthalene') }}"><span data-text-en="Follow the model" data-text-zh="沿着模型看一看">Follow the model</span><span aria-hidden="true">↗</span></a>
+          <a href="{{ url_for('drylab_naphthalene') }}"><span data-text-en="Follow the model" data-text-zh="查看模型分析">Follow the model</span><span aria-hidden="true">↗</span></a>
           <a href="{{ url_for('team_members') }}"><span data-text-en="Meet the people" data-text-zh="认识我们">Meet the people</span><span aria-hidden="true">↗</span></a>
         </div>
         {% endif %}
@@ -56,7 +96,7 @@
     <div class="story-bottom">
       <a class="story-scroll" href="#story-air" data-story-jump="air"><span class="story-scroll-icon" aria-hidden="true">↓</span><span data-text-en="Scroll to explore" data-text-zh="向下滚动，继续了解">Scroll to explore</span></a>
       <div class="story-progress" role="progressbar" aria-label="Story progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-story-progress><span></span></div>
-      <a class="story-skip" href="#story-return" data-story-jump="return" data-text-en="Go to our research ↗" data-text-zh="直接看看我们的研究 ↗">Go to our research ↗</a>
+      <a class="story-skip" href="#story-return" data-story-jump="return" data-text-en="Go to our research ↗" data-text-zh="了解项目研究 ↗">Go to our research ↗</a>
     </div>
   </div>
 </main>
@@ -67,5 +107,5 @@
 <script src="{{ url_for('static', filename='gsap.min.js') }}"></script>
 <script src="{{ url_for('static', filename='ScrollTrigger.min.js') }}"></script>
 <script src="{{ url_for('static', filename='vendor/lenis/lenis.min.js', v='1.3.26') }}"></script>
-<script type="module" src="{{ url_for('static', filename='js/home.js', v='3.0.0') }}"></script>
+<script type="module" src="{{ url_for('static', filename='js/home.js', v='4.0.1') }}"></script>
 {% endblock %}
