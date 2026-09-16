@@ -32,13 +32,50 @@ def home():
         current_path='/')
 
 
-@app.route('/wetlab/salicylic-acid/')
-def wetlab_salicylic_acid():
-    return render_template('pages/wetlab/salicylic-acid.html',
+@app.route('/wetlab/engineering/')
+def wetlab_engineering():
+    return render_template('pages/wetlab/engineering.html',
         is_subpage=True,
         active_nav='Wet-Lab',
-        current_path='/wetlab/salicylic-acid')
-    
+        current_path='/wetlab/engineering')
+
+
+@app.route('/wetlab/results/')
+def wetlab_results():
+    return render_template('pages/wetlab/results.html',
+        is_subpage=True,
+        active_nav='Wet-Lab',
+        current_path='/wetlab/results')
+
+
+@app.route('/wetlab/protocal/')
+def wetlab_protocal():
+    return render_template('pages/wetlab/protocal.html',
+        is_subpage=True,
+        active_nav='Wet-Lab',
+        current_path='/wetlab/protocal')
+
+
+@app.route('/wetlab/parts/')
+def wetlab_parts():
+    return render_template('pages/wetlab/pending.html',
+        is_subpage=True,
+        active_nav='Wet-Lab',
+        current_path='/wetlab/parts',
+        section_title='Parts',
+        section_title_zh='生物部件')
+
+
+@app.route('/wetlab/notebook/')
+def wetlab_notebook():
+    return render_template('pages/wetlab/pending.html',
+        is_subpage=True,
+        active_nav='Wet-Lab',
+        current_path='/wetlab/notebook',
+        section_title='Notebook',
+        section_title_zh='实验记录')
+
+
 @app.route('/drylab/naphthalene/')
 def drylab_naphthalene():
     return render_template('pages/drylab/naphthalene.html',

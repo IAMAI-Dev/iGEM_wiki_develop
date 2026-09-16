@@ -1,0 +1,19 @@
+{% extends 'templates/layouts/wetlab-document.html' %}
+
+{% block title %}Wet Lab · {{ section_title }}{% endblock %}
+{% block toc %}
+<li><a href="#content-status" data-text-en="Content status" data-text-zh="内容状态">Content status</a></li>
+{% endblock %}
+{% block hero %}
+<section class="wetlab-hero">
+  <span class="wetlab-hero-subtitle" data-text-en="WET LAB" data-text-zh="湿实验">WET LAB</span>
+  <h1 class="hero-title" data-text-en="{{ section_title }}" data-text-zh="{{ section_title_zh }}">{{ section_title }}</h1>
+</section>
+{% endblock %}
+{% block article %}
+<section class="document-section" id="content-status">
+  <div class="section-heading"><div class="section-icon" aria-hidden="true"><i class="fa-solid fa-book-open"></i></div><div class="section-heading-text"><h2 data-text-en="Coming soon" data-text-zh="内容待补充">Coming soon</h2><div class="section-heading-bar"></div></div></div>
+  <p data-text-en="This section will be updated when the materials are ready." data-text-zh="本模块将在相关材料整理完成后更新。">This section will be updated when the materials are ready.</p>
+  <a class="hero-btn hero-btn-primary" href="{{ url_for('wetlab_engineering') }}" data-text-en="Explore Engineering →" data-text-zh="查看工程设计 →">Explore Engineering →</a>
+</section>
+{% endblock %}

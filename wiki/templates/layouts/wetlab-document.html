@@ -1,0 +1,6 @@
+{% extends 'templates/layouts/article.html' %}
+
+{% block extra_css %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/wetlab-documents.css', v='20260916.2') }}">
+{% endblock %}

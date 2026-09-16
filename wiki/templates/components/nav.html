@@ -3,7 +3,7 @@
    变量：
      - is_subpage (bool)    : 是否为子页面
      - active_nav (string)  : 当前激活的顶级导航项 (如 'Project', 'Wet-Lab')
-     - current_path (string): 当前页面路径 (如 '/wetlab/salicylic-acid')
+     - current_path (string): 当前页面路径 (如 '/wetlab/engineering')
    ============================================================ #}
 
 {# 使用文件夹相对路径构建首页和区块锚点链接，避免硬编码 index.html 并适配 GitHub Pages 子目录 #}
@@ -47,12 +47,11 @@
           <i class="fa-solid fa-chevron-down"></i>
         </a>
         <ul class="dropdown-menu">
-          <li><a href="{{ home_hash_prefix }}#Result" class="dropdown-link"><span class="nav-text" data-text-en="Result" data-text-zh="实验结果">Result</span></a></li>
-          <li><a href="{{ home_hash_prefix }}#Design" class="dropdown-link"><span class="nav-text" data-text-en="Design" data-text-zh="实验设计">Design</span></a></li>
-          <li><a href="{{ home_hash_prefix }}#Notebook" class="dropdown-link"><span class="nav-text" data-text-en="Notebook" data-text-zh="实验记录">Notebook</span></a></li>
-          <li><a href="{{ url_for('wetlab_salicylic_acid') }}" class="dropdown-link {% if current_path == '/wetlab/salicylic-acid' %}active{% endif %}"><span class="nav-text" data-text-en="Experiments" data-text-zh="实验内容">Experiments</span></a></li>
-          <li><a href="{{ home_hash_prefix }}#Parts" class="dropdown-link"><span class="nav-text" data-text-en="Parts" data-text-zh="实验部件">Parts</span></a></li>
-          <li><a href="{{ home_hash_prefix }}#Safety" class="dropdown-link"><span class="nav-text" data-text-en="Safety" data-text-zh="安全说明">Safety</span></a></li>
+          <li><a href="{{ url_for('wetlab_engineering') }}" class="dropdown-link {% if current_path == '/wetlab/engineering' %}active{% endif %}"><span class="nav-text" data-text-en="Engineering" data-text-zh="工程设计">Engineering</span></a></li>
+          <li><a href="{{ url_for('wetlab_results') }}" class="dropdown-link {% if current_path == '/wetlab/results' %}active{% endif %}"><span class="nav-text" data-text-en="Results" data-text-zh="实验结果">Results</span></a></li>
+          <li><a href="{{ url_for('wetlab_protocal') }}" class="dropdown-link {% if current_path == '/wetlab/protocal' %}active{% endif %}"><span class="nav-text" data-text-en="Protocal" data-text-zh="实验方法">Protocal</span></a></li>
+          <li><a href="{{ url_for('wetlab_parts') }}" class="dropdown-link {% if current_path == '/wetlab/parts' %}active{% endif %}"><span class="nav-text" data-text-en="Parts" data-text-zh="生物部件">Parts</span></a></li>
+          <li><a href="{{ url_for('wetlab_notebook') }}" class="dropdown-link {% if current_path == '/wetlab/notebook' %}active{% endif %}"><span class="nav-text" data-text-en="notebook" data-text-zh="实验记录">notebook</span></a></li>
         </ul>
       </li>
 

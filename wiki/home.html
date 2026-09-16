@@ -84,7 +84,7 @@
         <svg class="story-still" viewBox="0 140 1600 860" aria-hidden="true"><use href="#v2-art-{{ id }}"/>{% if id in ['sample', 'lab', 'return'] %}<use href="#v2-bottle" transform="translate(1080 780)"/>{% elif id == 'signal' %}<use href="#story-cell-static" transform="translate(750 630)"/>{% endif %}</svg>
         {% if loop.last %}
         <div class="story-links">
-          <a href="{{ url_for('wetlab_salicylic_acid') }}"><span data-text-en="Inside the lab" data-text-zh="走进实验室">Inside the lab</span><span aria-hidden="true">↗</span></a>
+          <a href="{{ url_for('wetlab_engineering') }}"><span data-text-en="Inside the lab" data-text-zh="走进实验室">Inside the lab</span><span aria-hidden="true">↗</span></a>
           <a href="{{ url_for('drylab_naphthalene') }}"><span data-text-en="Follow the model" data-text-zh="查看模型分析">Follow the model</span><span aria-hidden="true">↗</span></a>
           <a href="{{ url_for('team_members') }}"><span data-text-en="Meet the people" data-text-zh="认识我们">Meet the people</span><span aria-hidden="true">↗</span></a>
         </div>
