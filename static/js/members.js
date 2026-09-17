@@ -135,7 +135,7 @@
         },
         {
             name: "Feier Yi",
-            role: "HP MEMBER",
+            role: "HP LEADER",
             description: "iGEM equipped me with the ability to let the engineering cycle guide my practice, moving steadily toward our goals through implementation, feedback, and iterative optimization, while growing together with friendly competition partners."
         },{
             name: "Yiwen Xu",
@@ -164,7 +164,7 @@
             description: "As a member of the Human Practices (HP) group, I was mainly responsible for conducting interviews, writing copy, and editing videos. My background in Journalism and Communication helped me deeply appreciate the importance of science communication within iGEM. At first, I felt intimidated and anxious when faced with scientific topics to which I had little prior exposure. However, the patient guidance and encouragement of my teammates helped me gradually push beyond my comfort zone. Through this experience, I learned how to communicate with people from different backgrounds and situations, and how to tell the story of synthetic biology through compelling visual content."
         },{
             name: "Siyi Zhu",
-            role: "ART MEMBER",
+            role: "ART LEADER",
             description: "When I first joined the iGEM team, I simply hoped to use the opportunity to pursue my interests. Later, I became the leader of the art and design group, a role that strengthened my sense of responsibility. Working closely with our advisor and teammates, we collaborated on various publicity and visual-design tasks and worked together to move our projects forward. This experience taught me how to balance creative expression with the needs of the team, grow through communication and coordination, and genuinely appreciate the fulfillment and joy that come from contributing to a collective effort."
         },
         {
@@ -187,7 +187,7 @@
         },
         {
             name: "Minxi Qiu",
-            role: "WIKI MEMBER",
+            role: "WIKI LEADER",
             description: "As a beginner in web design, I initially thought, the Wiki was simply a platform for presenting our results online. However, after joining iGEM and gaining hands-on experience, I discovered the many details that required careful attention and refinement. Technical challenges such as responsive layout design, content rendering, and formatting standards often required me to debug, troubleshoot, and revise my work repeatedly. Participating in iGEM strengthened my cross-disciplinary collaboration and communication skills, familiarized me with iGEM’s Wiki standards, and enhanced my ability to communicate scientific information effectively. It also deepened my understanding of teamwork, task division, and the importance of coordinating with members from different disciplines."
         },{
             name: "Ruilin Yang",
@@ -199,7 +199,7 @@
             description: "When I first joined the iGEM team, I assumed it would simply be an opportunity to showcase my front-end development and web animation skills. As the project progressed, however, I gained far more than technical experience. Working at the intersection of synthetic biology and digital design, I learned to translate complex experimental concepts and logic into clear, intuitive web visuals. I also came to understand how thoughtful visualization can make complex scientific content more accessible and help it reach a wider audience."
         },{
             name: "Qimeng Fan",
-            role: "DRYLAB MEMBER",
+            role: "DRYLAB LEADER",
             description: "Participating in iGEM gave me valuable hands-on experience. I helped coordinate the activities of our modeling group, which taught me how to coordinate team members and communicate effectively with my teammates. Senior members also introduced me to biological modeling, including protein modeling and data modeling, giving me an initial understanding of fundamental modeling methods and the underlying logic behind them."
         },{
             name: "Mengfei Liu",
