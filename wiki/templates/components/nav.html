@@ -39,7 +39,38 @@
             <li><a href="{{ home_hash_prefix }}#Contribution" class="dropdown-link"><span class="nav-text" data-text-en="Contribution" data-text-zh="贡献说明">Contribution</span></a></li>
           </ul>
         </li>
+    <div class="menu-container">
+      <ul class="nav-menu" id="navMenu">
+        <!-- Project 下拉菜单 -->
+        <li class="nav-item has-dropdown">
+          <a href="{{ home_hash_prefix }}#Project" class="nav-link {% if active_nav == 'Project' %}active{% endif %}" data-section="Project">
+            <i class="fas fa-home"></i>
+            <span class="nav-text" data-text-en="Project" data-text-zh="项目">Project</span>
+            <i class="fa-solid fa-chevron-down"></i>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a href="{{ home_hash_prefix }}#Description" class="dropdown-link"><span class="nav-text" data-text-en="Description" data-text-zh="项目描述">Description</span></a></li>
+            <li><a href="{{ home_hash_prefix }}#Engineering" class="dropdown-link"><span class="nav-text" data-text-en="Engineering" data-text-zh="工程实现">Engineering</span></a></li>
+            <li><a href="{{ home_hash_prefix }}#Contribution" class="dropdown-link"><span class="nav-text" data-text-en="Contribution" data-text-zh="贡献说明">Contribution</span></a></li>
+          </ul>
+        </li>
 
+        <!-- Wet Lab 下拉菜单 -->
+        <li class="nav-item has-dropdown">
+          <a href="{{ home_hash_prefix }}#Wet Lab" class="nav-link {% if active_nav == 'Wet-Lab' %}active{% endif %}" data-section="Wet-Lab">
+            <i class="fa-solid fa-flask"></i>
+            <span class="nav-text" data-text-en="Wet-Lab" data-text-zh="湿实验">Wet Lab</span>
+            <i class="fa-solid fa-chevron-down"></i>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a href="{{ home_hash_prefix }}#Result" class="dropdown-link"><span class="nav-text" data-text-en="Result" data-text-zh="实验结果">Result</span></a></li>
+            <li><a href="{{ home_hash_prefix }}#Design" class="dropdown-link"><span class="nav-text" data-text-en="Design" data-text-zh="实验设计">Design</span></a></li>
+            <li><a href="{{ home_hash_prefix }}#Notebook" class="dropdown-link"><span class="nav-text" data-text-en="Notebook" data-text-zh="实验记录">Notebook</span></a></li>
+            <li><a href="{{ url_for('wetlab_salicylic_acid') }}" class="dropdown-link {% if current_path == '/wetlab/salicylic-acid' %}active{% endif %}"><span class="nav-text" data-text-en="Experiments" data-text-zh="实验内容">Experiments</span></a></li>
+            <li><a href="{{ home_hash_prefix }}#Parts" class="dropdown-link"><span class="nav-text" data-text-en="Parts" data-text-zh="实验部件">Parts</span></a></li>
+            <li><a href="{{ home_hash_prefix }}#Safety" class="dropdown-link"><span class="nav-text" data-text-en="Safety" data-text-zh="安全说明">Safety</span></a></li>
+          </ul>
+        </li>
         <!-- Wet Lab 下拉菜单 -->
         <li class="nav-item has-dropdown">
           <a href="{{ home_hash_prefix }}#Wet Lab" class="nav-link {% if active_nav == 'Wet-Lab' %}active{% endif %}" data-section="Wet-Lab">
