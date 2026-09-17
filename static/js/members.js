@@ -81,9 +81,9 @@
     const descList = document.querySelectorAll(".introduction");
     descList.forEach(desc => {
         const splitDesc = new SplitText(desc, {
-            type: 'chars'
+            type: 'words'
         });
-        gsap.from(splitDesc.chars, {
+        gsap.from(splitDesc.words, {
             rotationX: -100,
             transformOrigin: "50% 50% -160px",
             opacity: 0,
