@@ -28,7 +28,6 @@ def serve():
 def home():
     return render_template('home.html',
         is_subpage=False,
-        active_nav='Project',
         current_path='/')
 
 @app.route('/project/description')
