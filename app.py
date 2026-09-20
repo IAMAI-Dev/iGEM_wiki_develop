@@ -28,16 +28,17 @@ def serve():
 def home():
     return render_template('home.html',
         is_subpage=False,
+        active_nav='Project',
         current_path='/')
 
-@app.route('/project/description')
+@app.route('/project/description/')
 def project_description():
     return render_template('pages/project/description.html',
                            is_subpage=True,
                            active_nav='Project',
                            current_path='/project/description')
 
-@app.route('/project/design')
+@app.route('/project/design/')
 def project_design():
     return render_template('pages/project/design.html',
                            is_subpage=True,
