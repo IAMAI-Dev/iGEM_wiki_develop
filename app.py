@@ -77,7 +77,7 @@ def drylab_salicylic_acid():
 def engagement_ihp():
     return render_template('pages/engagement/ihp.html',
         is_subpage=True,
-        active_nav='Dry-Lab',
+        active_nav='Engagement',
         current_path='/engagement/ihp')
 
 @app.route('/team/members/')
