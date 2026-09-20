@@ -34,8 +34,8 @@
             <i class="fa-solid fa-chevron-down"></i>
           </a>
           <ul class="dropdown-menu">
-            <li><a href="{{ home_hash_prefix }}#Description" class="dropdown-link"><span class="nav-text" data-text-en="Description" data-text-zh="项目描述">Description</span></a></li>
-            <li><a href="{{ home_hash_prefix }}#Engineering" class="dropdown-link"><span class="nav-text" data-text-en="Engineering" data-text-zh="工程实现">Engineering</span></a></li>
+            <li><a href="{{ url_for('project_description') }}" class="dropdown-link {% if current_path == '/project/description' %}active{% endif %}"><span class="nav-text" data-text-en="Description" data-text-zh="项目描述">Description</span></a></li>
+            <li><a href="{{ url_for('project_design') }}" class="dropdown-link {% if current_path == '/project/design' %}active{% endif %}"><span class="nav-text" data-text-en="Design" data-text-zh="设计">Design</span></a></li>
             <li><a href="{{ home_hash_prefix }}#Contribution" class="dropdown-link"><span class="nav-text" data-text-en="Contribution" data-text-zh="贡献说明">Contribution</span></a></li>
           </ul>
         </li>
@@ -47,12 +47,12 @@
             <i class="fa-solid fa-chevron-down"></i>
           </a>
           <ul class="dropdown-menu">
+            <li><a href="{{ home_hash_prefix }}#Engineering" class="dropdown-link"><span class="nav-text">Engineering</span></a></li>
             <li><a href="{{ home_hash_prefix }}#Result" class="dropdown-link"><span class="nav-text" data-text-en="Result" data-text-zh="实验结果">Result</span></a></li>
-            <li><a href="{{ home_hash_prefix }}#Design" class="dropdown-link"><span class="nav-text" data-text-en="Design" data-text-zh="实验设计">Design</span></a></li>
+            <li><a href="{{ home_hash_prefix }}#Protocol" class="dropdown-link {% if current_path == '/wetlab/protocal' %}active{% endif %}"><span class="nav-text">Protocol</span></a></li>
+            <li><a href="{{ home_hash_prefix }}#Parts" class="dropdown-link"><span class="nav-text" data-text-en="Parts" data-text-zh="实验部件">Parts</span></a></li> 
             <li><a href="{{ home_hash_prefix }}#Notebook" class="dropdown-link"><span class="nav-text" data-text-en="Notebook" data-text-zh="实验记录">Notebook</span></a></li>
-            <li><a href="{{ url_for('wetlab_salicylic_acid') }}" class="dropdown-link {% if current_path == '/wetlab/salicylic-acid' %}active{% endif %}"><span class="nav-text" data-text-en="Experiments" data-text-zh="实验内容">Experiments</span></a></li>
-            <li><a href="{{ home_hash_prefix }}#Parts" class="dropdown-link"><span class="nav-text" data-text-en="Parts" data-text-zh="实验部件">Parts</span></a></li>
-            <li><a href="{{ home_hash_prefix }}#Safety" class="dropdown-link"><span class="nav-text" data-text-en="Safety" data-text-zh="安全说明">Safety</span></a></li>
+            <li><a href="{{ url_for('wetlab_safety') }}" class="dropdown-link {% if current_path == '/wetlab/safety' %}active{% endif %}"><span class="nav-text" data-text-en="Safety" data-text-zh="安全说明">Safety</span></a></li>
           </ul>
         </li>
 
@@ -64,8 +64,7 @@
             <i class="fa-solid fa-chevron-down"></i>
           </a>
           <ul class="dropdown-menu">
-            <li style="width:15vw;"><a href="{{ url_for("drylab_naphthalene") }}" class="dropdown-link"><span class="nav-text" data-text-en="Modeling Naphthalene" data-text-zh="萘建模">Modeling Naphthalene</span></a></li>
-            <li><a href="{{ url_for("drylab_salicylic_acid") }}" class="dropdown-link"><span class="nav-text" data-text-en="Modeling Salicylic Acid" data-text-zh="水杨酸建模">Modeling Salicylic Acid</span></a></li>
+            <li><a href="{{ url_for("drylab_naphthalene") }}" class="dropdown-link {% if (current_path == '/drylab/naphthalene/' or current_path == '/drylab/salicylic-acid') %}active{% endif %}"><span class="nav-text" data-text-en="Modeling" data-text-zh="建模">Modeling</span></a></li>
             <li><a href="{{ home_hash_prefix }}#Software" class="dropdown-link"><span class="nav-text" data-text-en="Software" data-text-zh="软件实现">Software</span></a></li>
             <li><a href="{{ home_hash_prefix }}#Hardware" class="dropdown-link"><span class="nav-text" data-text-en="Hardware" data-text-zh="硬件实现">Hardware</span></a></li>
           </ul>
@@ -83,12 +82,19 @@
           </ul>
         </li>
 
-        <!-- 无下拉的导航项 -->
-        <li class="nav-item">
-          <a href="{{ home_hash_prefix }}#Human Practice" class="nav-link {% if active_nav == 'Human-Practice' %}active{% endif %}" data-section="Human-Practice">
-            <i class="fas fa-briefcase"></i>
-            <span class="nav-text" data-text-en="Human-Practice" data-text-zh="人文实践">Human Practice</span>
+        <!-- Team 下拉菜单 -->
+        <li class="nav-item has-dropdown">
+          <a href="{{ home_hash_prefix }}#Engagement" class="nav-link {% if active_nav == 'Engagement' %}active{% endif %}" data-section="Engagement">
+            <i class="fa-solid fa-people-group"></i>
+            <span class="nav-text">Engagement</span>
+            <i class="fa-solid fa-chevron-down"></i>
           </a>
+          <ul class="dropdown-menu">
+            <li style="width:15vw;"><a href="{{ url_for('engagement_ihp') }}" class="dropdown-link {% if active_nav == '/engagement/ihp' %}active{% endif %}"><span class="nav-text">IHP</span></a></li>
+            <li><a href="{{ home_hash_prefix }}#Education" class="dropdown-link"><span class="nav-text">Education</span></a></li>
+            <li><a href="{{ home_hash_prefix }}#Enterpreneurship" class="dropdown-link"><span class="nav-text">Enterpreneurship</span></a></li>
+            <li><a href="{{ home_hash_prefix }}#Sustainable Dvelopment" class="dropdown-link"><span class="nav-text">Sustainable Dvelopment</span></a></li>
+          </ul>
         </li>
       
         <li class="nav-item">

@@ -31,6 +31,19 @@ def home():
         active_nav='Project',
         current_path='/')
 
+@app.route('/project/description')
+def project_description():
+    return render_template('pages/project/description.html',
+                           is_subpage=True,
+                           active_nav='Project',
+                           current_path='/project/description')
+
+@app.route('/project/design')
+def project_design():
+    return render_template('pages/project/design.html',
+                           is_subpage=True,
+                           active_nav='Project',
+                           current_path='/project/design')
 
 @app.route('/wetlab/salicylic-acid/')
 def wetlab_salicylic_acid():
@@ -38,6 +51,13 @@ def wetlab_salicylic_acid():
         is_subpage=True,
         active_nav='Wet-Lab',
         current_path='/wetlab/salicylic-acid')
+
+@app.route('/wetlab/safety/')
+def wetlab_safety():
+    return render_template('pages/wetlab/safety.html',
+        is_subpage=True,
+        active_nav='Wet-Lab',
+        current_path='/wetlab/safety')
     
 @app.route('/drylab/naphthalene/')
 def drylab_naphthalene():
@@ -52,7 +72,14 @@ def drylab_salicylic_acid():
         is_subpage=True,
         active_nav='Dry-Lab',
         current_path='/drylab/salicylic-acid')
-    
+
+@app.route('/engagement/ihp/')
+def engagement_ihp():
+    return render_template('pages/engagement/ihp.html',
+        is_subpage=True,
+        active_nav='Dry-Lab',
+        current_path='/engagement/ihp')
+
 @app.route('/team/members/')
 def team_members():
     return render_template('pages/team/members.html',
