@@ -27,10 +27,10 @@
       svg: { fontCache: 'global' }
     };
   </script>
-  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+  <script href="{{ url_for('static', filename='tex.js', v='1.0.12') }}"></script>
 
   <!-- 全局样式 -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css', v='1.0.12') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css', v='1.0.12') }}">
 
   {% block extra_css %}{% endblock %}
 </head>
@@ -120,7 +120,7 @@
   {% endif %}
 
   {# 导航栏 #}
-  {% include 'templates/components/nav.html' %}
+  {% include 'menu.html' %}
 
   {# 主体内容 #}
   {% block content %}{% endblock %}

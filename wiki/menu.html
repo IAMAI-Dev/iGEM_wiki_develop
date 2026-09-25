@@ -1,21 +1,3 @@
-{# ============================================================
-共享导航栏组件
-变量：
-- is_subpage (bool) : 是否为子页面
-- active_nav (string) : 当前激活的顶级导航项 (如 'Project', 'Wet-Lab')
-- current_path (string): 当前页面路径 (如 '/wetlab/engineering')
-============================================================ #}
-
-{# 使用文件夹相对路径构建首页和区块锚点链接，避免硬编码 index.html 并适配 GitHub Pages 子目录 #}
-<!-- {% if is_subpage %}
-{% set home_url = '../../' %}
-{% set home_hash_prefix = '../../' %}
-{% else %}
-{% set home_url = './' %}
-{% set home_hash_prefix = '' %}
-{% endif %} -->
-<link rel="stylesheet" href="{{ url_for('static', filename='css/nav.css', v='1.0.2') }}">
-
 <header class="main-header" id="header">
     <nav class="nav-container">
         <div class="nav-brand">
@@ -29,13 +11,15 @@
             <ul class="nav-menu" id="navMenu">
                 <!-- Project 下拉菜单 -->
                 <li class="nav-item has-dropdown">
-                    <a
-                        class="nav-link {% if active_nav == 'Project' %}active{% endif %}" data-section="Project">
-                        <svg t="1790322990007" class="icon" viewBox="0 0 1025 1024" version="1.1"
-                            xmlns="http://www.w3.org/2000/svg" p-id="5674" width="20" height="20">
+                    <a class="nav-link {% if active_nav == 'Project' %}active{% endif %}" data-section="Project">
+                        <svg t="1790326463262" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                            xmlns="http://www.w3.org/2000/svg" p-id="16813" width="20" height="20">
                             <path
-                                d="M155.287118 608l0 309.696c0 23.36 19.072 42.304 42.624 42.304l236.544 0 0-281.536 186.176 0 0 281.536 236.608 0c23.552 0 42.688-18.944 42.688-42.304l0-321.536-377.216-289.984-367.424 301.824zM1009.111118 435.84l-107.712-86.528 0-241.728c0-22.912-18.816-41.536-42.048-41.536l-91.648 0c-23.232 0-42.048 18.624-42.048 41.536l0 100.672-167.104-134.144c-18.944-15.232-59.392-11.008-70.976-2.112l-472.384 377.856c-16.96 12.992-20.224 37.376-7.232 54.4l23.552 30.784c12.992 16.96 37.248 20.16 54.208 7.104l436.864-349.44 416.384 334.4c16.768 12.864 40.832 9.728 53.696-7.104l23.36-30.464c12.928-16.768 9.856-40.768-6.912-53.696z"
-                                fill="#10B981" p-id="5675"></path>
+                                d="M280 752h80c4.4 0 8-3.6 8-8V280c0-4.4-3.6-8-8-8h-80c-4.4 0-8 3.6-8 8v464c0 4.4 3.6 8 8 8zM472 472h80c4.4 0 8-3.6 8-8V280c0-4.4-3.6-8-8-8h-80c-4.4 0-8 3.6-8 8v184c0 4.4 3.6 8 8 8zM664 544h80c4.4 0 8-3.6 8-8V280c0-4.4-3.6-8-8-8h-80c-4.4 0-8 3.6-8 8v256c0 4.4 3.6 8 8 8z"
+                                p-id="16814" fill="#10B981"></path>
+                            <path
+                                d="M880 112H144c-17.7 0-32 14.3-32 32v736c0 17.7 14.3 32 32 32h736c17.7 0 32-14.3 32-32V144c0-17.7-14.3-32-32-32z m-40 728H184V184h656v656z"
+                                p-id="16815" fill="#10B981"></path>
                         </svg>
                         <span class="nav-text" data-text-en="Project" data-text-zh="项目">Project</span>
                         <svg t="1790323296971" class="icon fa-chevron-down" viewBox="0 0 1024 1024" version="1.1"
@@ -60,8 +44,7 @@
                 </li>
                 <!-- Wet Lab 下拉菜单 -->
                 <li class="nav-item has-dropdown">
-                    <a
-                        class="nav-link {% if active_nav == 'Wet-Lab' %}active{% endif %}" data-section="Wet-Lab">
+                    <a class="nav-link {% if active_nav == 'Wet-Lab' %}active{% endif %}" data-section="Wet-Lab">
                         <svg t="1790324893305" class="icon" viewBox="0 0 1025 1024" version="1.1"
                             xmlns="http://www.w3.org/2000/svg" p-id="13953" width="20" height="20">
                             <path
@@ -104,8 +87,7 @@
 
                 <!-- Dry Lab 下拉菜单 -->
                 <li class="nav-item has-dropdown">
-                    <a
-                        class="nav-link {% if active_nav == 'Dry-Lab' %}active{% endif %}" data-section="Dry-Lab">
+                    <a class="nav-link {% if active_nav == 'Dry-Lab' %}active{% endif %}" data-section="Dry-Lab">
                         <svg t="1790325454549" class="icon" viewBox="0 0 1024 1024" version="1.1"
                             xmlns="http://www.w3.org/2000/svg" p-id="15581" id="mx_n_1790325454550" width="20"
                             height="20">
@@ -134,8 +116,7 @@
                 </li>
                 <!-- Team 下拉菜单 -->
                 <li class="nav-item has-dropdown">
-                    <a
-                        class="nav-link {% if active_nav == 'Team' %}active{% endif %}" data-section="Team">
+                    <a class="nav-link {% if active_nav == 'Team' %}active{% endif %}" data-section="Team">
                         <svg t="1790324819500" class="icon" viewBox="0 0 1030 1024" version="1.1"
                             xmlns="http://www.w3.org/2000/svg" p-id="11139" width="20" height="20">
                             <path
@@ -180,8 +161,7 @@
 
                 <!-- Engagement 下拉菜单 -->
                 <li class="nav-item has-dropdown">
-                    <a
-                        class="nav-link {% if active_nav == 'Engagement' %}active{% endif %}" data-section="Engagement">
+                    <a class="nav-link {% if active_nav == 'Engagement' %}active{% endif %}" data-section="Engagement">
                         <svg t="1790324756815" class="icon" viewBox="0 0 1024 1024" version="1.1"
                             xmlns="http://www.w3.org/2000/svg" p-id="10047" width="20" height="20">
                             <path
@@ -211,8 +191,7 @@
                 </li>
 
                 <li class="nav-item">
-                    <a href="#Video"
-                        class="nav-link {% if active_nav == 'Video' %}active{% endif %}" data-section="Video">
+                    <a class="nav-link {% if active_nav == 'Video' %}active{% endif %}" data-section="Video">
                         <svg t="1790324375360" class="icon" viewBox="0 0 1024 1024" version="1.1"
                             xmlns="http://www.w3.org/2000/svg" p-id="7906" width="20" height="20">
                             <path
