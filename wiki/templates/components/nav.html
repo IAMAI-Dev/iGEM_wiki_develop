@@ -7,13 +7,13 @@
 ============================================================ #}
 
 {# 使用文件夹相对路径构建首页和区块锚点链接，避免硬编码 index.html 并适配 GitHub Pages 子目录 #}
-<!-- {% if is_subpage %}
+{% if is_subpage %}
 {% set home_url = '../../' %}
 {% set home_hash_prefix = '../../' %}
 {% else %}
 {% set home_url = './' %}
 {% set home_hash_prefix = '' %}
-{% endif %} -->
+{% endif %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/nav.css', v='1.0.2') }}">
 
 <header class="main-header" id="header">
