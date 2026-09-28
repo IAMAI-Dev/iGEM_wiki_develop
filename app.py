@@ -60,12 +60,12 @@ def wetlab_results():
         current_path='/wetlab/results')
 
 
-@app.route('/wetlab/protocal/')
-def wetlab_protocal():
-    return render_template('pages/wetlab/protocal.html',
+@app.route('/wetlab/protocol/')
+def wetlab_protocol():
+    return render_template('pages/wetlab/protocol.html',
         is_subpage=True,
         active_nav='Wet-Lab',
-        current_path='/wetlab/protocal')
+        current_path='/wetlab/protocol')
 
 
 @app.route('/wetlab/parts/')
