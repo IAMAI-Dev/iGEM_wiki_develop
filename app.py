@@ -109,6 +109,13 @@ def drylab_salicylic_acid():
         active_nav='Dry-Lab',
         current_path='/drylab/salicylic-acid')
 
+@app.route('/drylab/protein/')
+def drylab_protein():
+    return render_template('pages/drylab/protein.html',
+        is_subpage=True,
+        active_nav='Dry-Lab',
+        current_path='/drylab/protein')
+
 @app.route('/engagement/ihp/')
 def engagement_ihp():
     return render_template('pages/engagement/ihp.html',
