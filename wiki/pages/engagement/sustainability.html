@@ -1,0 +1,541 @@
+{# ============================================================
+   Human Practice · Sustainable Development
+   继承 layouts/article.html → templates/base.html
+   复用 wetlab.css，与 ihp.html（Stakeholder Analysis）页面架构完全对齐，
+   未引入任何新组件，全部沿用已有的 pull-quote / step-list /
+   key-finding / stat-grid / references-list 等既有样式类。
+   内容来源：English_Version.docx（无嵌入图片）
+   ============================================================ #}
+{% extends 'templates/layouts/article.html' %}
+{% block title %}Human Practice · Sustainable Development{% endblock %}
+{% block meta_description %}
+<meta name="description"
+  content="How the NapRemSen PAHs biosensor project advances the UN Sustainable Development Goals: SDG 3 (Good Health), SDG 6 (Clean Water), SDG 15 (Life on Land), and SDG 17 (Partnerships for the Goals).">
+{% endblock %}
+{# ==================== 侧边栏目录 ==================== #}
+{% block toc %}
+<li class="toc-parent">
+    <div class="toc-parent-row">
+        <a href="#sec-overview" data-text-en="Overview" data-text-zh="概述">Overview</a>
+        <button class="toc-expand-btn" aria-label="展开"><i class="fa-solid fa-chevron-right"></i></button>
+    </div>
+    <ul class="toc-children">
+        <li><a href="#sec-overview-what" data-text-en="What is sustainable development?" data-text-zh="什么是可持续发展？">What is sustainable development?</a></li>
+        <li><a href="#sec-overview-relation" data-text-en="How our project relates" data-text-zh="与本项目的关系">How our project relates</a></li>
+    </ul>
+</li>
+<li><a href="#sec-sdg3" data-text-en="SDG 3 · Good Health" data-text-zh="SDG 3 · 良好健康与福祉">SDG 3 · Good Health</a></li>
+<li><a href="#sec-sdg6" data-text-en="SDG 6 · Clean Water" data-text-zh="SDG 6 · 清洁饮水和卫生设施">SDG 6 · Clean Water</a></li>
+<li><a href="#sec-sdg15" data-text-en="SDG 15 · Life on Land" data-text-zh="SDG 15 · 陆地生物">SDG 15 · Life on Land</a></li>
+<li><a href="#sec-sdg17" data-text-en="SDG 17 · Partnerships" data-text-zh="SDG 17 · 促进目标实现的伙伴关系">SDG 17 · Partnerships</a></li>
+<li><a href="#sec-references" data-text-en="References" data-text-zh="参考文献">References</a></li>
+{% endblock %}
+
+{# ==================== Hero 横幅 ==================== #}
+{% block hero %}
+<section class="wetlab-hero wetlab-animate" id="sec-hero">
+  <div class="hero-glow-1"></div>
+  <div class="hero-glow-2"></div>
+
+  <div class="hero-inner">
+    <div class="hero-content-left">
+      <div class="wetlab-hero-subtitle" data-text-en="HUMAN PRACTICE · SUSTAINABLE DEVELOPMENT" data-text-zh="人文实践 · 可持续发展">HUMAN PRACTICE · SUSTAINABLE DEVELOPMENT</div>
+      <h1 class="hero-title" data-html
+        data-text-en="Sustainable <span class='hero-accent'>Development</span>"
+        data-text-zh="可持续<span class='hero-accent'>发展</span>">
+        Sustainable <span class="hero-accent">Development</span>
+      </h1>
+      <div class="hero-actions">
+        <a href="#sec-overview" class="hero-btn hero-btn-primary">
+          <span data-text-en="Overview" data-text-zh="概述">Overview</span> <i class="fa-solid fa-arrow-down"></i>
+        </a>
+        <a href="#sec-sdg3" class="hero-btn hero-btn-secondary">
+          <span data-text-en="SDG Highlights" data-text-zh="SDG亮点">SDG Highlights</span> <i class="fa-solid fa-earth-asia"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{# ==================== 文章主体 ==================== #}
+{% block article %}
+<!-- ==================== 1. Overview ==================== -->
+<section id="sec-overview" class="wetlab-animate">
+  <div class="section-heading">
+    <div class="section-icon">
+      <i class="fa-solid fa-earth-asia"></i>
+    </div>
+    <div class="section-heading-text">
+      <h2 data-text-en="Overview" data-text-zh="概述">Overview</h2>
+      <div class="section-heading-bar"></div>
+    </div>
+  </div>
+
+  <div class="pull-quote">
+    <p data-text-en="If people do not let down the green mountains, the green mountains will surely not let down the people."
+       data-text-zh="绿水青山就是金山银山；人不负青山，青山定不负人。">
+      "If people do not let down the green mountains, the green mountains will surely not let down the people."
+    </p>
+    <cite data-text-en="— Xi Jinping, on ecological civilization" data-text-zh="——习近平，关于生态文明建设的论述">— Xi Jinping, on ecological civilization</cite>
+  </div>
+
+  <div id="sec-overview-what">
+    <h3 data-text-en="What is sustainable development?" data-text-zh="什么是可持续发展？">What is sustainable development?</h3>
+    <p class="drop-cap" data-text-en="Sustainable development is defined as development that 'meets the needs of the present generation without compromising the ability of future generations to meet their own needs' (UN Brundtland Commission, 1987). It is not a single environmental issue, but rather a systemic framework encompassing three dimensions: environmental health, economic viability, and social equity."
+       data-text-zh="可持续发展被定义为『既满足当代人的需要，又不损害后代人满足其需要之能力』的发展（联合国布伦特兰委员会，1987年）。它并非单一的环境议题，而是一个涵盖环境健康、经济可行性与社会公平三个维度的系统性框架。">
+      Sustainable development is defined as development that "meets the needs of the present generation without
+      compromising the ability of future generations to meet their own needs" (UN Brundtland Commission, 1987). It
+      is not a single environmental issue, but rather a systemic framework encompassing three dimensions:
+      environmental health, economic viability, and social equity.
+    </p>
+    <p data-text-en="In 2015, the 193 member states of the United Nations adopted the 2030 Agenda for Sustainable Development, establishing 17 Sustainable Development Goals (SDGs) that set a common global agenda for action in areas such as poverty reduction, health, education, clean energy, environmental protection, and responsible consumption and production. These 17 goals are interconnected and indivisible — progress in one area often depends on coordinated advances in others."
+       data-text-zh="2015年，联合国193个会员国通过了《2030年可持续发展议程》，确立了17项可持续发展目标（SDGs），为减贫、健康、教育、清洁能源、环境保护以及负责任的消费与生产等领域设定了共同的全球行动议程。这17项目标相互关联、不可分割——某一领域的进展往往依赖于其他领域的协同推进。">
+      In 2015, the 193 member states of the United Nations adopted the 2030 Agenda for Sustainable Development,
+      establishing 17 Sustainable Development Goals (SDGs) that set a common global agenda for action in areas such
+      as poverty reduction, health, education, clean energy, environmental protection, and responsible consumption
+      and production. These 17 goals are interconnected and indivisible — progress in one area often depends on
+      coordinated advances in others.
+    </p>
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-card-number">17</div>
+        <div class="stat-card-label" data-text-en="Sustainable Development Goals" data-text-zh="项可持续发展目标">Sustainable Development Goals</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-number">193</div>
+        <div class="stat-card-label" data-text-en="UN member states" data-text-zh="联合国会员国">UN member states</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-number">2015</div>
+        <div class="stat-card-label" data-text-en="Year the 2030 Agenda was adopted" data-text-zh="《2030年议程》通过年份">Year the 2030 Agenda was adopted</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-number">4</div>
+        <div class="stat-card-label" data-text-en="SDGs this project directly advances" data-text-zh="本项目直接推动的SDG数量">SDGs this project directly advances</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="sec-overview-relation">
+    <h3 data-text-en="How is our project related to it?" data-text-zh="与本项目的关系">How is our project related to it?</h3>
+    <p data-text-en="Polycyclic aromatic hydrocarbons (PAHs) are a class of emerging pollutants widely generated in industrial production and everyday life — from coking plant wastewater to barbecue-stall fumes, from automobile exhaust to cigarette smoke. These pollutants persist in water bodies, soils, and the atmosphere, exhibiting carcinogenic, teratogenic, and mutagenic effects — so-called 'three-cause' toxicity — which has led many countries to classify them as priority controlled pollutants; China's 'Action Plan for the Control of Emerging Pollutants' also designates these substances as key targets for regulation."
+       data-text-zh="多环芳烃（PAHs）是广泛产生于工业生产与日常生活中的一类新污染物——从焦化厂废水到烧烤摊油烟，从机动车尾气到香烟烟雾。这些污染物持久存在于水体、土壤与大气中，具有致癌、致畸、致突变效应——即所谓的『三致』毒性，已被多国列为优先管控污染物；中国的《新污染物治理行动方案》也将这类物质列为重点监管对象。">
+      Polycyclic aromatic hydrocarbons (PAHs) are a class of emerging pollutants widely generated in industrial
+      production and everyday life — from coking plant wastewater to barbecue-stall fumes, from automobile exhaust
+      to cigarette smoke. These pollutants persist in water bodies, soils, and the atmosphere, exhibiting
+      carcinogenic, teratogenic, and mutagenic effects — so-called "three-cause" toxicity — which has led many
+      countries to classify them as priority controlled pollutants; China's "Action Plan for the Control of Emerging
+      Pollutants" also designates these substances as key targets for regulation.
+    </p>
+    <p data-text-en="However, the current state of governance is far from optimistic. Existing regulatory approaches rely heavily on laboratory-based chromatography-mass spectrometry, which is costly and time-consuming; handheld rapid-testing devices can only provide vague qualitative results, with data lacking legal validity, thereby perpetuating the longstanding dilemma of 'having standards but struggling to enforce them.' Meanwhile, PAH sources have long permeated everyday life — barbecue stalls, congested roadways, coal-fired heating — implying that effective management cannot depend solely on a handful of large laboratories. Instead, it calls for a more streamlined, widely accessible response system."
+       data-text-zh="然而，目前的治理现状远不乐观。现行监管方式高度依赖实验室色谱‑质谱分析，成本高、耗时长；手持式快速检测设备只能给出模糊的定性结果，数据不具备法律效力，长期陷入『有标准、难执行』的困境。与此同时，PAHs的污染源早已渗透进日常生活——烧烤摊、拥堵道路、燃煤取暖——这意味着有效治理不能仅依赖少数大型实验室，而是需要一套更精简、更易普及的响应体系。">
+      However, the current state of governance is far from optimistic. Existing regulatory approaches rely heavily
+      on laboratory-based chromatography-mass spectrometry, which is costly and time-consuming; handheld
+      rapid-testing devices can only provide vague qualitative results, with data lacking legal validity, thereby
+      perpetuating the longstanding dilemma of "having standards but struggling to enforce them." Meanwhile, PAH
+      sources have long permeated everyday life — barbecue stalls, congested roadways, coal-fired heating — implying
+      that effective management cannot depend solely on a handful of large laboratories. Instead, it calls for a
+      more streamlined, widely accessible response system.
+    </p>
+    <div class="key-finding">
+      <p data-text-en="Our response: a dual-strain time-difference sequential strategy. Samples are first incubated with the degrading bacteria; within 1–2 hours, naphthalene is degraded into salicylic acid. The reaction mixture is then transferred to a sensor-bacterial assay tube for incubation, and within about 30 minutes, whether the naphthalene concentration has fallen below the remediation standard is determined by checking whether fluorescence intensity has reached a preset threshold."
+         data-text-zh="我们的回应：双菌时间差序贯策略。样品先与降解菌混合孵育，1–2小时内萘被降解为水杨酸；随后反应混合液转移至传感菌检测管中孵育，约30分钟内，通过检查荧光强度是否达到预设阈值，即可判断萘浓度是否已降至修复标准以下。">
+        <strong data-text-en="Our response:" data-text-zh="我们的回应：">Our response:</strong> a dual-strain time-difference sequential
+        strategy. Samples are first incubated with the degrading bacteria; within 1–2 hours, naphthalene is degraded
+        into salicylic acid. The reaction mixture is then transferred to a sensor-bacterial assay tube for
+        incubation, and within about 30 minutes, whether the naphthalene concentration has fallen below the
+        remediation standard is determined by checking whether fluorescence intensity has reached a preset
+        threshold.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 2. SDG 3 — Good Health ==================== -->
+<section id="sec-sdg3" class="wetlab-animate">
+  <div class="section-heading">
+    <div class="section-icon">
+      <i class="fa-solid fa-heart-pulse"></i>
+    </div>
+    <div class="section-heading-text">
+      <h2 data-text-en="SDG 3 &mdash; Good Health" data-text-zh="SDG 3 &mdash; 良好健康与福祉">SDG 3 &mdash; Good Health</h2>
+      <div class="section-heading-bar"></div>
+    </div>
+  </div>
+
+  <h3 data-text-en="What did we do?" data-text-zh="我们做了什么？">What did we do?</h3>
+  <p data-text-en="The sources of polycyclic aromatic hydrocarbons are far more extensive than commonly believed. In addition to industrial sources such as coking plants and fuel depots, everyday activities — including cooking fumes from barbecue stalls, vehicle exhaust, cigarette smoke, and household coal-based heating — also continuously generate PAHs. This means that the risk of PAHs exposure is not limited to industrial workers — it has already permeated the everyday breathing and diet of ordinary people."
+     data-text-zh="多环芳烃的来源远比人们通常认为的更为广泛。除了焦化厂、燃料库等工业来源外，烧烤摊油烟、机动车尾气、香烟烟雾以及家庭燃煤取暖等日常活动也在持续产生PAHs。这意味着PAHs暴露的风险并不局限于产业工人——它早已渗透进普通人的日常呼吸与饮食之中。">
+    The sources of polycyclic aromatic hydrocarbons are far more extensive than commonly believed. In addition to
+    industrial sources such as coking plants and fuel depots, everyday activities — including cooking fumes from
+    barbecue stalls, vehicle exhaust, cigarette smoke, and household coal-based heating — also continuously generate
+    PAHs. This means that the risk of PAHs exposure is not limited to industrial workers — it has already permeated
+    the everyday breathing and diet of ordinary people.
+  </p>
+  <p data-text-en="Polycyclic aromatic hydrocarbons, including benzo[a]pyrene and other multi-component mixtures, have been classified by the International Agency for Research on Cancer (IARC) as Group 1 or Group 2B carcinogens. Workers at coking plants, fuel storage facilities, and chemical factories are chronically exposed to PAHs, while nearby communities are also affected through contaminated water and air."
+     data-text-zh="多环芳烃，包括苯并[a]芘等多组分混合物，已被国际癌症研究机构（IARC）列为1类或2B类致癌物。焦化厂、燃料储存设施与化工厂的工人长期暴露于PAHs之中，周边社区也通过受污染的水体与空气受到影响。">
+    Polycyclic aromatic hydrocarbons, including benzo[a]pyrene and other multi-component mixtures, have been
+    classified by the International Agency for Research on Cancer (IARC) as Group 1 or Group 2B carcinogens. Workers
+    at coking plants, fuel storage facilities, and chemical factories are chronically exposed to PAHs, while nearby
+    communities are also affected through contaminated water and air.
+  </p>
+  <p data-text-en="Our approach safeguards health through two pathways:" data-text-zh="我们的方案通过两条路径保障健康：">
+    Our approach safeguards health through two pathways:
+  </p>
+  <ul class="step-list">
+    <li data-text-en="Monitoring and Early Warning: Fluorescent signals are visible to the naked eye, eliminating the need for expensive equipment. Workers or regulatory personnel can readily determine whether PAH concentrations exceed permissible limits and promptly initiate emergency measures such as ventilation, use of protective gear, and process adjustments. In everyday settings like barbecue stalls and residential areas, frontline inspectors can also use this tool to rapidly assess PAH exposure levels in public spaces, addressing the current gap in rapid screening methods for PAHs from domestic sources."
+        data-text-zh="监测与预警：荧光信号肉眼可见，无需昂贵设备。工人或监管人员可以方便地判断PAHs浓度是否超标，并及时启动通风、佩戴防护装备、调整工艺等应急措施。在烧烤摊、居民区等日常场景中，一线检查人员也可借助该工具快速评估公共空间的PAHs暴露水平，弥补目前针对生活源PAHs快速筛查方法的空缺。"><strong
+          data-text-en="Monitoring and Early Warning:" data-text-zh="监测与预警：">Monitoring and Early Warning:</strong> Fluorescent
+      signals are visible to the naked eye, eliminating the need for expensive equipment. Workers or regulatory
+      personnel can readily determine whether PAH concentrations exceed permissible limits and promptly initiate
+      emergency measures such as ventilation, use of protective gear, and process adjustments. In everyday settings
+      like barbecue stalls and residential areas, frontline inspectors can also use this tool to rapidly assess PAH
+      exposure levels in public spaces, addressing the current gap in rapid screening methods for PAHs from
+      domestic sources.</li>
+    <li data-text-en="Source-level reduction: Degrading microorganisms convert naphthalene into harmless end products, offering the potential to lower the pollution load at its source and thereby mitigate the risk of chronic exposure in downstream drinking water sources and agricultural soils. China's Action Plan for the Control of Emerging Pollutants explicitly calls for prioritized management of persistent organic pollutants. In local practice, the Yangzhou Chemical Industrial Park in Jiangsu Province has reduced occupational exposure risks from toxic chemicals at the source by redesigning its material-handling systems and implementing multi-stage purification and recycling — demonstrating the feasibility of the 'source-level exposure reduction' approach in real-world industrial settings. It should be noted that degradation formulations, as long-term reserve products, are currently not being promoted due to restrictions under policies governing the environmental release of engineered microorganisms; at present, commercial efforts are focused on diagnostic test kits."
+        data-text-zh="源头减排：降解微生物将萘转化为无害终产物，有望从源头降低污染负荷，从而缓解下游饮用水源与农业土壤中慢性暴露的风险。中国的《新污染物治理行动方案》明确要求优先管控持久性有机污染物。在本地实践中，江苏省扬州化工产业园通过重新设计物料处理系统、实施多级净化与循环利用，从源头降低了有毒化学品的职业暴露风险——证明了『源头减排』方案在真实工业场景中的可行性。需要说明的是，降解制剂作为长期储备产品，目前因工程微生物环境释放相关政策的限制而暂未推广；现阶段商业化重点聚焦于检测试剂盒。"><strong
+          data-text-en="Source-level reduction:" data-text-zh="源头减排：">Source-level reduction:</strong> Degrading
+      microorganisms convert naphthalene into harmless end products, offering the potential to lower the pollution
+      load at its source and thereby mitigate the risk of chronic exposure in downstream drinking water sources and
+      agricultural soils. China's Action Plan for the Control of Emerging Pollutants explicitly calls for
+      prioritized management of persistent organic pollutants. In local practice, the Yangzhou Chemical Industrial
+      Park in Jiangsu Province has reduced occupational exposure risks from toxic chemicals at the source by
+      redesigning its material-handling systems and implementing multi-stage purification and recycling —
+      demonstrating the feasibility of the "source-level exposure reduction" approach in real-world industrial
+      settings. It should be noted that degradation formulations, as long-term reserve products, are currently not
+      being promoted due to restrictions under policies governing the environmental release of engineered
+      microorganisms; at present, commercial efforts are focused on diagnostic test kits.</li>
+  </ul>
+  <div class="key-finding">
+    <p data-text-en="SDG 3's goal is to 'ensure healthy lives and promote well-being for all at all ages.' We believe that prevention is the most effective safeguard for health and well-being — and the prerequisite for prevention is the ability to transform invisible pollutants into visible data, quickly and at a sufficiently low cost."
+       data-text-zh="SDG 3的目标是『确保健康的生活方式，促进各年龄段所有人的福祉』。我们相信，预防是对健康与福祉最有效的保障——而预防的前提，是能够快速且以足够低的成本，将无形的污染物转化为可见的数据。">
+      <strong data-text-en="SDG 3's goal" data-text-zh="SDG 3的目标">SDG 3's goal</strong> is to "ensure healthy lives and
+      promote well-being for all at all ages." We believe that prevention is the most effective safeguard for
+      health and well-being — and the prerequisite for prevention is the ability to transform invisible pollutants
+      into visible data, quickly and at a sufficiently low cost.
+    </p>
+  </div>
+
+  <h3 data-text-en="Feedback from stakeholders" data-text-zh="利益相关方反馈">Feedback from stakeholders</h3>
+  <div class="pull-quote">
+    <p data-text-en="The current 'basic parameters plus characteristic indicators' monitoring approach keeps overall costs stubbornly high, placing an especially heavy burden on small and micro enterprises. If we had a low-cost, portable biosensor capable of rapidly scanning multiple sampling points on-site and pinpointing suspected pollution areas, subsequent laboratory analyses would be far more targeted. This would be the most direct avenue for reducing costs and improving efficiency."
+       data-text-zh="目前『基础参数加特征指标』的监测方式使整体成本居高不下，对中小微企业的负担尤为沉重。如果有一款低成本、便携式的生物传感器，能够现场快速扫描多个采样点、锁定疑似污染区域，后续的实验室分析就会更有针对性——这将是降低成本、提升效率最直接的途径。">
+      "The current 'basic parameters plus characteristic indicators' monitoring approach keeps overall costs
+      stubbornly high, placing an especially heavy burden on small and micro enterprises. If we had a low-cost,
+      portable biosensor capable of rapidly scanning multiple sampling points on-site and pinpointing suspected
+      pollution areas, subsequent laboratory analyses would be far more targeted. This would be the most direct
+      avenue for reducing costs and improving efficiency."
+    </p>
+    <cite data-text-en="— Li Qiqi, Huangpi District Bureau of Ecology and Environment, Wuhan" data-text-zh="——李琪琪，武汉市黄陂区生态环境局">— Li Qiqi, Huangpi District Bureau of Ecology and Environment, Wuhan</cite>
+  </div>
+  <p data-text-en="This further reinforces our commitment to make testing affordable and accessible enough so that even small businesses and resource-limited regions can conduct routine PAHs screening, thereby reducing occupational exposure and community health risks."
+     data-text-zh="这进一步坚定了我们的目标：让检测足够便宜、足够易得，使中小企业与资源有限地区也能开展常态化的PAHs筛查，从而降低职业暴露与社区健康风险。">
+    This further reinforces our commitment to make testing affordable and accessible enough so that even small
+    businesses and resource-limited regions can conduct routine PAHs screening, thereby reducing occupational
+    exposure and community health risks.
+  </p>
+</section>
+
+<!-- ==================== 3. SDG 6 — Clean Water ==================== -->
+<section id="sec-sdg6" class="wetlab-animate">
+  <div class="section-heading">
+    <div class="section-icon">
+      <i class="fa-solid fa-droplet"></i>
+    </div>
+    <div class="section-heading-text">
+      <h2 data-text-en="SDG 6 &mdash; Clean Water" data-text-zh="SDG 6 &mdash; 清洁饮水和卫生设施">SDG 6 &mdash; Clean Water</h2>
+      <div class="section-heading-bar"></div>
+    </div>
+  </div>
+
+  <h3 data-text-en="What did we do?" data-text-zh="我们做了什么？">What did we do?</h3>
+  <p data-text-en="Polycyclic aromatic hydrocarbons (PAHs) are a class of persistent organic pollutants frequently detected in wastewater from coking plants, gasworks, and chemical industrial parks. A review article on PAH remediation published on ScienceDirect highlights that one of the key bottlenecks in current PAH management is the transition from 'advocacy' to 'practical implementation' — particularly in areas such as bioavailability assessment, standardized monitoring protocols, and low-carbon accounting for remediation technologies, where systematic solutions remain lacking [1]. To address this challenge, we selected naphthalene, a two-ring compound, as a model pollutant and developed a two-strain system with sequential operation: the first step involves incubation of degrading bacteria (converting naphthalene to salicylic acid within 1–2 hours), followed by the second step, in which sensing bacteria detect the target compound, yielding a fluorescent signal in about 30 minutes."
+     data-text-zh="多环芳烃（PAHs）是一类持久性有机污染物，常见于焦化厂、煤气厂与化工产业园的废水中。ScienceDirect上一篇关于PAHs修复的综述指出，当前PAHs治理的关键瓶颈之一在于从『倡导』到『实际落地』的转化——尤其是在生物有效性评估、标准化监测规程与修复技术低碳核算等方面，系统性解决方案仍然匮乏[1]。为应对这一挑战，我们选择了双环化合物萘作为模式污染物，开发了一套按序操作的双菌系统：第一步由降解菌孵育（1–2小时内将萘转化为水杨酸），第二步由传感菌检测目标化合物，约30分钟内产生荧光信号。">
+    Polycyclic aromatic hydrocarbons (PAHs) are a class of persistent organic pollutants frequently detected in
+    wastewater from coking plants, gasworks, and chemical industrial parks. A review article on PAH remediation
+    published on ScienceDirect highlights that one of the key bottlenecks in current PAH management is the
+    transition from "advocacy" to "practical implementation" — particularly in areas such as bioavailability
+    assessment, standardized monitoring protocols, and low-carbon accounting for remediation technologies, where
+    systematic solutions remain lacking [1]. To address this challenge, we selected naphthalene, a two-ring
+    compound, as a model pollutant and developed a two-strain system with sequential operation: the first step
+    involves incubation of degrading bacteria (converting naphthalene to salicylic acid within 1–2 hours), followed
+    by the second step, in which sensing bacteria detect the target compound, yielding a fluorescent signal in
+    about 30 minutes.
+  </p>
+  <p data-text-en="Stepwise operation for detection and degradation: We employ a two-strain, time-differential sequential strategy. In the first step, the sample is incubated with degrading bacteria for 1–2 hours, allowing naphthalene to be converted into salicylic acid by the naphthalene-hydroxylating enzyme in the degraders. In the second step, the reaction mixture is transferred to a sensing-bacterial assay tube and incubated for 30 minutes; the salicylic acid-responsive regulatory sequence carried by the sensor strain is activated, driving the expression of a fluorescent protein. Fluorescence intensity is directly proportional to salicylic acid concentration, enabling rapid, on-site compliance assessment of PAHs. It should be noted that the complete mineralization pathway of the degrading bacteria — naphthalene → salicylic acid → gentisic acid → TCA cycle → CO₂ and H₂O — is currently being developed as a long-term reserve technology. Due to restrictions imposed by policies governing the environmental release of engineered microorganisms, this capability is not being commercialized at this time and will be advanced only after a clear regulatory pathway has been established."
+     data-text-zh="检测与降解的分步操作：我们采用双菌、时间差序贯策略。第一步，样品与降解菌孵育1–2小时，萘在降解菌的萘羟化酶作用下转化为水杨酸；第二步，反应混合液转移至传感菌检测管中孵育30分钟，传感菌株携带的水杨酸响应调控序列被激活，驱动荧光蛋白表达。荧光强度与水杨酸浓度成正比，可实现对PAHs的快速现场合规性评估。需要说明的是，降解菌的完整矿化路径——萘→水杨酸→龙胆酸→TCA循环→CO₂与H₂O——目前作为长期储备技术在研发中；受工程微生物环境释放相关政策的限制，该能力现阶段并未商业化，将在明确的监管路径建立后再行推进。">
+    Stepwise operation for detection and degradation: We employ a two-strain, time-differential sequential
+    strategy. In the first step, the sample is incubated with degrading bacteria for 1–2 hours, allowing
+    naphthalene to be converted into salicylic acid by the naphthalene-hydroxylating enzyme in the degraders. In
+    the second step, the reaction mixture is transferred to a sensing-bacterial assay tube and incubated for 30
+    minutes; the salicylic acid-responsive regulatory sequence carried by the sensor strain is activated, driving
+    the expression of a fluorescent protein. Fluorescence intensity is directly proportional to salicylic acid
+    concentration, enabling rapid, on-site compliance assessment of PAHs. It should be noted that the complete
+    mineralization pathway of the degrading bacteria — naphthalene → salicylic acid → gentisic acid → TCA cycle →
+    CO₂ and H₂O — is currently being developed as a long-term reserve technology. Due to restrictions imposed by
+    policies governing the environmental release of engineered microorganisms, this capability is not being
+    commercialized at this time and will be advanced only after a clear regulatory pathway has been established.
+  </p>
+  <div class="key-finding">
+    <p data-text-en="Preliminary tests indicate that, throughout the entire process, this kit can generate test results within 2–3 hours, with the cost of a single test kept between several dozen and one hundred RMB — significantly reduced compared to traditional GC-MS/HPLC methods."
+       data-text-zh="初步测试表明，整个流程中该试剂盒可在2–3小时内产生检测结果，单次检测成本控制在数十至一百元人民币之间——相较传统GC‑MS/HPLC方法大幅降低。">
+      Preliminary tests indicate that, throughout the entire process, this kit can generate test results within 2–3
+      hours, with the cost of a single test kept between several dozen and one hundred RMB — significantly reduced
+      compared to traditional GC-MS/HPLC methods.
+    </p>
+  </div>
+  <p data-text-en="As SDG 6 calls for — 'Ensure availability and sustainable management of water and sanitation for all' — we believe that making detection technologies affordable and accessible is, in itself, an essential component of sustainable water resource management."
+     data-text-zh="正如SDG 6所呼吁的——『确保所有人都能获得水和环境卫生并对其进行可持续管理』——我们相信，让检测技术变得可负担、可获得，本身就是可持续水资源管理的重要组成部分。">
+    As SDG 6 calls for — "Ensure availability and sustainable management of water and sanitation for all" — we
+    believe that making detection technologies affordable and accessible is, in itself, an essential component of
+    sustainable water resource management.
+  </p>
+
+  <h3 data-text-en="Feedback from stakeholders" data-text-zh="利益相关方反馈">Feedback from stakeholders</h3>
+  <div class="pull-quote">
+    <p data-text-en="At present, quantitative testing is largely conducted by third-party laboratories using gas chromatography or liquid chromatography, and the entire process — from sample collection to report generation — can be quite time-consuming. For small and micro enterprises, this poses a particularly heavy cost burden."
+       data-text-zh="目前的定量检测大多由第三方实验室通过气相或液相色谱完成，从采样到出具报告的整个流程相当耗时，对中小微企业而言是一笔沉重的成本负担。">
+      "At present, quantitative testing is largely conducted by third-party laboratories using gas chromatography or
+      liquid chromatography, and the entire process — from sample collection to report generation — can be quite
+      time-consuming. For small and micro enterprises, this poses a particularly heavy cost burden."
+    </p>
+    <cite data-text-en="— Li Qiqi, Huangpi District Bureau of Ecology and Environment, Wuhan" data-text-zh="——李琪琪，武汉市黄陂区生态环境局">— Li Qiqi, Huangpi District Bureau of Ecology and Environment, Wuhan</cite>
+  </div>
+  <p data-text-en="She also pointed out that existing PID/FID handheld detectors are 'fast, but not accurate enough' — usable, but without legal force at the law-enforcement level."
+     data-text-zh="她还指出，现有的PID/FID手持检测仪『快是快，但不够准』——能用，但在执法层面不具备法律效力。">
+    She also pointed out that existing PID/FID handheld detectors are "fast, but not accurate enough" — usable, but
+    without legal force at the law-enforcement level.
+  </p>
+  <p data-text-en="This feedback directly defined our design objective: to develop a low-cost, portable biosensor to serve as a laboratory 'outpost' — by employing high-coverage, low-cost primary screening, we can allocate our limited testing resources precisely to where they are most needed. And our engineered bacteria's unique characteristic — the stepwise synergistic action of two strains — means that pollution reduction is initiated even during the screening process, an added value that conventional rapid-testing devices simply cannot offer."
+     data-text-zh="这一反馈直接定义了我们的设计目标：开发一款低成本、便携式的生物传感器，作为实验室的『前哨站』——通过高覆盖率、低成本的初筛，将有限的检测资源精准投放到最需要的地方。而我们工程菌独特的『双菌分步协同』特性，意味着污染削减在筛查过程中就已经启动——这是常规快速检测设备所无法提供的附加价值。">
+    This feedback directly defined our design objective: to develop a low-cost, portable biosensor to serve as a
+    laboratory "outpost" — by employing high-coverage, low-cost primary screening, we can allocate our limited
+    testing resources precisely to where they are most needed. And our engineered bacteria's unique characteristic
+    — the stepwise synergistic action of two strains — means that pollution reduction is initiated even during the
+    screening process, an added value that conventional rapid-testing devices simply cannot offer.
+  </p>
+</section>
+
+<!-- ==================== 4. SDG 15 — Terrestrial Ecosystems ==================== -->
+<section id="sec-sdg15" class="wetlab-animate">
+  <div class="section-heading">
+    <div class="section-icon">
+      <i class="fa-solid fa-seedling"></i>
+    </div>
+    <div class="section-heading-text">
+      <h2 data-text-en="SDG 15 &mdash; Life on Land" data-text-zh="SDG 15 &mdash; 陆地生物">SDG 15 &mdash; Life on Land</h2>
+      <div class="section-heading-bar"></div>
+    </div>
+  </div>
+
+  <h3 data-text-en="What did we do?" data-text-zh="我们做了什么？">What did we do?</h3>
+  <p data-text-en="Polycyclic aromatic hydrocarbon pollution can also enter soils through leaks, irrigation with wastewater, and atmospheric deposition, reducing microbial diversity, inhibiting seed germination, disrupting nutrient cycling, and ultimately leading to land degradation and biodiversity loss."
+     data-text-zh="多环芳烃污染也可通过泄漏、污水灌溉与大气沉降进入土壤，降低微生物多样性、抑制种子萌发、扰乱养分循环，最终导致土地退化与生物多样性丧失。">
+    Polycyclic aromatic hydrocarbon pollution can also enter soils through leaks, irrigation with wastewater, and
+    atmospheric deposition, reducing microbial diversity, inhibiting seed germination, disrupting nutrient cycling,
+    and ultimately leading to land degradation and biodiversity loss.
+  </p>
+  <p data-text-en="Our engineered microbial strains are naturally suited for in-situ soil bioremediation:"
+     data-text-zh="我们的工程菌株天然适合用于原位土壤生物修复：">
+    Our engineered microbial strains are naturally suited for in-situ soil bioremediation:
+  </p>
+  <ul class="step-list">
+    <li data-text-en="Rapid preliminary screening: Whole-cell biosensors can be directly applied to soil leachate or groundwater samples, eliminating the need for complex sample pretreatment. Within 2–3 hours, preliminary screening results for pollution levels can be obtained, helping to quickly assess the level of pollution."
+        data-text-zh="快速初筛：全细胞生物传感器可直接应用于土壤浸出液或地下水样品，无需复杂的样品前处理。2–3小时内即可获得污染水平的初步筛查结果，帮助快速评估污染程度。"><strong
+          data-text-en="Rapid preliminary screening:" data-text-zh="快速初筛：">Rapid preliminary screening:</strong> Whole-cell
+      biosensors can be directly applied to soil leachate or groundwater samples, eliminating the need for complex
+      sample pretreatment. Within 2–3 hours, preliminary screening results for pollution levels can be obtained,
+      helping to quickly assess the level of pollution.</li>
+    <li data-text-en="Synchronous signal generation for detection: During the assay, naphthalene in the sample is converted into salicylic acid by naphthalene-hydroxylating enzymes in the degrading bacteria, and this salicylic acid simultaneously serves as the detection signal molecule for the sensor strain. We place particular emphasis on comprehensive pathway metabolite analysis (GC-MS) to validate the complete metabolic route — from naphthalene through salicylic acid to gentisic acid and ultimately to the TCA cycle — ensuring that no toxic intermediates accumulate; this represents a critical safety threshold we rigorously uphold. It should be noted that degradation formulations based on this engineered strain are currently held as a long-term reserve and, due to regulatory constraints on the environmental release of genetically modified organisms, are not being marketed at this time. They will be made available as commercial products once compliant pathways have been clearly established."
+        data-text-zh="检测信号的同步产生：检测过程中，样品中的萘经降解菌的萘羟化酶转化为水杨酸，这一水杨酸同时也是传感菌株的检测信号分子。我们特别重视完整的通路代谢物分析（GC‑MS），以验证从萘经水杨酸到龙胆酸、最终进入TCA循环的完整代谢路线，确保没有毒性中间体累积——这是我们严格坚守的关键安全底线。需要说明的是，基于该工程菌株的降解制剂目前作为长期储备保留，受转基因生物环境释放相关监管限制，现阶段并未上市，将在合规路径明确建立后作为商业化产品推出。"><strong
+          data-text-en="Synchronous signal generation for detection:"
+          data-text-zh="检测信号的同步产生：">Synchronous signal generation for detection:</strong> During the assay, naphthalene in
+      the sample is converted into salicylic acid by naphthalene-hydroxylating enzymes in the degrading bacteria,
+      and this salicylic acid simultaneously serves as the detection signal molecule for the sensor strain. We
+      place particular emphasis on comprehensive pathway metabolite analysis (GC-MS) to validate the complete
+      metabolic route — from naphthalene through salicylic acid to gentisic acid and ultimately to the TCA cycle —
+      ensuring that no toxic intermediates accumulate; this represents a critical safety threshold we rigorously
+      uphold. It should be noted that degradation formulations based on this engineered strain are currently held
+      as a long-term reserve and, due to regulatory constraints on the environmental release of genetically
+      modified organisms, are not being marketed at this time. They will be made available as commercial products
+      once compliant pathways have been clearly established.</li>
+    <li data-text-en="Biosafety containment: Biosafety is a prerequisite for soil applications. We employ immobilized microspheres or kit-based containment systems to ensure that engineered microorganisms do not proliferate or spread in the environment; at the same time, we design auxotrophic strains that undergo programmed cell death once removed from laboratory conditions, thereby eliminating the risks of horizontal gene transfer and ecological invasion."
+        data-text-zh="生物安全封闭：生物安全是土壤应用的前提。我们采用固定化微球或试剂盒式的封闭系统，确保工程微生物不会在环境中增殖或扩散；同时设计营养缺陷型菌株，使其一旦离开实验室条件即发生程序性死亡，从而消除水平基因转移与生态入侵的风险。"><strong
+          data-text-en="Biosafety containment:" data-text-zh="生物安全封闭：">Biosafety containment:</strong> Biosafety is a
+      prerequisite for soil applications. We employ immobilized microspheres or kit-based containment systems to
+      ensure that engineered microorganisms do not proliferate or spread in the environment; at the same time, we
+      design auxotrophic strains that undergo programmed cell death once removed from laboratory conditions,
+      thereby eliminating the risks of horizontal gene transfer and ecological invasion.</li>
+  </ul>
+
+  <h3 data-text-en="Feedback from stakeholders" data-text-zh="利益相关方反馈">Feedback from stakeholders</h3>
+  <div class="pull-quote">
+    <p data-text-en="Many teams track only the parent compound. However, the degradation of polycyclic aromatic hydrocarbons can stall at intermediate products, which sometimes exhibit greater toxicity and mobility. Comprehensive pathway validation is essential."
+       data-text-zh="很多团队只追踪母体化合物，但多环芳烃的降解可能停滞在中间产物阶段，而这些中间产物有时毒性与迁移性更强。完整的通路验证是必不可少的。">
+      "Many teams track only the parent compound. However, the degradation of polycyclic aromatic hydrocarbons can
+      stall at intermediate products, which sometimes exhibit greater toxicity and mobility. Comprehensive pathway
+      validation is essential."
+    </p>
+    <cite data-text-en="— Professor Xinli Xing, China University of Geosciences (Wuhan)" data-text-zh="——邢新丽教授，中国地质大学（武汉）">— Professor Xinli Xing, China University of Geosciences (Wuhan)</cite>
+  </div>
+  <p data-text-en="Professor Xing also pointed out that naphthalene is widely distributed in the natural environment and exhibits complex environmental behavior, yet existing conventional risk assessment frameworks pay relatively little attention to low-ring PAHs. This precisely demonstrates that establishing a comprehensive detection and degradation technology platform, with naphthalene as the breakthrough point, is essential for filling a weak link in the PAHs governance chain, and is of critical preliminary significance. Guided by this principle, we will conduct a comprehensive metabolite-profile analysis to confirm the complete mineralization of naphthalene into carbon dioxide and water, ensuring that, building on our success with naphthalene, our approach can be extended — using the same technical rationale — to other PAH contaminants, thereby truly remediating soils without causing secondary harm."
+     data-text-zh="邢教授还指出，萘在自然环境中分布广泛，环境行为复杂，但现有常规风险评估框架对低环数PAHs的关注相对不足。这恰恰说明，以萘为突破口建立完整的检测‑降解技术平台，对于填补PAHs治理链条中的薄弱环节具有重要的先导意义。以此为指导，我们将开展全面的代谢物图谱分析，确认萘完全矿化为二氧化碳与水，确保在萘取得成功的基础上，能够以相同的技术思路推广至其他PAHs污染物，真正实现不产生二次危害的土壤修复。">
+    Professor Xing also pointed out that naphthalene is widely distributed in the natural environment and exhibits
+    complex environmental behavior, yet existing conventional risk assessment frameworks pay relatively little
+    attention to low-ring PAHs. This precisely demonstrates that establishing a comprehensive detection and
+    degradation technology platform, with naphthalene as the breakthrough point, is essential for filling a weak
+    link in the PAHs governance chain, and is of critical preliminary significance. Guided by this principle, we
+    will conduct a comprehensive metabolite-profile analysis to confirm the complete mineralization of naphthalene
+    into carbon dioxide and water, ensuring that, building on our success with naphthalene, our approach can be
+    extended — using the same technical rationale — to other PAH contaminants, thereby truly remediating soils
+    without causing secondary harm.
+  </p>
+  <div class="pull-quote">
+    <p data-text-en="Whole-cell biosensors involve living engineered microorganisms. In field or industrial settings, the microbial cells must be contained within a closed system — for example, developed into a kit or immobilized microspheres — to avoid environmental release. Do we need to apply for an environmental release permit? Do we need to inform the public? These are not merely technical issues; they also concern trust."
+       data-text-zh="全细胞生物传感器涉及活的工程微生物。在现场或工业场景中，菌体细胞必须封闭在一个密闭系统内——例如制成试剂盒或固定化微球——以避免环境释放。我们是否需要申请环境释放许可？是否需要告知公众？这些不仅是技术问题，也关乎信任。">
+      "Whole-cell biosensors involve living engineered microorganisms. In field or industrial settings, the
+      microbial cells must be contained within a closed system — for example, developed into a kit or immobilized
+      microspheres — to avoid environmental release. Do we need to apply for an environmental release permit? Do
+      we need to inform the public? These are not merely technical issues; they also concern trust."
+    </p>
+    <cite data-text-en="— Li Qiqi, Huangpi District Bureau of Ecology and Environment, Wuhan" data-text-zh="——李琪琪，武汉市黄陂区生态环境局">— Li Qiqi, Huangpi District Bureau of Ecology and Environment, Wuhan</cite>
+  </div>
+  <p data-text-en="This makes biosafety and closed-loop systems an uncompromising design priority for our project."
+     data-text-zh="这使得生物安全与闭环系统成为本项目不可妥协的设计优先级。">
+    This makes biosafety and closed-loop systems an uncompromising design priority for our project.
+  </p>
+</section>
+
+<!-- ==================== 5. SDG 17 — Partnerships for the Goals ==================== -->
+<section id="sec-sdg17" class="wetlab-animate">
+  <div class="section-heading">
+    <div class="section-icon">
+      <i class="fa-solid fa-handshake"></i>
+    </div>
+    <div class="section-heading-text">
+      <h2 data-text-en="SDG 17 &mdash; Partnerships for the Goals" data-text-zh="SDG 17 &mdash; 促进目标实现的伙伴关系">SDG 17 &mdash; Partnerships for the Goals</h2>
+      <div class="section-heading-bar"></div>
+    </div>
+  </div>
+
+  <h3 data-text-en="What did we do?" data-text-zh="我们做了什么？">What did we do?</h3>
+  <p data-text-en="No single team can solve environmental pollution on its own. From the very beginning of its design, our project has proactively established a cross-sectoral collaboration network, bringing together academia, regulatory agencies, industry, community organizations, and the iGEM community."
+     data-text-zh="没有任何一个团队能够独自解决环境污染问题。从设计之初，本项目就主动建立了跨部门协作网络，汇聚了学术界、监管机构、产业界、社区组织以及iGEM社区。">
+    No single team can solve environmental pollution on its own. From the very beginning of its design, our project
+    has proactively established a cross-sectoral collaboration network, bringing together academia, regulatory
+    agencies, industry, community organizations, and the iGEM community.
+  </p>
+  <ul class="step-list">
+    <li data-text-en="Academia: Professor Xinli Xing of China University of Geosciences (Wuhan) provided expert guidance on the environmental behavior of PAHs, field sampling design, validation of degradation pathways, and gaps in the policy framework, directly helping us define a comprehensive technical roadmap and safety standards for the entire process — from detection to complete mineralization — of naphthalene."
+        data-text-zh="学术界：中国地质大学（武汉）邢新丽教授就PAHs的环境行为、现场采样设计、降解通路验证以及政策框架的空缺提供了专业指导，直接帮助我们明确了从萘的检测到完全矿化全流程的技术路线与安全标准。"><strong
+          data-text-en="Academia:" data-text-zh="学术界：">Academia:</strong> Professor Xinli Xing of China University of
+      Geosciences (Wuhan) provided expert guidance on the environmental behavior of PAHs, field sampling design,
+      validation of degradation pathways, and gaps in the policy framework, directly helping us define a
+      comprehensive technical roadmap and safety standards for the entire process — from detection to complete
+      mineralization — of naphthalene.</li>
+    <li data-text-en="Regulatory agencies: Li Qiqi of the Huangpi District Branch, Wuhan Municipal Ecology and Environment Bureau, highlighted the real pain points of oversight — high costs, lengthy timelines, and the lack of legally recognized rapid-testing tools — and proposed a tiered regulatory approach of 'on-site rapid testing plus laboratory confirmation.' She also emphasized that successful implementation must overcome three critical hurdles: accuracy, method validation, and biosafety."
+        data-text-zh="监管机构：武汉市生态环境局黄陂区分局的李琪琪指出了监管的真实痛点——成本高、周期长，且缺乏具有法律效力的快速检测工具，并提出了『现场快检+实验室确证』的分级监管思路。她还强调，技术要真正落地，必须跨过准确性、方法验证与生物安全三道关卡。"><strong
+          data-text-en="Regulatory agencies:" data-text-zh="监管机构：">Regulatory agencies:</strong> Li Qiqi of the Huangpi
+      District Branch, Wuhan Municipal Ecology and Environment Bureau, highlighted the real pain points of oversight
+      — high costs, lengthy timelines, and the lack of legally recognized rapid-testing tools — and proposed a
+      tiered regulatory approach of "on-site rapid testing plus laboratory confirmation." She also emphasized that
+      successful implementation must overcome three critical hurdles: accuracy, method validation, and biosafety.</li>
+    <li data-text-en="Community: In Chenzhou, Hunan Province, Director Wu Xianglian of the He Xiaoqing Action Center provided field observations of river PAHs pollution, making the need for low-cost, easy-to-use tools in grassroots river-monitoring efforts both tangible and pressing."
+        data-text-zh="社区：在湖南省郴州市，河小青行动中心的吴湘莲主任提供了河流PAHs污染的现场观察，使基层巡河工作中对低成本、易用工具的需求变得具体而迫切。"><strong
+          data-text-en="Community:" data-text-zh="社区：">Community:</strong> In Chenzhou, Hunan Province, Director Wu
+      Xianglian of the He Xiaoqing Action Center provided field observations of river PAHs pollution, making the
+      need for low-cost, easy-to-use tools in grassroots river-monitoring efforts both tangible and pressing.</li>
+    <li data-text-en="Industry (engineering): Engineers from Wuhan Zhongke Shuicheng offered recommendations on practical operational constraints — such as scale-up cultivation of engineered microorganisms, selection of immobilization materials, and field-transport conditions — helping us anticipate in advance the real-world challenges that may arise when transitioning from the laboratory to field applications."
+        data-text-zh="产业界（工程层面）：武汉中科水城的工程师就实际操作限制提出了建议——包括工程微生物的扩大培养、固定化材料的选择以及现场运输条件——帮助我们提前预判从实验室走向现场应用可能遇到的真实挑战。"><strong
+          data-text-en="Industry (engineering):" data-text-zh="产业界（工程层面）：">Industry (engineering):</strong> Engineers
+      from Wuhan Zhongke Shuicheng offered recommendations on practical operational constraints — such as scale-up
+      cultivation of engineered microorganisms, selection of immobilization materials, and field-transport
+      conditions — helping us anticipate in advance the real-world challenges that may arise when transitioning
+      from the laboratory to field applications.</li>
+    <li data-text-en="Industry (commercialization): Director Han of Yuangou Bio (Wuhan) Co., Ltd. cautioned us from a commercialization perspective: there is a significant gap between academic thinking and industrial thinking, one defined by 'cost' and 'compliance.' His feedback prompted us to abandon the complex 'three-in-one' design and return to the product's core — separating the detection and degradation functions and focusing on threshold-based determination of 'compliant/non-compliant.' Under existing regulatory constraints, we were able to launch a compliant testing product while preserving long-term commercial potential for degradation formulations."
+        data-text-zh="产业界（商业化层面）：源构生物（武汉）有限公司的韩总从商业化角度提醒我们：学术思维与产业思维之间存在由『成本』与『合规』定义的显著差距。他的反馈促使我们放弃复杂的『三合一』设计，回归产品核心——将检测与降解功能分离，聚焦于『达标/不达标』的阈值判断。在现行监管约束下，我们得以推出一款合规的检测产品，同时为降解制剂保留了长期的商业化潜力。"><strong
+          data-text-en="Industry (commercialization):" data-text-zh="产业界（商业化层面）：">Industry
+        (commercialization):</strong> Director Han of Yuangou Bio (Wuhan) Co., Ltd. cautioned us from a
+      commercialization perspective: there is a significant gap between academic thinking and industrial thinking,
+      one defined by "cost" and "compliance." His feedback prompted us to abandon the complex "three-in-one" design
+      and return to the product's core — separating the detection and degradation functions and focusing on
+      threshold-based determination of "compliant/non-compliant." Under existing regulatory constraints, we were
+      able to launch a compliant testing product while preserving long-term commercial potential for degradation
+      formulations.</li>
+    <li data-text-en="iGEM community: We also collaborated with other iGEM teams through experience sharing — collaborative iteration within the iGEM community enhances the robustness of each project."
+        data-text-zh="iGEM社区：我们还与其他iGEM团队开展了经验分享——通过iGEM社区内的协作迭代，提升了各自项目的稳健性。"><strong
+          data-text-en="iGEM community:" data-text-zh="iGEM社区：">iGEM community:</strong> We also collaborated with other
+      iGEM teams through experience sharing — collaborative iteration within the iGEM community enhances the
+      robustness of each project.</li>
+  </ul>
+
+  <h3 data-text-en="Feedback from stakeholders" data-text-zh="利益相关方反馈">Feedback from stakeholders</h3>
+  <p data-text-en="Our dialogue with multiple stakeholders has conveyed a consistent message:"
+     data-text-zh="我们与多方利益相关者的对话传递出一个一致的信息：">
+    Our dialogue with multiple stakeholders has conveyed a consistent message:
+  </p>
+  <div class="pull-quote">
+    <p data-text-en="Studying the migration of pollutants requires analyzing key parameters such as the octanol-water partition coefficient, the organic phase-atmosphere partition coefficient, and Henry's law constant — there is no universal, one-size-fits-all rule. Field sampling must account for land-use type, seasonal temperature, and soil organic matter content."
+       data-text-zh="研究污染物的迁移需要分析辛醇‑水分配系数、有机相‑大气分配系数与亨利常数等关键参数——没有放之四海而皆准的通用规则。现场采样必须考虑土地利用类型、季节温度与土壤有机质含量。">
+      "Studying the migration of pollutants requires analyzing key parameters such as the octanol-water partition
+      coefficient, the organic phase-atmosphere partition coefficient, and Henry's law constant — there is no
+      universal, one-size-fits-all rule. Field sampling must account for land-use type, seasonal temperature, and
+      soil organic matter content."
+    </p>
+    <cite data-text-en="— Professor Xinli Xing, China University of Geosciences (Wuhan)" data-text-zh="——邢新丽教授，中国地质大学（武汉）">— Professor Xinli Xing, China University of Geosciences (Wuhan)</cite>
+  </div>
+  <p data-text-en="This directly informed our sampling design and experimental validation plan."
+     data-text-zh="这直接指导了我们的采样设计与实验验证方案。">
+    This directly informed our sampling design and experimental validation plan.
+  </p>
+  <div class="pull-quote">
+    <p data-text-en="For a biosensor to be adopted by regulators, it must clear three hurdles: first, accuracy — its performance must be on par with standard methods; second, method validation — only then will the data carry legal weight; and third, biosafety — requiring a closed-system design. These are not optional; they are prerequisites."
+       data-text-zh="一款生物传感器要被监管部门采纳，必须跨过三道关卡：第一，准确性——性能须与标准方法相当；第二，方法验证——唯有如此数据才具备法律效力；第三，生物安全——须具备闭环系统设计。这些不是可选项，而是前提条件。">
+      "For a biosensor to be adopted by regulators, it must clear three hurdles: first, accuracy — its performance
+      must be on par with standard methods; second, method validation — only then will the data carry legal
+      weight; and third, biosafety — requiring a closed-system design. These are not optional; they are
+      prerequisites."
+    </p>
+    <cite data-text-en="— Li Qiqi, Huangpi District Bureau of Ecology and Environment, Wuhan" data-text-zh="——李琪琪，武汉市黄陂区生态环境局">— Li Qiqi, Huangpi District Bureau of Ecology and Environment, Wuhan</cite>
+  </div>
+  <p data-text-en="This provides us with a clear technical roadmap: in the short term, develop an on-site screening tool for identifying soil contamination risks, and in the long term, achieve high accuracy and secure method validation."
+     data-text-zh="这为我们提供了清晰的技术路线图：短期内开发用于识别土壤污染风险的现场筛查工具，长期则致力于实现高准确性并完成方法验证。">
+    This provides us with a clear technical roadmap: in the short term, develop an on-site screening tool for
+    identifying soil contamination risks, and in the long term, achieve high accuracy and secure method validation.
+  </p>
+  <div class="pull-quote">
+    <p data-text-en="No matter how advanced the technology, it's meaningless if it stays confined to the lab. You need to understand who will use it, who will oversee it, and who will be affected. Involve everyone as early as possible."
+       data-text-zh="无论技术多么先进，如果只停留在实验室里就毫无意义。你需要了解谁会使用它、谁会监管它、谁会受到影响。尽早让所有相关方参与进来。">
+      "No matter how advanced the technology, it's meaningless if it stays confined to the lab. You need to
+      understand who will use it, who will oversee it, and who will be affected. Involve everyone as early as
+      possible."
+    </p>
+    <cite data-text-en="— Representative of a local environmental NGO" data-text-zh="——某地方环保NGO代表">— Representative of a local environmental NGO</cite>
+  </div>
+  <p data-text-en="These insights have shaped our project from the very outset, rather than being tacked on afterward. Our approach will be designed to be scientifically sound, regulatorily viable, ecologically safe, and socially acceptable."
+     data-text-zh="这些洞见从一开始就塑造了我们的项目，而非事后补充。我们的方案将致力于做到科学可靠、监管可行、生态安全、社会可接受。">
+    These insights have shaped our project from the very outset, rather than being tacked on afterward. Our
+    approach will be designed to be scientifically sound, regulatorily viable, ecologically safe, and socially
+    acceptable.
+  </p>
+</section>
+
+<!-- ==================== 6. References ==================== -->
+<section id="sec-references" class="wetlab-animate">
+  <div class="section-heading">
+    <div class="section-icon">
+      <i class="fa-solid fa-book"></i>
+    </div>
+    <div class="section-heading-text">
+      <h2 data-text-en="References" data-text-zh="参考文献">References</h2>
+      <div class="section-heading-bar"></div>
+    </div>
+  </div>
+
+  <ul class="references-list">
+    <li>Mekontchou Yemele O, Zhao Z, Nkoh J N, et al. A systematic review of polycyclic aromatic hydrocarbon pollution: A combined bibliometric and mechanistic analysis of research trend toward an environmentally friendly solution [J]. Science of the Total Environment, 2024, 926: 171577. DOI: 10.1016/j.scitotenv.2024.171577.</li>
+  </ul>
+</section>
+{% endblock %}
